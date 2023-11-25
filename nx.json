@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultProject": "angular-material-virtual-select",
+  "workspaceLayout": {
+    "libsDir": "libs",
+    "appsDir": "apps"
+  },
   "targetDefaults": {
     "build": {
       "cache": true,
@@ -53,11 +57,13 @@
       "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "jest",
-      "e2eTestRunner": "playwright"
+      "e2eTestRunner": "playwright",
+      "prefix": "app"
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "jest",
+      "prefix": "lib"
     },
     "@nx/angular:component": {
       "style": "scss"

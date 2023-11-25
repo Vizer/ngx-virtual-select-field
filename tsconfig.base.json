@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@angular-material-virtual-select/virtual-select-field": [
+        "libs/virtual-select-field/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
