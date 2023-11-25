@@ -9,6 +9,17 @@ export class VirtualSelectFieldOptionForDirective<TValue> {
   @Input('libVirtualSelectFieldOptionForOf')
   options: { label: string; value: TValue }[] = [];
 
-  @Input('libVirtualSelectFieldOptionForTemplate')
-  template!: TemplateRef<unknown>;
+  // @Input('libVirtualSelectFieldOptionForTemplate')
+  // template!: TemplateRef<unknown>;
+
+  constructor(
+    public template: TemplateRef<{ $implicit: { label: string; value: TValue } }>
+  ) {}
+
+  static ngTemplateContextGuard<TValue>(
+    _dir: VirtualSelectFieldOptionForDirective<TValue>,
+    ctx: unknown
+  ): ctx is { $implicit: { label: string; value: TValue }  } {
+    return true;
+  }
 }

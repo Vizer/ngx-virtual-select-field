@@ -58,9 +58,11 @@
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
     (keydown)="_handleKeydown($event)" -->
     @for(option of optionFor.options; track option.value) {
-      <span [attr.value]="option.value">
-        {{ option.label }}
-      </span>
+      <ng-container
+        [ngTemplateOutlet]="optionFor.template"
+        [ngTemplateOutletContext]="{ $implicit: option }"
+      >
+      </ng-container>
     }
   </div>
 </ng-template>
