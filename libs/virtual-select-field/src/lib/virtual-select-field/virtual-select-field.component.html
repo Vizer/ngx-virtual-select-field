@@ -3,9 +3,9 @@
   <div>
     <!-- [attr.id]="_valueId" -->
     @if (empty) {
-      <span>{{ placeholder }}</span>
+    <span>{{ placeholder }}</span>
     } @else {
-      <!-- <span>
+    <!-- <span>
         @if (customTrigger) {
           <ng-content select="lib-virtual-select-trigger"></ng-content>
         } @else {
@@ -57,6 +57,10 @@
     [@transformPanel]="'showing'"
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
     (keydown)="_handleKeydown($event)" -->
-    <ng-content></ng-content>
+    @for(option of optionFor.options; track option.value) {
+      <span [attr.value]="option.value">
+        {{ option.label }}
+      </span>
+    }
   </div>
 </ng-template>

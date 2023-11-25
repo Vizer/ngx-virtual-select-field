@@ -1,1 +1,1 @@
-export * from './lib/virtual-select-field/virtual-select-field.component';
+export * from './lib/virtual-select-field';

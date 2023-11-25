@@ -1,6 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import {
   Component,
+  ContentChild,
   ElementRef,
   EventEmitter,
   HostBinding,
@@ -17,6 +18,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -42,6 +44,9 @@ export class VirtualSelectFieldComponent<TValue>
 
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
+
+  @ContentChild(VirtualSelectFieldOptionForDirective)
+  optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
 
   focused = false;
   autofilled = false;

@@ -4,14 +4,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NxWelcomeComponent } from './nx-welcome.component';
 
-import { VirtualSelectFieldComponent } from '@angular-material-virtual-select/virtual-select-field';
+import { VIRTUAL_SELECT } from '@angular-material-virtual-select/virtual-select-field';
 
 @Component({
   standalone: true,
   imports: [
     NxWelcomeComponent,
     RouterModule,
-    VirtualSelectFieldComponent,
+    VIRTUAL_SELECT,
     MatFormFieldModule,
     MatInputModule,
   ],
