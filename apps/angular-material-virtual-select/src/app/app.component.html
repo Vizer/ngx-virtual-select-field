@@ -1,2 +1,10 @@
-<lib-virtual-select-field> </lib-virtual-select-field>
+<mat-form-field>
+  <mat-label>Virtual Example</mat-label>
+  <lib-virtual-select-field>
+    @for (option of options; track option.value) {
+      <span [attr.value]="option.value">{{ option.label }}</span>
+    }
+  </lib-virtual-select-field>
+</mat-form-field>
+
 <router-outlet></router-outlet>
