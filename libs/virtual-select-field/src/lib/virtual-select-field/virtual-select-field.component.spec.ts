@@ -1,21 +1,76 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { render } from '@testing-library/angular';
 import { VirtualSelectFieldComponent } from './virtual-select-field.component';
+import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 
 describe('VirtualSelectFieldComponent', () => {
-  let component: VirtualSelectFieldComponent;
-  let fixture: ComponentFixture<VirtualSelectFieldComponent>;
+  describe('as a mat-form-field-control', () => {
+    it('should render field in material form field', async () => {
+      const expectedPlaceholder = 'test placeholder';
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [VirtualSelectFieldComponent],
-    }).compileComponents();
+      const result = await render(
+        `
+        <mat-form-field>
+          <mat-label>Test Field</mat-label>
+          <lib-virtual-select-field [placeholder]="placeholder">
+            <span
+              *libVirtualSelectFieldOptionFor="let option of options"
+            >
+              {{ option.label }}
+            </span>
+          </lib-virtual-select-field>
+        </mat-form-field>`,
+        {
+          componentProperties: {
+            options: [{ label: 'foo' }],
+            placeholder: expectedPlaceholder,
+          },
+          imports: [
+            MatFormFieldModule,
+            VirtualSelectFieldComponent,
+            VirtualSelectFieldOptionForDirective,
+          ],
+        }
+      );
 
-    fixture = TestBed.createComponent(VirtualSelectFieldComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      expect(result.getByText('Test Field')).toBeTruthy();
+      expect(result.getByText(expectedPlaceholder)).toBeTruthy();
+    });
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('as a control value accessor', () => {
+    it('should bind to form control', async () => {
+      const expectedValue = 'foo';
+
+      const result = await render(
+        `
+          <lib-virtual-select-field [formControl]="control" [placeholder]="placeholder">
+            <span
+              *libVirtualSelectFieldOptionFor="let option of options"
+            >
+              {{ option.label }}
+            </span>
+          </lib-virtual-select-field>
+        `,
+        {
+          componentProperties: {
+            control: new FormControl(expectedValue),
+          },
+          imports: [
+            ReactiveFormsModule,
+            VirtualSelectFieldComponent,
+            VirtualSelectFieldOptionForDirective,
+          ],
+        }
+      );
+
+      const childComponentInstance = result.fixture.debugElement.query(
+        By.directive(VirtualSelectFieldComponent)
+      ).componentInstance;
+
+      expect(childComponentInstance.value).toBe(expectedValue);
+    });
   });
 });
