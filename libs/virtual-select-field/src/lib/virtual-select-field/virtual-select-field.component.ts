@@ -59,7 +59,7 @@ export class VirtualSelectFieldComponent<TValue>
   readonly controlType = 'lib-virtual-select-field';
   readonly POSITIONS = POSITIONS;
 
-  public ngControl: NgControl | null = inject(NgControl, { optional: true });
+  ngControl: NgControl | null = inject(NgControl, { optional: true });
 
   private _fm: FocusMonitor = inject(FocusMonitor);
   private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
@@ -150,25 +150,8 @@ export class VirtualSelectFieldComponent<TValue>
     return !!this.ngControl?.invalid && this._touched;
   }
 
-  @HostListener('focusin')
-  onFocusIn() {
-    if (!this.focused) {
-      this.focused = true;
-      this._stateChanges.next();
-    }
-  }
-
-  @HostListener('focusout', ['$event'])
-  onFocusOut(event: FocusEvent) {
-    if (!this._elRef.nativeElement.contains(event.relatedTarget as Element)) {
-      this._touched = true;
-      this.focused = false;
-      this._onTouched();
-      this._stateChanges.next();
-    }
-  }
-
   ngOnInit() {
+    // TODO: mb move to constructor
     this._disabled = this.ngControl?.disabled ?? false;
   }
 
@@ -204,16 +187,34 @@ export class VirtualSelectFieldComponent<TValue>
     controlElement.setAttribute('aria-describedby', ids.join(' '));
   }
 
-  emitValue(): void {
-    this._onChange?.(this.value);
-    this.valueChange.emit(this.value);
-  }
-
   onContainerClick(): void {
     this.open();
   }
 
-  toggle(): void {
+  @HostListener('focusin')
+  protected onFocusIn() {
+    if (!this.focused) {
+      this.focused = true;
+      this._stateChanges.next();
+    }
+  }
+
+  @HostListener('focusout', ['$event'])
+  protected onFocusOut(event: FocusEvent) {
+    if (!this._elRef.nativeElement.contains(event.relatedTarget as Element)) {
+      this._touched = true;
+      this.focused = false;
+      this._onTouched();
+      this._stateChanges.next();
+    }
+  }
+
+  protected emitValue(): void {
+    this._onChange?.(this.value);
+    this.valueChange.emit(this.value);
+  }
+
+  protected toggle(): void {
     if (this.panelOpen) {
       this.close();
     } else {
