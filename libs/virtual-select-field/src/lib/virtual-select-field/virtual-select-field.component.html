@@ -3,7 +3,7 @@
   <div>
     <!-- [attr.id]="_valueId" -->
     @if (empty) {
-    <span>{{ placeholder }}</span>
+      <span>{{ placeholder }}</span>
     } @else {
     <!-- <span>
         @if (customTrigger) {
@@ -36,13 +36,13 @@
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
   [cdkConnectedOverlayOpen]="panelOpen"
   [cdkConnectedOverlayOrigin]="fallbackOverlayOrigin"
+  [cdkConnectedOverlayPositions]="POSITIONS"
   (backdropClick)="close()"
   (detach)="close()"
 >
   <!-- [cdkConnectedOverlayPanelClass]="_overlayPanelClass"
   [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
   [cdkConnectedOverlayOrigin]="_preferredOverlayOrigin || fallbackOverlayOrigin"
-  [cdkConnectedOverlayPositions]="_positions"
   [cdkConnectedOverlayWidth]="_overlayWidth"
   (attach)="_onAttached()"
    -->

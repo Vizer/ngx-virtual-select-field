@@ -1,4 +1,3 @@
-import { FocusMonitor } from '@angular/cdk/a11y';
 import {
   Component,
   ContentChild,
@@ -13,12 +12,16 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OverlayModule } from '@angular/cdk/overlay';
-import { MatFormFieldControl } from '@angular/material/form-field';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import { Observable, Subject, Subscription } from 'rxjs';
+
 import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+
+import { POSITIONS } from './virtual-select-field.constants';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -54,6 +57,7 @@ export class VirtualSelectFieldComponent<TValue>
 
   readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'lib-virtual-select-field';
+  readonly POSITIONS = POSITIONS;
 
   public ngControl: NgControl | null = inject(NgControl, { optional: true });
 
