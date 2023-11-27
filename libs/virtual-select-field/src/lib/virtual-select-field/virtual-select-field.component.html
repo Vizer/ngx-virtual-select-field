@@ -1,9 +1,14 @@
-
-<div (click)="toggle()" cdk-overlay-origin #fallbackOverlayOrigin="cdkOverlayOrigin" #trigger>
-  <div>
-    <!-- [attr.id]="_valueId" -->
+<div
+  class="lib-virtual-select-trigger"
+  (click)="toggle()"
+  cdk-overlay-origin
+  #fallbackOverlayOrigin="cdkOverlayOrigin"
+  #trigger
+>
+  <!-- [attr.id]="_valueId" -->
+  <div class="lib-virtual-select-value">
     @if (empty) {
-      <span>{{ placeholder }}</span>
+    <span class="lib-select-placeholder">{{ placeholder }}</span>
     } @else {
     <!-- <span>
         @if (customTrigger) {
@@ -15,17 +20,19 @@
     }
   </div>
 
-  <div>
-    <!-- Use an inline SVG, because it works better than a CSS triangle in high contrast mode. -->
-    <svg
-      viewBox="0 0 24 24"
-      width="24px"
-      height="24px"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M7 10l5 5 5-5z" />
-    </svg>
+  <div class="lib-virtual-select-arrow-wrapper">
+    <div class="lib-select-arrow">
+      <!-- Use an inline SVG, because it works better than a CSS triangle in high contrast mode. -->
+      <svg
+        viewBox="0 0 24 24"
+        width="24px"
+        height="24px"
+        focusable="false"
+        aria-hidden="true"
+      >
+        <path d="M7 10l5 5 5-5z" />
+      </svg>
+    </div>
   </div>
 </div>
 
@@ -58,11 +65,11 @@
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
     (keydown)="_handleKeydown($event)" -->
     @for(option of optionFor.options; track option.value) {
-      <ng-container
-        [ngTemplateOutlet]="optionFor.template"
-        [ngTemplateOutletContext]="{ $implicit: option }"
-      >
-      </ng-container>
+    <ng-container
+      [ngTemplateOutlet]="optionFor.template"
+      [ngTemplateOutletContext]="{ $implicit: option }"
+    >
+    </ng-container>
     }
   </div>
 </ng-template>

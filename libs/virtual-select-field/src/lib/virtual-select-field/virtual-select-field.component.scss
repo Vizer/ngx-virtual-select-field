@@ -1,8 +1,141 @@
+@use 'sass:math';
+@use '@angular/cdk';
+// @use '@material/typography/typography' as mdc-typography;
+@use '@angular/material/core/style/elevation';
+@use '@angular/material/core/style/vendor-prefixes';
+@use '@angular/material/core/style/variables';
+@use '@angular/material/core/tokens/token-utils';
+@use '@angular/material/core/tokens/m2/mat/select' as tokens-mat-select;
+
+:host {
+  --lib-select-arrow-size: 5px;
+
+  @include token-utils.use-tokens(
+    tokens-mat-select.$prefix,
+    tokens-mat-select.get-token-slots()
+  ) {
+    // @include mdc-typography.smooth-font();
+    @include token-utils.create-token-slot(color, enabled-trigger-text-color);
+    @include token-utils.create-token-slot(font-family, trigger-text-font);
+    @include token-utils.create-token-slot(
+      line-height,
+      trigger-text-line-height
+    );
+    @include token-utils.create-token-slot(font-size, trigger-text-size);
+    @include token-utils.create-token-slot(font-weight, trigger-text-weight);
+    @include token-utils.create-token-slot(
+      letter-spacing,
+      trigger-text-tracking
+    );
+  }
+}
+
+.lib-virtual-select-trigger {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+
+.lib-virtual-select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.lib-select-placeholder {
+  // Delay the transition until the label has animated about a third of the way through, in
+  // order to prevent the placeholder from overlapping for a split second.
+  transition: color variables.$swift-ease-out-duration
+    math.div(variables.$swift-ease-out-duration, 3)
+    variables.$swift-ease-out-timing-function;
+
+  @include token-utils.use-tokens(
+    tokens-mat-select.$prefix,
+    tokens-mat-select.get-token-slots()
+  ) {
+    @include token-utils.create-token-slot(color, placeholder-text-color);
+  }
+
+  ._mat-animation-noopable & {
+    transition: none;
+  }
+
+  :host-context(.lib-virtual-select-hide-placeholder) & {
+    color: transparent;
+
+    // Overwrite browser specific CSS properties that can overwrite the `color` property.
+    // Some developers seem to use this approach to easily overwrite the placeholder / label color.
+    -webkit-text-fill-color: transparent;
+
+    // Remove the transition to prevent the placeholder
+    // from overlapping when the label comes back down.
+    transition: none;
+    // Prevents the '...' from showing on the parent element.
+    display: block;
+  }
+}
+
 .lib-virtual-select-field {
   &-panel {
     background: black;
     color: white;
     display: flex;
     flex-direction: column;
+  }
+}
+
+.lib-virtual-select-arrow-wrapper {
+  height: 24px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+
+  :host-context(.mat-form-field-appearance-fill) & {
+    transform: translateY(-8px);
+  }
+}
+
+.lib-select-arrow {
+  width: calc(var(--lib-select-arrow-size) * 2);
+  height: var(--lib-select-arrow-size);
+  position: relative;
+
+  @include token-utils.use-tokens(
+    tokens-mat-select.$prefix,
+    tokens-mat-select.get-token-slots()
+  ) {
+    @include token-utils.create-token-slot(color, enabled-arrow-color);
+
+    .mat-mdc-form-field.mat-focused & {
+      @include token-utils.create-token-slot(color, focused-arrow-color);
+    }
+
+    .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-invalid & {
+      @include token-utils.create-token-slot(color, invalid-arrow-color);
+    }
+
+    .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled & {
+      @include token-utils.create-token-slot(color, disabled-arrow-color);
+    }
+  }
+
+  svg {
+    fill: currentColor;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @include cdk.high-contrast(active, off) {
+      // On Chromium browsers the `currentColor` blends in with the
+      // background for SVGs so we have to fall back to `CanvasText`.
+      fill: CanvasText;
+
+      .mat-mdc-select-disabled & {
+        fill: GrayText;
+      }
+    }
   }
 }

@@ -133,7 +133,6 @@ export class VirtualSelectFieldComponent<TValue>
     this._stateChanges.next();
   }
 
-  @HostBinding('class.floating')
   get shouldLabelFloat() {
     return this.focused || !this.empty;
   }
@@ -148,6 +147,11 @@ export class VirtualSelectFieldComponent<TValue>
 
   get errorState(): boolean {
     return !!this.ngControl?.invalid && this._touched;
+  }
+
+  @HostBinding('class.lib-virtual-select-hide-placeholder')
+  get hidePlaceholder() {
+    return !this.focused || !this.empty;
   }
 
   ngOnInit() {
