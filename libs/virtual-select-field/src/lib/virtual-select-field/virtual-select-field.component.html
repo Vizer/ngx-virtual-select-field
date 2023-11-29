@@ -41,16 +41,15 @@
   cdkConnectedOverlayLockPosition
   cdkConnectedOverlayHasBackdrop
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  [cdkConnectedOverlayOpen]="panelOpen"
-  [cdkConnectedOverlayOrigin]="fallbackOverlayOrigin"
+  [cdkConnectedOverlayOpen]="panelOpen()"
+  [cdkConnectedOverlayOrigin]="preferredOverlayOrigin || fallbackOverlayOrigin"
   [cdkConnectedOverlayPositions]="POSITIONS"
   [cdkConnectedOverlayPanelClass]="OVERLAY_PANEL_CLASS"
-  [cdkConnectedOverlayWidth]="PANEL_WIDTH"
+  [cdkConnectedOverlayWidth]="overlayWidth()"
   (backdropClick)="close()"
   (detach)="close()"
 >
 <!--
-  [cdkConnectedOverlayOrigin]="_preferredOverlayOrigin || fallbackOverlayOrigin"
   (attach)="_onAttached()"
    -->
   <div #panel role="listbox" class="lib-virtual-select-field-panel">

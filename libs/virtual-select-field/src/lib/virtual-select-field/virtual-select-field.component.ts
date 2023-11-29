@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
@@ -11,19 +12,32 @@ import {
   OnInit,
   Optional,
   Output,
+  Signal,
+  computed,
   inject,
+  signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import {
+  MAT_FORM_FIELD,
+  MatFormField,
+  MatFormFieldControl,
+} from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { OverlayModule } from '@angular/cdk/overlay';
+import {
+  CdkOverlayOrigin,
+  OverlayModule,
+  ViewportRuler,
+} from '@angular/cdk/overlay';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, tap } from 'rxjs';
 
 import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 
 import {
+  PANEL_WIDTH_AUTO,
   POSITIONS,
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
@@ -51,25 +65,31 @@ export class VirtualSelectFieldComponent<TValue>
   @Input('aria-describedby')
   userAriaDescribedBy = '';
 
+  @Input() panelWidth: string | number | null =
+    this._defaultOptions?.panelWidth ?? PANEL_WIDTH_AUTO;
+
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
 
   @ContentChild(VirtualSelectFieldOptionForDirective)
   optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
 
-  focused = false;
-  autofilled = false;
-  panelOpen = false;
-
   readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'lib-virtual-select-field';
   readonly POSITIONS = POSITIONS;
   readonly OVERLAY_PANEL_CLASS: string | string[] =
-    this._defaultOptions?.overlayPanelClass || '';
-  readonly PANEL_WIDTH: string | number =
-    this._defaultOptions?.panelWidth ?? 'auto';
+  this._defaultOptions?.overlayPanelClass || '';
+
+  focused = false;
+  autofilled = false;
+  panelOpen = signal(false);
+
+  overlayWidth: Signal<string | number>;
 
   ngControl: NgControl | null = inject(NgControl, { optional: true });
+
+  protected readonly _destroy = new Subject<void>();
+  protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
   private _fm: FocusMonitor = inject(FocusMonitor);
   private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
@@ -84,8 +104,15 @@ export class VirtualSelectFieldComponent<TValue>
   private _touched = false;
   private _placeholder = '';
   private _fmMonitorSubscription: Subscription;
+  private _viewPortRulerChange: Signal<void>;
 
   constructor(
+    protected _viewportRuler: ViewportRuler,
+    protected _changeDetectorRef: ChangeDetectorRef,
+    @Optional()
+    @Inject(MAT_FORM_FIELD)
+    protected _parentFormField: MatFormField,
+    readonly _elementRef: ElementRef,
     @Optional()
     @Inject(VIRTUAL_SELECT_CONFIG)
     protected _defaultOptions?: VirtualSelectConfig
@@ -100,6 +127,24 @@ export class VirtualSelectFieldComponent<TValue>
         this.focused = !!origin;
         this._stateChanges.next();
       });
+
+    // NOTE: View port ruler change stream runs outside the zone.
+    //       Need to run change detection manually to trigger computed signal below.
+    this._viewPortRulerChange = toSignal(
+      this._viewportRuler
+        .change()
+        .pipe(tap(() => this._changeDetectorRef.detectChanges()))
+    );
+
+    this.overlayWidth = computed(() => {
+      this._viewPortRulerChange();
+
+      if (!this.panelOpen()) {
+        return 0;
+      }
+
+      return this.resolveOverlayWidth(this.preferredOverlayOrigin);
+    });
   }
 
   @Input()
@@ -163,6 +208,7 @@ export class VirtualSelectFieldComponent<TValue>
     return !!this.ngControl?.invalid && this._touched;
   }
 
+  // NOTE: material components use class mat-form-field-hide-placeholder
   @HostBinding('class.lib-virtual-select-hide-placeholder')
   get hidePlaceholder() {
     return !this.focused || !this.empty;
@@ -233,7 +279,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   protected toggle(): void {
-    if (this.panelOpen) {
+    if (this.panelOpen()) {
       this.close();
     } else {
       this.open;
@@ -241,11 +287,30 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   protected open() {
-    this.panelOpen = true;
+    if (this._parentFormField) {
+      this.preferredOverlayOrigin =
+        this._parentFormField.getConnectedOverlayOrigin();
+    }
+
+    this.panelOpen.set(true);
   }
 
   protected close() {
-    this.panelOpen = false;
+    this.panelOpen.set(false);
+  }
+
+  private resolveOverlayWidth(
+    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
+  ): string | number {
+    if (this.panelWidth === PANEL_WIDTH_AUTO) {
+      const refToMeasure =
+        preferredOrigin instanceof CdkOverlayOrigin
+          ? preferredOrigin.elementRef
+          : preferredOrigin || this._elementRef;
+      return refToMeasure.nativeElement.getBoundingClientRect().width;
+    }
+
+    return this.panelWidth === null ? '' : this.panelWidth;
   }
 
   static ngAcceptInputType_required: BooleanInput;

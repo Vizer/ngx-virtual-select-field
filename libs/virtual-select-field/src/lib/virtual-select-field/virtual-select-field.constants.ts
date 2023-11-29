@@ -32,4 +32,8 @@ export const POSITIONS: ConnectedPosition[] = [
   },
 ];
 
-export const VIRTUAL_SELECT_CONFIG = new InjectionToken<VirtualSelectConfig>('VIRTUAL_SELECT_CONFIG');
+export const VIRTUAL_SELECT_CONFIG = new InjectionToken<VirtualSelectConfig>(
+  'VIRTUAL_SELECT_CONFIG'
+);
+
+export const PANEL_WIDTH_AUTO = 'auto';
