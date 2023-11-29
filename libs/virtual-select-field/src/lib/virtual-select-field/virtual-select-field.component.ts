@@ -5,9 +5,11 @@ import {
   EventEmitter,
   HostBinding,
   HostListener,
+  Inject,
   Input,
   OnDestroy,
   OnInit,
+  Optional,
   Output,
   inject,
 } from '@angular/core';
@@ -21,7 +23,11 @@ import { Observable, Subject, Subscription } from 'rxjs';
 
 import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 
-import { POSITIONS } from './virtual-select-field.constants';
+import {
+  POSITIONS,
+  VIRTUAL_SELECT_CONFIG,
+} from './virtual-select-field.constants';
+import { VirtualSelectConfig } from './virtual-select-field.models';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -58,6 +64,10 @@ export class VirtualSelectFieldComponent<TValue>
   readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'lib-virtual-select-field';
   readonly POSITIONS = POSITIONS;
+  readonly OVERLAY_PANEL_CLASS: string | string[] =
+    this._defaultOptions?.overlayPanelClass || '';
+  readonly PANEL_WIDTH: string | number =
+    this._defaultOptions?.panelWidth ?? 'auto';
 
   ngControl: NgControl | null = inject(NgControl, { optional: true });
 
@@ -75,7 +85,11 @@ export class VirtualSelectFieldComponent<TValue>
   private _placeholder = '';
   private _fmMonitorSubscription: Subscription;
 
-  constructor() {
+  constructor(
+    @Optional()
+    @Inject(VIRTUAL_SELECT_CONFIG)
+    protected _defaultOptions?: VirtualSelectConfig
+  ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }

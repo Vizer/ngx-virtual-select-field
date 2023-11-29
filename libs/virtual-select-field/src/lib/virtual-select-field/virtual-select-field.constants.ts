@@ -1,4 +1,7 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
+import { InjectionToken } from '@angular/core';
+
+import { VirtualSelectConfig } from './virtual-select-field.models';
 
 export const POSITIONS: ConnectedPosition[] = [
   {
@@ -28,3 +31,5 @@ export const POSITIONS: ConnectedPosition[] = [
     // panelClass: 'mat-mdc-select-panel-above',
   },
 ];
+
+export const VIRTUAL_SELECT_CONFIG = new InjectionToken<VirtualSelectConfig>('VIRTUAL_SELECT_CONFIG');

@@ -44,13 +44,13 @@
   [cdkConnectedOverlayOpen]="panelOpen"
   [cdkConnectedOverlayOrigin]="fallbackOverlayOrigin"
   [cdkConnectedOverlayPositions]="POSITIONS"
+  [cdkConnectedOverlayPanelClass]="OVERLAY_PANEL_CLASS"
+  [cdkConnectedOverlayWidth]="PANEL_WIDTH"
   (backdropClick)="close()"
   (detach)="close()"
 >
-  <!-- [cdkConnectedOverlayPanelClass]="_overlayPanelClass"
-  [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
+<!--
   [cdkConnectedOverlayOrigin]="_preferredOverlayOrigin || fallbackOverlayOrigin"
-  [cdkConnectedOverlayWidth]="_overlayWidth"
   (attach)="_onAttached()"
    -->
   <div #panel role="listbox" class="lib-virtual-select-field-panel">
