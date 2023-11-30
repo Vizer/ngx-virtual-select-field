@@ -42,6 +42,10 @@ import {
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
+import {
+  VIRTUAL_SELECT_FIELD_TRIGGER,
+  VirtualSelectFieldTriggerDirective,
+} from './virtual-select-field-trigger';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -74,11 +78,14 @@ export class VirtualSelectFieldComponent<TValue>
   @ContentChild(VirtualSelectFieldOptionForDirective)
   optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
 
+  @ContentChild(VIRTUAL_SELECT_FIELD_TRIGGER)
+  customTrigger: VirtualSelectFieldTriggerDirective | null = null;
+
   readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'lib-virtual-select-field';
   readonly POSITIONS = POSITIONS;
   readonly OVERLAY_PANEL_CLASS: string | string[] =
-  this._defaultOptions?.overlayPanelClass || '';
+    this._defaultOptions?.overlayPanelClass || '';
 
   focused = false;
   autofilled = false;
@@ -212,6 +219,16 @@ export class VirtualSelectFieldComponent<TValue>
   @HostBinding('class.lib-virtual-select-hide-placeholder')
   get hidePlaceholder() {
     return !this.focused || !this.empty;
+  }
+
+  get triggerValue(): string {
+    if (this.empty) {
+      return '';
+    }
+
+    //TODO: resolve trigger text bu selected values
+
+    return 'mock build in trigger';
   }
 
   ngOnInit() {

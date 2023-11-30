@@ -10,13 +10,13 @@
     @if (empty) {
     <span class="lib-select-placeholder">{{ placeholder }}</span>
     } @else {
-    <!-- <span>
-        @if (customTrigger) {
-          <ng-content select="lib-virtual-select-field-trigger"></ng-content>
-        } @else {
-          <span>{{ triggerValue }}</span>
-        }
-      </span> -->
+    <span>
+      @if (customTrigger) {
+      <ng-content select="lib-virtual-select-field-trigger"></ng-content>
+      } @else {
+      <span>{{ triggerValue }}</span>
+      }
+    </span>
     }
   </div>
 
@@ -49,7 +49,7 @@
   (backdropClick)="close()"
   (detach)="close()"
 >
-<!--
+  <!--
   (attach)="_onAttached()"
    -->
   <div #panel role="listbox" class="lib-virtual-select-field-panel">

@@ -1,9 +1,35 @@
 <mat-form-field class="field">
   <mat-label>Virtual Example</mat-label>
   <lib-virtual-select-field placeholder="virtual select">
-    <!-- <lib-virtual-select-field-trigger>
-      {{ triggerValue }}
-    </lib-virtual-select-field-trigger> -->
+
+    <span
+      *libVirtualSelectFieldOptionFor="let option of options"
+      [attr.value]="option.value"
+    >
+      {{ option.label }}
+    </span>
+  </lib-virtual-select-field>
+</mat-form-field>
+
+<mat-form-field class="field">
+  <mat-label>Virtual Example</mat-label>
+  <lib-virtual-select-field placeholder="virtual select" [value]="[2]">
+
+    <span
+      *libVirtualSelectFieldOptionFor="let option of options"
+      [attr.value]="option.value"
+    >
+      {{ option.label }}
+    </span>
+  </lib-virtual-select-field>
+</mat-form-field>
+
+<mat-form-field class="field">
+  <mat-label>Virtual Example</mat-label>
+  <lib-virtual-select-field placeholder="virtual select" [value]="[1]">
+    <lib-virtual-select-field-trigger>
+      Custom trigger
+    </lib-virtual-select-field-trigger>
 
     <span
       *libVirtualSelectFieldOptionFor="let option of options"
