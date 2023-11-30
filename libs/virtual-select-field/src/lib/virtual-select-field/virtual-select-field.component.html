@@ -48,10 +48,8 @@
   [cdkConnectedOverlayWidth]="overlayWidth()"
   (backdropClick)="close()"
   (detach)="close()"
+  (attach)="onOverlayAttached()"
 >
-  <!--
-  (attach)="_onAttached()"
-   -->
   <div #panel role="listbox" class="lib-virtual-select-field-panel">
     <!-- tabindex="-1"
     class="mat-mdc-select-panel mdc-menu-surface mdc-menu-surface--open {{ _getPanelTheme() }}"

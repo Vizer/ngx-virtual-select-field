@@ -272,6 +272,10 @@ export class VirtualSelectFieldComponent<TValue>
     this.open();
   }
 
+  onOverlayAttached( ){
+    // TODO: navigate to active option
+  }
+
   @HostListener('focusin')
   protected onFocusIn() {
     if (!this.focused) {
