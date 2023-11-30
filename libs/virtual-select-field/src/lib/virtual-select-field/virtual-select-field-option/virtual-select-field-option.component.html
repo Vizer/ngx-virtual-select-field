@@ -1,0 +1,17 @@
+@if(multiple){
+<mat-pseudo-checkbox
+  [state]="selected ? 'checked' : 'unchecked'"
+></mat-pseudo-checkbox>
+}
+
+<!-- NOTE: ng-select mat-icon here in mat option -->
+
+<span><ng-content></ng-content></span>
+
+@if (!multiple && selected ) {
+<mat-pseudo-checkbox state="checked" appearance="minimal"></mat-pseudo-checkbox>
+}
+
+<!-- TODO: a11y hidden group.label -->
+
+<!-- TODO: ripple -->
