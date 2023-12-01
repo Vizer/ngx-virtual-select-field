@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "test": "nx run-many test"
+    "test": "nx run-many --target=test --all"
   },
   "private": true,
   "dependencies": {
