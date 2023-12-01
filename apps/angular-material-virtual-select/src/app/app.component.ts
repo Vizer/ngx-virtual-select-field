@@ -21,7 +21,7 @@ import { VIRTUAL_SELECT } from '@angular-material-virtual-select/virtual-select-
 })
 export class AppComponent {
   title = 'angular-material-virtual-select';
-  options = new Array(100).fill(null).map((_, index) => ({
+  options = new Array(100000).fill(null).map((_, index) => ({
     value: index,
     label: `Option ${index}`,
   }));

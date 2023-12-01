@@ -46,11 +46,12 @@ import {
   VIRTUAL_SELECT_FIELD_TRIGGER,
   VirtualSelectFieldTriggerDirective,
 } from './virtual-select-field-trigger';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'lib-virtual-select-field',
   standalone: true,
-  imports: [CommonModule, OverlayModule],
+  imports: [CommonModule, OverlayModule, ScrollingModule],
   templateUrl: './virtual-select-field.component.html',
   styleUrl: './virtual-select-field.component.scss',
   providers: [
@@ -272,7 +273,7 @@ export class VirtualSelectFieldComponent<TValue>
     this.open();
   }
 
-  onOverlayAttached( ){
+  onOverlayAttached() {
     // TODO: navigate to active option
   }
 
