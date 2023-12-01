@@ -79,11 +79,14 @@
 
 .lib-virtual-select-field {
   &-panel {
+    --lib-virtual-select-field-item-height: 48px;
     background: black;
     color: white;
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-height: calc(var(--lib-virtual-select-field-item-height) * 8);
+    overflow: auto;
   }
 }
 

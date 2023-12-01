@@ -1,0 +1,8 @@
+:host {
+  --lib-virtual-select-field-option-item-height: 48px;
+
+  display: inline-block;
+  height: var(--lib-virtual-select-field-option-item-height);
+  line-height: var(--lib-virtual-select-field-option-item-height);
+  padding: 0 16px;
+}
