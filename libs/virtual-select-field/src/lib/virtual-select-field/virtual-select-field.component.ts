@@ -47,6 +47,10 @@ import {
   VirtualSelectFieldTriggerDirective,
 } from './virtual-select-field-trigger';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+  VirtualSelectFieldOptionParent,
+} from './virtual-select-field-option';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -56,6 +60,10 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
   styleUrl: './virtual-select-field.component.scss',
   providers: [
     { provide: MatFormFieldControl, useExisting: VirtualSelectFieldComponent },
+    {
+      provide: VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+      useExisting: VirtualSelectFieldComponent,
+    },
   ],
 })
 // TODO: implement single value typings
@@ -64,14 +72,19 @@ export class VirtualSelectFieldComponent<TValue>
     OnInit,
     OnDestroy,
     MatFormFieldControl<TValue[]>,
-    ControlValueAccessor
+    ControlValueAccessor,
+    VirtualSelectFieldOptionParent
 {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('aria-describedby')
   userAriaDescribedBy = '';
 
-  @Input() panelWidth: string | number | null =
+  @Input()
+  panelWidth: string | number | null =
     this._defaultOptions?.panelWidth ?? PANEL_WIDTH_AUTO;
+
+  @Input({ transform: coerceBooleanProperty })
+  multiple: boolean = false;
 
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
@@ -114,6 +127,7 @@ export class VirtualSelectFieldComponent<TValue>
   private _fmMonitorSubscription: Subscription;
   private _viewPortRulerChange: Signal<void>;
 
+  // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
     protected _viewportRuler: ViewportRuler,
     protected _changeDetectorRef: ChangeDetectorRef,
