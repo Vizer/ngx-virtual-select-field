@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPseudoCheckboxModule } from '@angular/material/core';
@@ -26,18 +27,37 @@ export class VirtualSelectFieldOptionComponent<TValue> {
   @Input({ required: true })
   value!: TValue;
 
-  multiple = this._optionParent?.multiple ?? false;
+  @Output()
+  selectedChange = new EventEmitter<
+    VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+  >();
 
-  selected: boolean = false;
+  protected multiple = this._optionParent?.multiple ?? false;
+
+  protected selected = signal(false);
 
   constructor(
     @Inject(VIRTUAL_SELECT_FIELD_OPTION_PARENT)
     private _optionParent: VirtualSelectFieldOptionParent
   ) {}
 
+  deselect() {
+    this.selected.set(false);
+  }
+
+  select() {
+    this.selected.set(true);
+  }
+
   @HostListener('click')
-  onClick() {
-    this.selected = this.multiple ? !this.selected : true;
+  protected onClick() {
+    this.selected.set(this.multiple ? !this.selected() : true);
+
+    this.selectedChange.emit({
+      source: this,
+      value: this.value,
+      selected: this.selected(),
+    });
   }
 
   // TODO: implement disabled state

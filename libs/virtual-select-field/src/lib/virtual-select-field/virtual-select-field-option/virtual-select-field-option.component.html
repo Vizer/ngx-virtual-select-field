@@ -1,6 +1,6 @@
 @if(multiple){
 <mat-pseudo-checkbox
-  [state]="selected ? 'checked' : 'unchecked'"
+  [state]="selected() ? 'checked' : 'unchecked'"
 ></mat-pseudo-checkbox>
 }
 
@@ -8,7 +8,7 @@
 
 <span><ng-content></ng-content></span>
 
-@if (!multiple && selected ) {
+@if (!multiple && selected() ) {
 <mat-pseudo-checkbox state="checked" appearance="minimal"></mat-pseudo-checkbox>
 }
 
