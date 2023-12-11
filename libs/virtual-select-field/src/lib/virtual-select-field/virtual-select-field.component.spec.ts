@@ -15,11 +15,12 @@ describe('VirtualSelectFieldComponent', () => {
         <mat-form-field>
           <mat-label>Test Field</mat-label>
           <lib-virtual-select-field [placeholder]="placeholder">
-            <span
+            <lib-virtual-select-field-option
               *libVirtualSelectFieldOptionFor="let option of options"
+              [value]="option.value"
             >
               {{ option.label }}
-            </span>
+            </lib-virtual-select-field-option>
           </lib-virtual-select-field>
         </mat-form-field>`,
         {
@@ -42,18 +43,19 @@ describe('VirtualSelectFieldComponent', () => {
 
   describe('as a control value accessor', () => {
     it('should bind to form control', async () => {
-      const expectedValue = 'foo';
+      const expectedValue = ['foo'];
 
       const result = await render(
         `
           <lib-virtual-select-field [formControl]="control" [placeholder]="placeholder">
-            <span
+            <lib-virtual-select-field-option
               *libVirtualSelectFieldOptionFor="let option of options"
+              [value]="option.value"
             >
               {{ option.label }}
-            </span>
-          </lib-virtual-select-field>
+            </lib-virtual-select-field-option>
         `,
+
         {
           componentProperties: {
             control: new FormControl(expectedValue),
