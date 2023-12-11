@@ -17,6 +17,7 @@ import {
   Output,
   QueryList,
   Signal,
+  TrackByFunction,
   computed,
   inject,
   numberAttribute,
@@ -421,9 +422,10 @@ export class VirtualSelectFieldComponent<TValue>
     }
   }
 
-  protected trackByOptions(options: { label: string; value: TValue }) {
-    return options.value;
-  }
+  protected trackByOptions: TrackByFunction<{ label: string; value: TValue }> =
+    (index: number, options: { label: string; value: TValue }) => {
+      return options.value;
+    };
 
   protected onScrolledIndexChange(): void {
     this._scrolledIndexChange.next();
