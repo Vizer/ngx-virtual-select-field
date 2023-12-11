@@ -10,6 +10,8 @@
 :host {
   --lib-select-arrow-size: 5px;
 
+  outline: none;
+
   @include token-utils.use-tokens(
     tokens-mat-select.$prefix,
     tokens-mat-select.get-token-slots()

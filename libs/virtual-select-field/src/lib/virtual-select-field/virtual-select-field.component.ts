@@ -1,20 +1,25 @@
 import {
+  AfterContentInit,
   ChangeDetectorRef,
   Component,
   ContentChild,
+  ContentChildren,
   ElementRef,
   EventEmitter,
   HostBinding,
   HostListener,
   Inject,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   Optional,
   Output,
+  QueryList,
   Signal,
   computed,
   inject,
+  numberAttribute,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -32,7 +37,19 @@ import {
   ViewportRuler,
 } from '@angular/cdk/overlay';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Observable, Subject, Subscription, tap } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  Subscription,
+  debounceTime,
+  defer,
+  merge,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 
 import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 
@@ -49,8 +66,11 @@ import {
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import {
   VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+  VirtualSelectFieldOptionComponent,
   VirtualSelectFieldOptionParent,
+  VirtualSelectFieldOptionSelectionChangeEvent,
 } from './virtual-select-field-option';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -71,6 +91,7 @@ export class VirtualSelectFieldComponent<TValue>
   implements
     OnInit,
     OnDestroy,
+    AfterContentInit,
     MatFormFieldControl<TValue[]>,
     ControlValueAccessor,
     VirtualSelectFieldOptionParent
@@ -86,6 +107,13 @@ export class VirtualSelectFieldComponent<TValue>
   @Input({ transform: coerceBooleanProperty })
   multiple: boolean = false;
 
+  @HostBinding('attr.tabindex')
+  @Input({
+    // eslint-disable-next-line @angular-eslint/no-input-rename
+    transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
+  })
+  tabIndex: number = 0;
+
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
 
@@ -94,6 +122,10 @@ export class VirtualSelectFieldComponent<TValue>
 
   @ContentChild(VIRTUAL_SELECT_FIELD_TRIGGER)
   customTrigger: VirtualSelectFieldTriggerDirective | null = null;
+
+  @ContentChildren(VirtualSelectFieldOptionComponent)
+  optionsQuery: QueryList<VirtualSelectFieldOptionComponent<TValue>> | null =
+    null;
 
   readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'lib-virtual-select-field';
@@ -124,8 +156,31 @@ export class VirtualSelectFieldComponent<TValue>
   private _disabled = false;
   private _touched = false;
   private _placeholder = '';
+  private _selectionModel!: SelectionModel<TValue>;
   private _fmMonitorSubscription: Subscription;
   private _viewPortRulerChange: Signal<void>;
+  private _scrolledIndexChange = new Subject<void>();
+
+  // NOTE: recursive defer observable to await for options to be rendered
+  private readonly _optionSelectionChanges: Observable<
+    VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+  > = defer(() => {
+    const options = this.optionsQuery;
+
+    if (options) {
+      return options.changes.pipe(
+        startWith(options),
+        switchMap(() =>
+          merge(...options.map((option) => option.selectedChange))
+        )
+      );
+    }
+
+    return this._ngZone.onStable.pipe(
+      take(1),
+      switchMap(() => this._optionSelectionChanges)
+    );
+  }) as Observable<VirtualSelectFieldOptionSelectionChangeEvent<TValue>>;
 
   // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
@@ -135,6 +190,7 @@ export class VirtualSelectFieldComponent<TValue>
     @Inject(MAT_FORM_FIELD)
     protected _parentFormField: MatFormField,
     readonly _elementRef: ElementRef,
+    private _ngZone: NgZone,
     @Optional()
     @Inject(VIRTUAL_SELECT_CONFIG)
     protected _defaultOptions?: VirtualSelectConfig
@@ -176,6 +232,7 @@ export class VirtualSelectFieldComponent<TValue>
     }
 
     this._value = value ? value : [];
+    this._selectionModel?.select(...this._value);
 
     this._stateChanges.next();
   }
@@ -249,6 +306,59 @@ export class VirtualSelectFieldComponent<TValue>
   ngOnInit() {
     // TODO: mb move to constructor
     this._disabled = this.ngControl?.disabled ?? false;
+
+    this._selectionModel = new SelectionModel<TValue>(this.multiple);
+    this._selectionModel?.select(...this._value);
+  }
+
+  ngAfterContentInit() {
+    // TODO: mb merge both subscriptions
+    this.optionFor.options$
+      .pipe(
+        takeUntil(this._destroy),
+        switchMap(() => this._optionSelectionChanges)
+      )
+      .subscribe(
+        (
+          selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+        ) => this.updateOptionSelection(selectionEvent)
+      );
+
+    this.optionFor.options$
+      .pipe(
+        takeUntil(this._destroy),
+        switchMap(() => this._scrolledIndexChange),
+        debounceTime(100)
+      )
+      .subscribe(() => this.updateRenderedOptionsState());
+  }
+
+  private updateOptionSelection(
+    selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+  ) {
+    if (this.multiple) {
+      this._selectionModel.toggle(selectionEvent.value);
+    } else {
+      this._selectionModel.select(selectionEvent.value);
+      this.optionsQuery?.forEach((option) => {
+        if (option.value !== selectionEvent.value) {
+          option.deselect();
+        }
+      });
+
+      this.close();
+      this.focus();
+    }
+  }
+
+  private updateRenderedOptionsState() {
+    this.optionsQuery!.forEach((option) => {
+      // NOTE: deselect for all is needed because of virtual scroll and reusing options
+      option.deselect();
+      if (this._selectionModel.isSelected(option.value)) {
+        option.select();
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -309,6 +419,14 @@ export class VirtualSelectFieldComponent<TValue>
     }
   }
 
+  protected trackByOptions(options: { label: string; value: TValue }) {
+    return options.value;
+  }
+
+  protected onScrolledIndexChange(): void {
+    this._scrolledIndexChange.next();
+  }
+
   protected emitValue(): void {
     this._onChange?.(this.value);
     this.valueChange.emit(this.value);
@@ -333,6 +451,10 @@ export class VirtualSelectFieldComponent<TValue>
 
   protected close() {
     this.panelOpen.set(false);
+  }
+
+  private focus() {
+    this._elementRef.nativeElement.focus();
   }
 
   private resolveOverlayWidth(

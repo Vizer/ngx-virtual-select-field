@@ -65,9 +65,10 @@
     role="listbox"
     class="lib-virtual-select-field-panel"
     itemSize="48"
+    (scrolledIndexChange)="onScrolledIndexChange()"
   >
     <div class="lib-virtual-select-field-list-wrapper">
-      <ng-container *cdkVirtualFor="let option of optionFor.options">
+      <ng-container *cdkVirtualFor="let option of optionFor.options$ | async; cdkVirtualForTrackBy: trackByOptions ">
         <ng-container
           [ngTemplateOutlet]="optionFor.template"
           [ngTemplateOutletContext]="{ $implicit: option }"
