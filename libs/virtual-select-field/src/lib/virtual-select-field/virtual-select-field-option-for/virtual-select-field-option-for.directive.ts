@@ -1,4 +1,5 @@
 import { Directive, Input, TemplateRef } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Directive({
   selector: '[libVirtualSelectFieldOptionFor]',
@@ -7,19 +8,22 @@ import { Directive, Input, TemplateRef } from '@angular/core';
 export class VirtualSelectFieldOptionForDirective<TValue> {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('libVirtualSelectFieldOptionForOf')
-  options: { label: string; value: TValue }[] = [];
+  set options(options: { label: string; value: TValue }[]) {
+    this.options$.next(options);
+  }
 
-  // @Input('libVirtualSelectFieldOptionForTemplate')
-  // template!: TemplateRef<unknown>;
+  options$ = new BehaviorSubject<{ label: string; value: TValue }[]>([]);
 
   constructor(
-    public template: TemplateRef<{ $implicit: { label: string; value: TValue } }>
+    public template: TemplateRef<{
+      $implicit: { label: string; value: TValue };
+    }>
   ) {}
 
   static ngTemplateContextGuard<TValue>(
     _dir: VirtualSelectFieldOptionForDirective<TValue>,
     ctx: unknown
-  ): ctx is { $implicit: { label: string; value: TValue }  } {
+  ): ctx is { $implicit: { label: string; value: TValue } } {
     return true;
   }
 }
