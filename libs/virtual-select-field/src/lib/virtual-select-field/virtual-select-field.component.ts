@@ -305,8 +305,10 @@ export class VirtualSelectFieldComponent<TValue>
 
   ngOnInit() {
     // TODO: mb move to constructor
+    // TODO: mb use disabled property instead of false
     this._disabled = this.ngControl?.disabled ?? false;
 
+    // TODO: consider using this._selectionModel.changed
     this._selectionModel = new SelectionModel<TValue>(this.multiple);
     this._selectionModel?.select(...this._value);
   }
