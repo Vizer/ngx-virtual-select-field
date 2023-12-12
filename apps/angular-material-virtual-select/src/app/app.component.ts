@@ -24,5 +24,6 @@ export class AppComponent {
   options = new Array(100000).fill(null).map((_, index) => ({
     value: index,
     label: `${index} Option ${index}`,
+    disabled: index % 5 === 0,
   }));
 }
