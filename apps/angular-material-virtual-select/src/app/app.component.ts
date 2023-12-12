@@ -23,6 +23,6 @@ export class AppComponent {
   title = 'angular-material-virtual-select';
   options = new Array(100000).fill(null).map((_, index) => ({
     value: index,
-    label: `Option ${index}`,
+    label: `${index} Option ${index}`,
   }));
 }
