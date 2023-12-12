@@ -1,9 +1,18 @@
 :host {
+  --lib-virtual-select-field-option-selected-state-label-text-color: var(
+    --mat-option-selected-state-label-text-color,
+    inherit
+  );
+
   --lib-virtual-select-field-option-item-height: 48px;
   --lib-virtual-select-field-option-active-background-color: #383838;
   --lib-virtual-select-field-option-hover-background-color: #515151;
+  --lib-virtual-select-field-option-selected-background-color: #202020;
+  --lib-virtual-select-field-option-disabled-state-opacity: 0.5;
 
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
   height: var(--lib-virtual-select-field-option-item-height);
   line-height: var(--lib-virtual-select-field-option-item-height);
   padding: 0 16px;
@@ -14,6 +23,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
+    box-sizing: border-box;
 
     &--active {
       background-color: var(
@@ -21,10 +31,32 @@
       );
     }
 
+    &--selected:not(.lib-virtual-select-field-option--multiple) {
+      background-color: var(
+        --lib-virtual-select-field-option-selected-background-color
+      );
+      color: var(
+        --lib-virtual-select-field-option-selected-state-label-text-color
+      );
+    }
+
+    &--disabled {
+      pointer-events: none;
+      opacity: var(--lib-virtual-select-field-option-disabled-state-opacity);
+    }
+
     &:hover {
       background-color: var(
         --lib-virtual-select-field-option-hover-background-color
       );
+    }
+
+    & &__label {
+      flex: 1;
+      display: inline-flex;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }

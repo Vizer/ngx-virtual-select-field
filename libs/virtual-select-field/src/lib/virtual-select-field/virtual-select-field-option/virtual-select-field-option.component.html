@@ -6,7 +6,9 @@
 
 <!-- NOTE: ng-select mat-icon here in mat option -->
 
-<span #textLabel><ng-content></ng-content></span>
+<span class="lib-virtual-select-field-option__label" #textLabel
+  ><ng-content></ng-content
+></span>
 
 @if (!multiple && selected() ) {
 <mat-pseudo-checkbox state="checked" appearance="minimal"></mat-pseudo-checkbox>

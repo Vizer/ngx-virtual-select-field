@@ -31,6 +31,9 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
   host: {
     role: 'option',
     '[class.lib-virtual-select-field-option--active]': 'active',
+    '[class.lib-virtual-select-field-option--selected]': 'selected()',
+    '[class.lib-virtual-select-field-option--multiple]': 'multiple',
+    '[class.lib-virtual-select-field-option--disabled]': 'disabled',
     class: 'lib-virtual-select-field-option',
   },
 })
@@ -71,6 +74,7 @@ export class VirtualSelectFieldOptionComponent<TValue>
       this._changeDetectorRef.markForCheck();
     }
   }
+
   setInactiveStyles(): void {
     if (this.active) {
       this.active = false;
@@ -98,6 +102,10 @@ export class VirtualSelectFieldOptionComponent<TValue>
 
   @HostListener('click')
   protected onClick() {
+    if (this.disabled) {
+      return;
+    }
+
     this.selected.set(this.multiple ? !this.selected() : true);
 
     this.selectedChange.emit({
