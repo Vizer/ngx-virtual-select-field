@@ -1,8 +1,30 @@
 :host {
   --lib-virtual-select-field-option-item-height: 48px;
+  --lib-virtual-select-field-option-active-background-color: #383838;
+  --lib-virtual-select-field-option-hover-background-color: #515151;
 
   display: inline-block;
   height: var(--lib-virtual-select-field-option-item-height);
   line-height: var(--lib-virtual-select-field-option-item-height);
   padding: 0 16px;
+  cursor: pointer;
+
+  &.lib-virtual-select-field-option {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    &--active {
+      background-color: var(
+        --lib-virtual-select-field-option-active-background-color
+      );
+    }
+
+    &:hover {
+      background-color: var(
+        --lib-virtual-select-field-option-hover-background-color
+      );
+    }
+  }
 }
