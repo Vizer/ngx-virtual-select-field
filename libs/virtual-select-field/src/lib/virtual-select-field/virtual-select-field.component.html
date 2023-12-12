@@ -50,7 +50,7 @@
   (detach)="close()"
   (attach)="onOverlayAttached()"
 >
-  <!-- tabindex="-1"
+  <!--
     class="mat-mdc-select-panel mdc-menu-surface mdc-menu-surface--open {{ _getPanelTheme() }}"
     [attr.id]="id + '-panel'"
     [attr.aria-multiselectable]="multiple"
@@ -59,7 +59,7 @@
     [ngClass]="panelClass"
     [@transformPanel]="'showing'"
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
-    (keydown)="_handleKeydown($event)" -->
+    -->
 
   <cdk-virtual-scroll-viewport
     role="listbox"
@@ -67,8 +67,17 @@
     itemSize="48"
     (scrolledIndexChange)="onScrolledIndexChange()"
   >
-    <div class="lib-virtual-select-field-list-wrapper">
-      <ng-container *cdkVirtualFor="let option of optionFor.options$ | async; trackBy: trackByOptions ">
+    <div
+      tabindex="-1"
+      class="lib-virtual-select-field-list-wrapper"
+      (keydown)="onKeyDown($event)"
+    >
+      <ng-container
+        *cdkVirtualFor="
+          let option of optionFor.options$ | async;
+          trackBy: trackByOptions
+        "
+      >
         <ng-container
           [ngTemplateOutlet]="optionFor.template"
           [ngTemplateOutletContext]="{ $implicit: option }"

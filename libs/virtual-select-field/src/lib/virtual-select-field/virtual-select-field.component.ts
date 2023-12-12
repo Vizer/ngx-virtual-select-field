@@ -31,7 +31,7 @@ import {
   MatFormField,
   MatFormFieldControl,
 } from '@angular/material/form-field';
-import { FocusMonitor } from '@angular/cdk/a11y';
+import { ActiveDescendantKeyManager, FocusMonitor } from '@angular/cdk/a11y';
 import {
   CdkOverlayOrigin,
   OverlayModule,
@@ -86,6 +86,9 @@ import { SelectionModel } from '@angular/cdk/collections';
       useExisting: VirtualSelectFieldComponent,
     },
   ],
+  host: {
+    '(keydown)': 'onKeyDown($event)',
+  },
 })
 // TODO: implement single value typings
 export class VirtualSelectFieldComponent<TValue>
@@ -115,6 +118,9 @@ export class VirtualSelectFieldComponent<TValue>
   })
   tabIndex: number = 0;
 
+  @Input({ transform: numberAttribute })
+  typeaheadDebounceInterval: number = 100;
+
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
 
@@ -134,36 +140,39 @@ export class VirtualSelectFieldComponent<TValue>
   readonly OVERLAY_PANEL_CLASS: string | string[] =
     this._defaultOptions?.overlayPanelClass || '';
 
-  focused = false;
-  autofilled = false;
-  panelOpen = signal(false);
+    autofilled = false;
+    panelOpen = signal(false);
 
-  overlayWidth: Signal<string | number>;
+    overlayWidth: Signal<string | number>;
 
-  ngControl: NgControl | null = inject(NgControl, { optional: true });
+    ngControl: NgControl | null = inject(NgControl, { optional: true });
 
-  protected readonly _destroy = new Subject<void>();
-  protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
+    protected readonly _destroy = new Subject<void>();
+    protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
-  private _fm: FocusMonitor = inject(FocusMonitor);
-  private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
-  private _stateChanges = new Subject<void>();
+    private _fm: FocusMonitor = inject(FocusMonitor);
+    private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
+    private _stateChanges = new Subject<void>();
 
-  private _onChange: (value: TValue[]) => void = () => void 0;
-  private _onTouched: () => void = () => void 0;
+    private _onChange: (value: TValue[]) => void = () => void 0;
+    private _onTouched: () => void = () => void 0;
 
-  private _value: TValue[] = [];
-  private _required = false;
-  private _disabled = false;
-  private _touched = false;
-  private _placeholder = '';
-  private _selectionModel!: SelectionModel<TValue>;
-  private _fmMonitorSubscription: Subscription;
-  private _viewPortRulerChange: Signal<void>;
-  private _scrolledIndexChange = new Subject<void>();
+    private _value: TValue[] = [];
+    private _focused = false;
+    private _required = false;
+    private _disabled = false;
+    private _touched = false;
+    private _placeholder = '';
+    private _selectionModel!: SelectionModel<TValue>;
+    private _fmMonitorSubscription: Subscription;
+    private _viewPortRulerChange: Signal<void>;
+    private _scrolledIndexChange = new Subject<void>();
+    private _keyManager: ActiveDescendantKeyManager<
+    VirtualSelectFieldOptionComponent<TValue>
+    > | null = null;
 
-  // NOTE: recursive defer observable to await for options to be rendered
-  private readonly _optionSelectionChanges: Observable<
+    // NOTE: recursive defer observable to await for options to be rendered
+    private readonly _optionSelectionChanges: Observable<
     VirtualSelectFieldOptionSelectionChangeEvent<TValue>
   > = defer(() => {
     const options = this.optionsQuery;
@@ -203,7 +212,7 @@ export class VirtualSelectFieldComponent<TValue>
     this._fmMonitorSubscription = this._fm
       .monitor(this._elRef, true)
       .subscribe((origin) => {
-        this.focused = !!origin;
+        this._focused = !!origin;
         this._stateChanges.next();
       });
 
@@ -304,6 +313,11 @@ export class VirtualSelectFieldComponent<TValue>
     return 'mock build in trigger';
   }
 
+  get focused(): boolean {
+    // NOTE: panel open is needed to keep form field in focused state during interaction with options
+    return this._focused || this.panelOpen();
+  }
+
   ngOnInit() {
     // TODO: mb move to constructor
     // TODO: mb use disabled property instead of false
@@ -315,6 +329,9 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   ngAfterContentInit() {
+    // TODO: mb create new keyManger on optionFor.options$ change
+    this.initKeyManager();
+
     // TODO: mb merge both subscriptions
     this.optionFor.options$
       .pipe(
@@ -350,8 +367,11 @@ export class VirtualSelectFieldComponent<TValue>
       });
 
       this.close();
-      this.focus();
     }
+
+    this._keyManager?.setActiveItem(selectionEvent.source);
+    // TODO: this need to keep form field in focus state
+    this.focus();
   }
 
   private updateRenderedOptionsState() {
@@ -397,6 +417,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   onContainerClick(): void {
+    this.focus();
     this.open();
   }
 
@@ -404,21 +425,31 @@ export class VirtualSelectFieldComponent<TValue>
     // TODO: navigate to active option
   }
 
-  @HostListener('focusin')
+  @HostListener('focus')
   protected onFocusIn() {
     if (!this.focused) {
-      this.focused = true;
+      this._focused = true;
       this._stateChanges.next();
     }
   }
 
-  @HostListener('focusout', ['$event'])
-  protected onFocusOut(event: FocusEvent) {
-    if (!this._elRef.nativeElement.contains(event.relatedTarget as Element)) {
+  @HostListener('blur')
+  protected onFocusOut() {
+    this._focused = false;
+
+    if (!this.panelOpen()) {
       this._touched = true;
-      this.focused = false;
       this._onTouched();
       this._stateChanges.next();
+    }
+  }
+
+  // @HostListener('keydown', ['$event'])
+  protected onKeyDown(event: KeyboardEvent) {
+    if (this.panelOpen()) {
+      this._keyManager?.onKeydown(event);
+    } else {
+      //
     }
   }
 
@@ -473,6 +504,38 @@ export class VirtualSelectFieldComponent<TValue>
     }
 
     return this.panelWidth === null ? '' : this.panelWidth;
+  }
+
+  private initKeyManager() {
+    // TODO: use parent ListKeyManager
+    // pass array from optionsFor directive
+    // handle active item change
+    // implmenet ListKeyManagerOption for option item interface in optionsFor
+    this._keyManager = new ActiveDescendantKeyManager<
+      VirtualSelectFieldOptionComponent<TValue>
+    >(this.optionsQuery!)
+      .withTypeAhead(this.typeaheadDebounceInterval)
+      .withVerticalOrientation()
+      // .withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr')
+      .withHomeAndEnd()
+      .withPageUpDown()
+      .withAllowedModifierKeys(['shiftKey']);
+    // .skipPredicate(this._skipPredicate)
+
+    this._keyManager.tabOut.subscribe(() => {
+      if (this.panelOpen()) {
+        // Select the active item when tabbing away. This is consistent with how the native
+        // select behaves. Note that we only want to do this in single selection mode.
+        // if (!this.multiple && this._keyManager.activeItem) {
+        //   this._keyManager.activeItem._selectViaInteraction();
+        // }
+
+        // Restore focus to the trigger before closing. Ensures that the focus
+        // position won't be lost if the user got focus into the overlay.
+        this.focus();
+        this.close();
+      }
+    });
   }
 
   static ngAcceptInputType_required: BooleanInput;

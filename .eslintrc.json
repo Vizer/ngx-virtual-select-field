@@ -24,7 +24,9 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/no-host-metadata-property": "off"
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
