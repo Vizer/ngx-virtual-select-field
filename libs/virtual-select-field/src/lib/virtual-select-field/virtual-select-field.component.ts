@@ -286,7 +286,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   get empty() {
-    return this._value?.length === 0;
+    return this._selectionModel.isEmpty();
   }
 
   get stateChanges(): Observable<void> {
