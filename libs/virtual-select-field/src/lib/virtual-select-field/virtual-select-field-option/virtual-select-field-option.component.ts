@@ -13,7 +13,10 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatPseudoCheckboxModule } from '@angular/material/core';
+import {
+  MatPseudoCheckboxModule,
+  MatRippleModule,
+} from '@angular/material/core';
 
 import {
   VIRTUAL_SELECT_FIELD_OPTION_PARENT,
@@ -24,7 +27,7 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
 @Component({
   selector: 'lib-virtual-select-field-option',
   standalone: true,
-  imports: [CommonModule, MatPseudoCheckboxModule],
+  imports: [CommonModule, MatPseudoCheckboxModule, MatRippleModule],
   templateUrl: './virtual-select-field-option.component.html',
   styleUrl: './virtual-select-field-option.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,19 +55,24 @@ export class VirtualSelectFieldOptionComponent<TValue>
   >();
 
   @ViewChild('textLabel', { static: true })
-  protected textLabel!: ElementRef<HTMLElement>;
+  protected readonly textLabel!: ElementRef<HTMLElement>;
 
   protected active = false;
 
-  protected multiple = this._optionParent?.multiple ?? false;
+  protected readonly multiple = this._optionParent?.multiple ?? false;
 
-  protected selected = signal(false);
+  protected readonly selected = signal(false);
+
+  protected readonly hostNativeElement: HTMLElement;
 
   constructor(
     @Inject(VIRTUAL_SELECT_FIELD_OPTION_PARENT)
     private _optionParent: VirtualSelectFieldOptionParent,
-    private _changeDetectorRef: ChangeDetectorRef
-  ) {}
+    private _changeDetectorRef: ChangeDetectorRef,
+    private _elementRef: ElementRef<HTMLElement>
+  ) {
+    this.hostNativeElement = this._elementRef.nativeElement;
+  }
 
   // #region Highlightable
 
@@ -114,8 +122,6 @@ export class VirtualSelectFieldOptionComponent<TValue>
       selected: this.selected(),
     });
   }
-
-  // TODO: implement disabled state
 }
 
 export interface VirtualSelectFieldOptionSelectionChangeEvent<TValue> {
