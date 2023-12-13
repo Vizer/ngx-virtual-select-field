@@ -6,7 +6,10 @@ import { VirtualSelectFieldTriggerDirective } from './virtual-select-field-trigg
 
 import { VirtualSelectFieldOptionComponent } from './virtual-select-field-option';
 
-export { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+export {
+  VirtualSelectFieldOptionForDirective,
+  VirtualSelectFieldOptionModel,
+} from './virtual-select-field-option-for';
 
 export { VirtualSelectFieldComponent } from './virtual-select-field.component';
 
