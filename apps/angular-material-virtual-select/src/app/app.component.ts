@@ -24,6 +24,9 @@ import {
 })
 export class AppComponent {
   title = 'angular-material-virtual-select';
+
+  multiselectValue: number[] = [];
+
   options: VirtualSelectFieldOptionModel<number>[] = new Array(100000)
     .fill(null)
     .map((_, index) => ({

@@ -25,10 +25,14 @@
 </mat-form-field>
 
 <mat-form-field class="field">
-  <mat-label>Virtual Example</mat-label>
-  <lib-virtual-select-field placeholder="virtual select" multiple [value]="[1]">
+  <mat-label>Multiselect Virtual Example</mat-label>
+  <lib-virtual-select-field
+    placeholder="virtual select"
+    multiple
+    [(value)]="multiselectValue"
+  >
     <lib-virtual-select-field-trigger>
-      Custom trigger
+      {{ multiselectValue.length }} selected
     </lib-virtual-select-field-trigger>
 
     <lib-virtual-select-field-option
