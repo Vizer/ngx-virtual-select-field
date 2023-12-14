@@ -18,6 +18,7 @@ import {
   QueryList,
   Signal,
   TrackByFunction,
+  ViewChild,
   computed,
   inject,
   numberAttribute,
@@ -31,7 +32,7 @@ import {
   MatFormField,
   MatFormFieldControl,
 } from '@angular/material/form-field';
-import { ActiveDescendantKeyManager, FocusMonitor } from '@angular/cdk/a11y';
+import { FocusMonitor, ListKeyManager } from '@angular/cdk/a11y';
 import {
   CdkOverlayOrigin,
   OverlayModule,
@@ -54,7 +55,10 @@ import {
   withLatestFrom,
 } from 'rxjs';
 
-import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+import {
+  VirtualSelectFieldOptionForDirective,
+  VirtualSelectFieldOptionModel,
+} from './virtual-select-field-option-for';
 
 import {
   PANEL_WIDTH_AUTO,
@@ -66,7 +70,10 @@ import {
   VIRTUAL_SELECT_FIELD_TRIGGER,
   VirtualSelectFieldTriggerDirective,
 } from './virtual-select-field-trigger';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
 import {
   VIRTUAL_SELECT_FIELD_OPTION_PARENT,
   VirtualSelectFieldOptionComponent,
@@ -126,6 +133,9 @@ export class VirtualSelectFieldComponent<TValue>
   @Output()
   valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
 
+  @ViewChild(CdkVirtualScrollViewport, { static: false })
+  cdkVirtualScrollViewport!: CdkVirtualScrollViewport;
+
   @ContentChild(VirtualSelectFieldOptionForDirective)
   optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
 
@@ -170,8 +180,8 @@ export class VirtualSelectFieldComponent<TValue>
   private _fmMonitorSubscription: Subscription;
   private _viewPortRulerChange: Signal<void>;
   private _scrolledIndexChange = new Subject<void>();
-  private _keyManager: ActiveDescendantKeyManager<
-    VirtualSelectFieldOptionComponent<TValue>
+  private _keyManager: ListKeyManager<
+    VirtualSelectFieldOptionModel<TValue>
   > | null = null;
 
   // NOTE: recursive defer observable to await for options to be rendered
@@ -324,8 +334,9 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   ngAfterContentInit() {
-    // TODO: mb create new keyManger on optionFor.options$ change
-    this.initKeyManager();
+    this.optionFor.options$
+      .pipe(takeUntil(this._destroy))
+      .subscribe((options) => this.initListKeyManager(options));
 
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
@@ -359,6 +370,7 @@ export class VirtualSelectFieldComponent<TValue>
       )
       .subscribe(() => this.updateRenderedOptionsState());
     // TODO: mb merge subscriptions
+    // TODO: consider other options for receive updates from optionFor directive
   }
 
   private updateOptionSelection(
@@ -377,7 +389,11 @@ export class VirtualSelectFieldComponent<TValue>
       this.close();
     }
 
-    this._keyManager?.setActiveItem(selectionEvent.source);
+    const index = this.optionFor.options$.value.findIndex(
+      (option) => option.value === selectionEvent.value
+    );
+    this._keyManager?.setActiveItem(index);
+
     // NOTE: this need to keep form field in focus state
     this.focus();
     this.emitValue();
@@ -516,14 +532,20 @@ export class VirtualSelectFieldComponent<TValue>
     return this.panelWidth === null ? '' : this.panelWidth;
   }
 
-  private initKeyManager() {
-    // TODO: use parent ListKeyManager
-    // pass array from optionsFor directive
-    // handle active item change
-    // implmenet ListKeyManagerOption for option item interface in optionsFor
-    this._keyManager = new ActiveDescendantKeyManager<
-      VirtualSelectFieldOptionComponent<TValue>
-    >(this.optionsQuery!)
+  private initListKeyManager(options: VirtualSelectFieldOptionModel<TValue>[]) {
+    // TODO [refactor]: mb move to separate method
+    const normalizedOptions = options.map((option) => ({
+      value: option.value,
+      label: option.label,
+      disabled: option.disabled ?? false,
+      getLabel: () => option.getLabel?.() ?? option.label,
+    }));
+
+    this._keyManager?.destroy();
+
+    this._keyManager = new ListKeyManager<
+      VirtualSelectFieldOptionModel<TValue>
+    >(normalizedOptions)
       .withTypeAhead(this.typeaheadDebounceInterval)
       .withVerticalOrientation()
       // .withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr')
@@ -534,17 +556,32 @@ export class VirtualSelectFieldComponent<TValue>
 
     this._keyManager.tabOut.subscribe(() => {
       if (this.panelOpen()) {
-        // Select the active item when tabbing away. This is consistent with how the native
-        // select behaves. Note that we only want to do this in single selection mode.
+        // TODO: select active element on tab out in sigle mode
         // if (!this.multiple && this._keyManager.activeItem) {
         //   this._keyManager.activeItem._selectViaInteraction();
         // }
 
-        // Restore focus to the trigger before closing. Ensures that the focus
-        // position won't be lost if the user got focus into the overlay.
         this.focus();
         this.close();
       }
+    });
+
+    this._keyManager.change.subscribe((index) => {
+      const itemSize = 48;
+      const viewportVisibleItems = 8;
+
+      const scrollTop =
+        this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
+      const bottomScroll = scrollTop + itemSize * viewportVisibleItems - 1;
+      const targetScroll = itemSize * index;
+
+      if (scrollTop > targetScroll || bottomScroll < targetScroll) {
+        this.cdkVirtualScrollViewport.scrollToIndex(index);
+      }
+
+      // TODO: set active style on option component
+      // TODO: add itemSize input and config property
+      // TODO [refactor]: mb move calcs to separate method
     });
   }
 
