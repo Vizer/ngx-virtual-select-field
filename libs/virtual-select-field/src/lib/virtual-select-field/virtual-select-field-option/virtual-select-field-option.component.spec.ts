@@ -1,21 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { render } from '@testing-library/angular';
+
 import { VirtualSelectFieldOptionComponent } from './virtual-select-field-option.component';
+import { VIRTUAL_SELECT_FIELD_OPTION_PARENT } from './virtual-select-field-option.models';
 
 describe('VirtualSelectFieldOptionComponent', () => {
-  let component: VirtualSelectFieldOptionComponent<number>;
-  let fixture: ComponentFixture<VirtualSelectFieldOptionComponent<number>>;
+  it('should initialize', async () => {
+    const result = await render(VirtualSelectFieldOptionComponent, {
+      providers: [
+        {
+          provide: VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+          useValue: {
+            multiple: false,
+          },
+        },
+      ],
+    });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [VirtualSelectFieldOptionComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(VirtualSelectFieldOptionComponent<number>);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(result).toBeTruthy();
   });
 });
