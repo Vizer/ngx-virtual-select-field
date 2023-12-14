@@ -14,7 +14,7 @@
       @if (customTrigger) {
       <ng-content select="lib-virtual-select-field-trigger"></ng-content>
       } @else {
-      <span>{{ triggerValue }}</span>
+      <span>{{ triggerValue$ | async }}</span>
       }
     </span>
     }

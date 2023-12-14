@@ -44,12 +44,14 @@ import {
   Subscription,
   debounceTime,
   defer,
+  map,
   merge,
   startWith,
   switchMap,
   take,
   takeUntil,
   tap,
+  withLatestFrom,
 } from 'rxjs';
 
 import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
@@ -140,39 +142,40 @@ export class VirtualSelectFieldComponent<TValue>
   readonly OVERLAY_PANEL_CLASS: string | string[] =
     this._defaultOptions?.overlayPanelClass || '';
 
-    autofilled = false;
-    panelOpen = signal(false);
+  autofilled = false;
+  panelOpen = signal(false);
+  triggerValue$: Observable<string> | null = null;
 
-    overlayWidth: Signal<string | number>;
+  overlayWidth: Signal<string | number>;
 
-    ngControl: NgControl | null = inject(NgControl, { optional: true });
+  ngControl: NgControl | null = inject(NgControl, { optional: true });
 
-    protected readonly _destroy = new Subject<void>();
-    protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
+  protected readonly _destroy = new Subject<void>();
+  protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
-    private _fm: FocusMonitor = inject(FocusMonitor);
-    private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
-    private _stateChanges = new Subject<void>();
+  private _fm: FocusMonitor = inject(FocusMonitor);
+  private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
+  private _stateChanges = new Subject<void>();
 
-    private _onChange: (value: TValue[]) => void = () => void 0;
-    private _onTouched: () => void = () => void 0;
+  private _onChange: (value: TValue[]) => void = () => void 0;
+  private _onTouched: () => void = () => void 0;
 
-    private _value: TValue[] = [];
-    private _focused = false;
-    private _required = false;
-    private _disabled = false;
-    private _touched = false;
-    private _placeholder = '';
-    private _selectionModel!: SelectionModel<TValue>;
-    private _fmMonitorSubscription: Subscription;
-    private _viewPortRulerChange: Signal<void>;
-    private _scrolledIndexChange = new Subject<void>();
-    private _keyManager: ActiveDescendantKeyManager<
+  private _value: TValue[] = [];
+  private _focused = false;
+  private _required = false;
+  private _disabled = false;
+  private _touched = false;
+  private _placeholder = '';
+  private _selectionModel!: SelectionModel<TValue>;
+  private _fmMonitorSubscription: Subscription;
+  private _viewPortRulerChange: Signal<void>;
+  private _scrolledIndexChange = new Subject<void>();
+  private _keyManager: ActiveDescendantKeyManager<
     VirtualSelectFieldOptionComponent<TValue>
-    > | null = null;
+  > | null = null;
 
-    // NOTE: recursive defer observable to await for options to be rendered
-    private readonly _optionSelectionChanges: Observable<
+  // NOTE: recursive defer observable to await for options to be rendered
+  private readonly _optionSelectionChanges: Observable<
     VirtualSelectFieldOptionSelectionChangeEvent<TValue>
   > = defer(() => {
     const options = this.optionsQuery;
@@ -209,6 +212,7 @@ export class VirtualSelectFieldComponent<TValue>
       this.ngControl.valueAccessor = this;
     }
 
+    // TODO: remove focus monitor
     this._fmMonitorSubscription = this._fm
       .monitor(this._elRef, true)
       .subscribe((origin) => {
@@ -248,6 +252,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   get value() {
+    // TODO: migrate to selectionModel
     return this._value;
   }
 
@@ -303,16 +308,6 @@ export class VirtualSelectFieldComponent<TValue>
     return !this.focused || !this.empty;
   }
 
-  get triggerValue(): string {
-    if (this.empty) {
-      return '';
-    }
-
-    //TODO: resolve trigger text bu selected values
-
-    return 'mock build in trigger';
-  }
-
   get focused(): boolean {
     // NOTE: panel open is needed to keep form field in focused state during interaction with options
     return this._focused || this.panelOpen();
@@ -324,7 +319,7 @@ export class VirtualSelectFieldComponent<TValue>
     this._disabled = this.ngControl?.disabled ?? false;
 
     // TODO: consider using this._selectionModel.changed
-    this._selectionModel = new SelectionModel<TValue>(this.multiple);
+    this._selectionModel = new SelectionModel<TValue>(this.multiple, [], true);
     this._selectionModel?.select(...this._value);
   }
 
@@ -332,7 +327,19 @@ export class VirtualSelectFieldComponent<TValue>
     // TODO: mb create new keyManger on optionFor.options$ change
     this.initKeyManager();
 
-    // TODO: mb merge both subscriptions
+    if (!this.customTrigger) {
+      this.triggerValue$ = this._selectionModel.changed.pipe(
+        startWith(null),
+        withLatestFrom(this.optionFor.options$),
+        map(([_selected, options]) =>
+          this._selectionModel.selected
+            .map((value) => options.find((o) => o.value === value))
+            .map((option) => option?.label ?? '')
+            .join(', ')
+        )
+      );
+    }
+
     this.optionFor.options$
       .pipe(
         takeUntil(this._destroy),
@@ -351,6 +358,7 @@ export class VirtualSelectFieldComponent<TValue>
         debounceTime(100)
       )
       .subscribe(() => this.updateRenderedOptionsState());
+    // TODO: mb merge subscriptions
   }
 
   private updateOptionSelection(
@@ -370,8 +378,9 @@ export class VirtualSelectFieldComponent<TValue>
     }
 
     this._keyManager?.setActiveItem(selectionEvent.source);
-    // TODO: this need to keep form field in focus state
+    // NOTE: this need to keep form field in focus state
     this.focus();
+    this.emitValue();
   }
 
   private updateRenderedOptionsState() {
@@ -463,8 +472,8 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   protected emitValue(): void {
-    this._onChange?.(this.value);
-    this.valueChange.emit(this.value);
+    this._onChange?.(this._selectionModel.selected);
+    this.valueChange.emit(this._selectionModel.selected);
   }
 
   protected toggle(): void {
@@ -486,6 +495,7 @@ export class VirtualSelectFieldComponent<TValue>
 
   protected close() {
     this.panelOpen.set(false);
+    this._stateChanges.next();
   }
 
   private focus() {
