@@ -556,7 +556,7 @@ export class VirtualSelectFieldComponent<TValue>
 
     this._keyManager.tabOut.subscribe(() => {
       if (this.panelOpen()) {
-        // TODO: select active element on tab out in sigle mode
+        // TODO: select active element on tab out in single mode
         // if (!this.multiple && this._keyManager.activeItem) {
         //   this._keyManager.activeItem._selectViaInteraction();
         // }
@@ -567,22 +567,41 @@ export class VirtualSelectFieldComponent<TValue>
     });
 
     this._keyManager.change.subscribe((index) => {
-      const itemSize = 48;
-      const viewportVisibleItems = 8;
+      this.optionsQuery?.forEach((option) => option.setInactiveStyles());
+      const activeOption = options[index];
 
-      const scrollTop =
-        this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
-      const bottomScroll = scrollTop + itemSize * viewportVisibleItems - 1;
-      const targetScroll = itemSize * index;
-
-      if (scrollTop > targetScroll || bottomScroll < targetScroll) {
+      const shouldScrollToActiveItem = this.shouldScrollToActiveItem(index);
+      if (shouldScrollToActiveItem) {
+        this.cdkVirtualScrollViewport.scrolledIndexChange
+          .pipe(take(1))
+          .subscribe(() => this.setActiveOptionByValues(activeOption.value));
         this.cdkVirtualScrollViewport.scrollToIndex(index);
+      } else {
+        this.setActiveOptionByValues(activeOption.value);
       }
-
-      // TODO: set active style on option component
-      // TODO: add itemSize input and config property
-      // TODO [refactor]: mb move calcs to separate method
     });
+  }
+
+  private shouldScrollToActiveItem(targetIndex: number): boolean {
+    // TODO: add itemSize input and config property
+    const itemSize = 48;
+    const viewportVisibleItems = 8;
+
+    const scrollTop =
+      this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
+
+    // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
+    const bottomScroll = scrollTop + itemSize * viewportVisibleItems - 1;
+    const targetScroll = itemSize * targetIndex;
+
+    return scrollTop > targetScroll || bottomScroll < targetScroll;
+  }
+
+  private setActiveOptionByValues(value: TValue) {
+    const optionComponent = this.optionsQuery?.find(
+      (option) => option.value === value
+    );
+    optionComponent?.setActiveStyles();
   }
 
   static ngAcceptInputType_required: BooleanInput;
