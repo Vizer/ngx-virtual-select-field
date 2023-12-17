@@ -344,16 +344,6 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   ngAfterContentInit() {
-    this._selectionModel?.setSelection(
-      ...this._value.map(
-        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
-      )
-    );
-
-    this.optionFor.options$
-      .pipe(takeUntil(this._destroy))
-      .subscribe((options) => this.initListKeyManager(options));
-
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
         startWith(null),
@@ -369,27 +359,30 @@ export class VirtualSelectFieldComponent<TValue>
     this.optionFor.options$
       .pipe(
         takeUntil(this._destroy),
-        switchMap(() => this._optionSelectionChanges)
-      )
-      .subscribe(
-        (
-          selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
-        ) =>
-          this.updateOptionSelection(
-            selectionEvent,
-            this.optionFor.options$.value
+        tap((options) =>
+          this._selectionModel?.setSelection(
+            ...this._value.map((v) => options.find((o) => o.value === v)!)
           )
-      );
+        ),
+        tap((options) => this.initListKeyManager(options)),
+        switchMap((options) =>
+          merge(
+            this._optionSelectionChanges.pipe(
+              tap(
+                (
+                  selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+                ) => this.updateOptionSelection(selectionEvent, options)
+              )
+            ),
 
-    this.optionFor.options$
-      .pipe(
-        takeUntil(this._destroy),
-        switchMap(() => this._scrolledIndexChange),
-        debounceTime(100)
+            this._scrolledIndexChange.pipe(
+              debounceTime(100),
+              tap(() => this.updateRenderedOptionsState(options))
+            )
+          )
+        )
       )
-      .subscribe(() =>
-        this.updateRenderedOptionsState(this.optionFor.options$.value)
-      );
+      .subscribe();
 
     // TODO: mb merge subscriptions
     // TODO: consider other options for receive updates from optionFor directive
