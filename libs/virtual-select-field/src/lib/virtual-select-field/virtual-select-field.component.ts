@@ -24,14 +24,10 @@ import {
   numberAttribute,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import {
-  MAT_FORM_FIELD,
-  MatFormField,
-  MatFormFieldControl,
-} from '@angular/material/form-field';
+import { SelectionModel } from '@angular/cdk/collections';
 import { FocusMonitor, ListKeyManager } from '@angular/cdk/a11y';
 import {
   CdkOverlayOrigin,
@@ -39,6 +35,15 @@ import {
   ViewportRuler,
 } from '@angular/cdk/overlay';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import {
+  CdkVirtualScrollViewport,
+  ScrollingModule,
+} from '@angular/cdk/scrolling';
+import {
+  MAT_FORM_FIELD,
+  MatFormField,
+  MatFormFieldControl,
+} from '@angular/material/form-field';
 import {
   Observable,
   Subject,
@@ -52,13 +57,22 @@ import {
   take,
   takeUntil,
   tap,
-  withLatestFrom,
 } from 'rxjs';
 
 import {
   VirtualSelectFieldOptionForDirective,
   VirtualSelectFieldOptionModel,
 } from './virtual-select-field-option-for';
+import {
+  VIRTUAL_SELECT_FIELD_TRIGGER,
+  VirtualSelectFieldTriggerDirective,
+} from './virtual-select-field-trigger';
+import {
+  VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+  VirtualSelectFieldOptionComponent,
+  VirtualSelectFieldOptionParent,
+  VirtualSelectFieldOptionSelectionChangeEvent,
+} from './virtual-select-field-option';
 
 import {
   PANEL_WIDTH_AUTO,
@@ -66,21 +80,6 @@ import {
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
-import {
-  VIRTUAL_SELECT_FIELD_TRIGGER,
-  VirtualSelectFieldTriggerDirective,
-} from './virtual-select-field-trigger';
-import {
-  CdkVirtualScrollViewport,
-  ScrollingModule,
-} from '@angular/cdk/scrolling';
-import {
-  VIRTUAL_SELECT_FIELD_OPTION_PARENT,
-  VirtualSelectFieldOptionComponent,
-  VirtualSelectFieldOptionParent,
-  VirtualSelectFieldOptionSelectionChangeEvent,
-} from './virtual-select-field-option';
-import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -176,7 +175,9 @@ export class VirtualSelectFieldComponent<TValue>
   private _disabled = false;
   private _touched = false;
   private _placeholder = '';
-  private _selectionModel!: SelectionModel<TValue>;
+  private _selectionModel!: SelectionModel<
+    VirtualSelectFieldOptionModel<TValue>
+  >;
   private _fmMonitorSubscription: Subscription;
   private _viewPortRulerChange: Signal<void>;
   private _scrolledIndexChange = new Subject<void>();
@@ -256,7 +257,12 @@ export class VirtualSelectFieldComponent<TValue>
     }
 
     this._value = value ? value : [];
-    this._selectionModel?.select(...this._value);
+
+    this._selectionModel?.setSelection(
+      ...this._value.map(
+        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
+      )
+    );
 
     this._stateChanges.next();
   }
@@ -329,11 +335,21 @@ export class VirtualSelectFieldComponent<TValue>
     this._disabled = this.ngControl?.disabled ?? false;
 
     // TODO: consider using this._selectionModel.changed
-    this._selectionModel = new SelectionModel<TValue>(this.multiple, [], true);
-    this._selectionModel?.select(...this._value);
+    this._selectionModel = new SelectionModel<
+      VirtualSelectFieldOptionModel<TValue>
+    >(this.multiple, [], true);
+
+    // NOTE: mat select listens to stateChanges of options components.
+    // in out case our source of update in optionFor directive
   }
 
   ngAfterContentInit() {
+    this._selectionModel?.setSelection(
+      ...this._value.map(
+        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
+      )
+    );
+
     this.optionFor.options$
       .pipe(takeUntil(this._destroy))
       .subscribe((options) => this.initListKeyManager(options));
@@ -341,10 +357,9 @@ export class VirtualSelectFieldComponent<TValue>
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
         startWith(null),
-        withLatestFrom(this.optionFor.options$),
-        map(([_selected, options]) =>
+        // withLatestFrom(this.optionFor.options$),
+        map((_selected) =>
           this._selectionModel.selected
-            .map((value) => options.find((o) => o.value === value))
             .map((option) => option?.label ?? '')
             .join(', ')
         )
@@ -359,7 +374,11 @@ export class VirtualSelectFieldComponent<TValue>
       .subscribe(
         (
           selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
-        ) => this.updateOptionSelection(selectionEvent)
+        ) =>
+          this.updateOptionSelection(
+            selectionEvent,
+            this.optionFor.options$.value
+          )
       );
 
     this.optionFor.options$
@@ -368,18 +387,27 @@ export class VirtualSelectFieldComponent<TValue>
         switchMap(() => this._scrolledIndexChange),
         debounceTime(100)
       )
-      .subscribe(() => this.updateRenderedOptionsState());
+      .subscribe(() =>
+        this.updateRenderedOptionsState(this.optionFor.options$.value)
+      );
+
     // TODO: mb merge subscriptions
     // TODO: consider other options for receive updates from optionFor directive
   }
 
   private updateOptionSelection(
-    selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+    selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>,
+    options: VirtualSelectFieldOptionModel<TValue>[]
   ) {
+    const selectedIndex = options.findIndex(
+      (option) => option.value === selectionEvent.value
+    );
+    const selectedOption = options[selectedIndex];
+
     if (this.multiple) {
-      this._selectionModel.toggle(selectionEvent.value);
+      this._selectionModel.toggle(selectedOption);
     } else {
-      this._selectionModel.select(selectionEvent.value);
+      this._selectionModel.select(selectedOption);
       this.optionsQuery?.forEach((option) => {
         if (option.value !== selectionEvent.value) {
           option.deselect();
@@ -389,22 +417,23 @@ export class VirtualSelectFieldComponent<TValue>
       this.close();
     }
 
-    const index = this.optionFor.options$.value.findIndex(
-      (option) => option.value === selectionEvent.value
-    );
-    this._keyManager?.setActiveItem(index);
+    this._keyManager?.setActiveItem(selectedIndex);
 
     // NOTE: this need to keep form field in focus state
     this.focus();
     this.emitValue();
   }
 
-  private updateRenderedOptionsState() {
-    this.optionsQuery!.forEach((option) => {
+  private updateRenderedOptionsState(
+    options: VirtualSelectFieldOptionModel<TValue>[]
+  ) {
+    this.optionsQuery!.forEach((optionComponent) => {
+      const option = options.find((o) => o.value === optionComponent.value)!;
+
       // NOTE: deselect for all is needed because of virtual scroll and reusing options
-      option.deselect();
-      if (this._selectionModel.isSelected(option.value)) {
-        option.select();
+      optionComponent.deselect();
+      if (this._selectionModel.isSelected(option)) {
+        optionComponent.select();
       }
     });
   }
@@ -488,8 +517,10 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   protected emitValue(): void {
-    this._onChange?.(this._selectionModel.selected);
-    this.valueChange.emit(this._selectionModel.selected);
+    this._value = this._selectionModel.selected.map((option) => option.value);
+
+    this.valueChange.emit(this._value);
+    this._onChange?.(this._value);
   }
 
   protected toggle(): void {
