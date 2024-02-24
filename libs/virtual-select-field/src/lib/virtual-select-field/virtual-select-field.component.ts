@@ -30,6 +30,7 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FocusMonitor, ListKeyManager } from '@angular/cdk/a11y';
 import {
+  CdkConnectedOverlay,
   CdkOverlayOrigin,
   OverlayModule,
   ViewportRuler,
@@ -75,8 +76,10 @@ import {
 } from './virtual-select-field-option';
 
 import {
+  ITEM_SIZE,
   PANEL_WIDTH_AUTO,
   POSITIONS,
+  VIEWPORT_VISIBLE_ITEMS,
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
@@ -134,6 +137,9 @@ export class VirtualSelectFieldComponent<TValue>
 
   @ViewChild(CdkVirtualScrollViewport, { static: false })
   cdkVirtualScrollViewport!: CdkVirtualScrollViewport;
+
+  @ViewChild(CdkConnectedOverlay, { static: false })
+  cdkConnectedOverlay!: CdkConnectedOverlay;
 
   @ContentChild(VirtualSelectFieldOptionForDirective)
   optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
@@ -469,7 +475,22 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   onOverlayAttached() {
-    // TODO: navigate to active option
+    this.cdkConnectedOverlay.positionChange
+      .pipe(
+        take(1),
+        switchMap(() => this._scrolledIndexChange.pipe(take(1)))
+      )
+      .subscribe(() => {
+        if (!this._selectionModel.isEmpty()) {
+          let targetIndex = this.optionFor.options$.value.findIndex(
+            (option) => option === this._selectionModel.selected[0]
+          );
+
+          targetIndex = targetIndex - VIEWPORT_VISIBLE_ITEMS / 2;
+
+          this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
+        }
+      });
   }
 
   @HostListener('focus')
@@ -607,16 +628,12 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   private shouldScrollToActiveItem(targetIndex: number): boolean {
-    // TODO: add itemSize input and config property
-    const itemSize = 48;
-    const viewportVisibleItems = 8;
-
     const scrollTop =
       this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
 
     // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
-    const bottomScroll = scrollTop + itemSize * viewportVisibleItems - 1;
-    const targetScroll = itemSize * targetIndex;
+    const bottomScroll = scrollTop + ITEM_SIZE * VIEWPORT_VISIBLE_ITEMS - 1;
+    const targetScroll = ITEM_SIZE * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;
   }

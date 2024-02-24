@@ -37,3 +37,8 @@ export const VIRTUAL_SELECT_CONFIG = new InjectionToken<VirtualSelectConfig>(
 );
 
 export const PANEL_WIDTH_AUTO = 'auto';
+
+// TODO: add itemSize input and config property
+export const VIEWPORT_VISIBLE_ITEMS = 8
+
+export const ITEM_SIZE = 48;
