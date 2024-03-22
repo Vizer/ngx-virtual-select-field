@@ -676,6 +676,8 @@ export class VirtualSelectFieldComponent<TValue>
 
   protected close() {
     this.panelOpen.set(false);
+    this._touched = true;
+    this._onTouched()
     this._stateChanges.next();
   }
 
