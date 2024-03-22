@@ -45,6 +45,7 @@ import {
   MatFormField,
   MatFormFieldControl,
 } from '@angular/material/form-field';
+import { hasModifierKey } from '@angular/cdk/keycodes';
 import {
   Observable,
   Subject,
@@ -83,6 +84,12 @@ import {
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
+
+const ARROW_DOWN_KEY = 'ArrowDown';
+const ARROW_UP_KEY = 'ArrowUp';
+const ENTER_CODE = 'Enter';
+const SPACE_CODE = 'Space';
+const KEY_A_CODE = 'KeyA';
 
 @Component({
   selector: 'lib-virtual-select-field',
@@ -514,10 +521,88 @@ export class VirtualSelectFieldComponent<TValue>
 
   // @HostListener('keydown', ['$event'])
   protected onKeyDown(event: KeyboardEvent) {
+    if (this.disabled) {
+      return;
+    }
+
     if (this.panelOpen()) {
-      this._keyManager?.onKeydown(event);
+      this.doPanelOpenedKeydown(event);
     } else {
-      //
+      // this.doPanelClosedKeydown(event);
+    }
+  }
+
+  private doPanelOpenedKeydown(event: KeyboardEvent) {
+    const keyManager = this._keyManager!;
+    const activeItem = keyManager.activeItem;
+    const isTyping = keyManager.isTyping();
+
+    if (
+      (event.key === ARROW_DOWN_KEY || event.key === ARROW_UP_KEY) &&
+      event.altKey
+    ) {
+      event.preventDefault();
+      this.close();
+    } else if (
+      !isTyping &&
+      (event.code == ENTER_CODE || event.code === SPACE_CODE) &&
+      activeItem &&
+      !hasModifierKey(event)
+    ) {
+      event.preventDefault();
+
+      const option = this.optionFor.options$.value.find(
+        (option) => option.value === activeItem.value
+      );
+
+      this._selectionModel.toggle(option!);
+
+      this.updateRenderedOptionsState(this.optionFor.options$.value);
+    } else if (
+      !isTyping &&
+      this.multiple &&
+      event.code === KEY_A_CODE &&
+      event.ctrlKey
+    ) {
+      event.preventDefault();
+      const enabledOptionValues = this.optionFor.options$.value.filter(
+        (option) => !option.disabled
+      );
+
+      const hasDeselectedOptions =
+        enabledOptionValues.length > this._selectionModel.selected.length;
+
+      if (hasDeselectedOptions) {
+        this._selectionModel.select(...enabledOptionValues);
+        this.optionsQuery!.forEach((optionComponent) => {
+          if (!optionComponent.disabled) {
+            optionComponent.select();
+          }
+        });
+      } else {
+        this._selectionModel.clear();
+        this.optionsQuery!.forEach((optionComponent) => {
+          optionComponent.deselect();
+        });
+      }
+    } else {
+      const previouslyFocusedIndex = keyManager.activeItemIndex;
+
+      keyManager.onKeydown(event);
+
+      if (
+        this.multiple &&
+        (event.key === ARROW_DOWN_KEY || event.key === ARROW_UP_KEY) &&
+        event.shiftKey &&
+        keyManager.activeItem &&
+        keyManager.activeItemIndex !== previouslyFocusedIndex
+      ) {
+        const option = this.findOptionByValue(keyManager.activeItem.value);
+
+        this._selectionModel.toggle(option);
+
+        this.updateRenderedOptionsState(this.optionFor.options$.value);
+      }
     }
   }
 
@@ -525,6 +610,20 @@ export class VirtualSelectFieldComponent<TValue>
     (index: number, options: { label: string; value: TValue }) => {
       return options.value;
     };
+
+  private findOptionByValue(
+    value: TValue
+  ): VirtualSelectFieldOptionModel<TValue> {
+    const result = this.optionFor.options$.value.find(
+      (option) => option.value === value
+    );
+
+    if (!result) {
+      throw new Error(`Option with value ${value} not found`);
+    }
+
+    return result;
+  }
 
   protected onScrolledIndexChange(): void {
     this._scrolledIndexChange.next();
