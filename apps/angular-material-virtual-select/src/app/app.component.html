@@ -58,4 +58,41 @@
   </lib-virtual-select-field>
 </mat-form-field>
 
+<h3 class="mat-title">Form</h3>
+<div>
+  <form [formGroup]="form" class="form-container">
+    <mat-form-field class="field">
+      <mat-label>Virtual Example</mat-label>
+      <lib-virtual-select-field
+        placeholder="virtual select"
+        formControlName="multiselect"
+        multiple
+      >
+        <lib-virtual-select-field-option
+          *libVirtualSelectFieldOptionFor="let option of options"
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          {{ option.label }}</lib-virtual-select-field-option
+        >
+      </lib-virtual-select-field>
+    </mat-form-field>
+
+    <mat-form-field class="field">
+      <mat-label>Virtual Example</mat-label>
+      <lib-virtual-select-field
+        placeholder="virtual select"
+        formControlName="singleselect"
+      >
+        <lib-virtual-select-field-option
+          *libVirtualSelectFieldOptionFor="let option of options"
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          {{ option.label }}</lib-virtual-select-field-option
+        >
+      </lib-virtual-select-field>
+    </mat-form-field>
+  </form>
+</div>
 <router-outlet></router-outlet>
