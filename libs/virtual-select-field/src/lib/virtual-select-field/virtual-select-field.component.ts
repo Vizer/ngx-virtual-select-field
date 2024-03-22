@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
-import { FocusMonitor, ListKeyManager } from '@angular/cdk/a11y';
+import { ListKeyManager } from '@angular/cdk/a11y';
 import {
   CdkConnectedOverlay,
   CdkOverlayOrigin,
@@ -49,7 +49,6 @@ import { hasModifierKey } from '@angular/cdk/keycodes';
 import {
   Observable,
   Subject,
-  Subscription,
   debounceTime,
   defer,
   map,
@@ -177,7 +176,6 @@ export class VirtualSelectFieldComponent<TValue>
   protected readonly _destroy = new Subject<void>();
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
-  private _fm: FocusMonitor = inject(FocusMonitor);
   private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
   private _stateChanges = new Subject<void>();
 
@@ -193,7 +191,6 @@ export class VirtualSelectFieldComponent<TValue>
   private _selectionModel!: SelectionModel<
     VirtualSelectFieldOptionModel<TValue>
   >;
-  private _fmMonitorSubscription: Subscription;
   private _viewPortRulerChange: Signal<void>;
   private _scrolledIndexChange = new Subject<void>();
   private _keyManager: ListKeyManager<
@@ -237,14 +234,6 @@ export class VirtualSelectFieldComponent<TValue>
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }
-
-    // TODO: remove focus monitor
-    this._fmMonitorSubscription = this._fm
-      .monitor(this._elRef, true)
-      .subscribe((origin) => {
-        this._focused = !!origin;
-        this._stateChanges.next();
-      });
 
     // NOTE: View port ruler change stream runs outside the zone.
     //       Need to run change detection manually to trigger computed signal below.
@@ -448,8 +437,6 @@ export class VirtualSelectFieldComponent<TValue>
 
   ngOnDestroy() {
     this._stateChanges.complete();
-    this._fm.stopMonitoring(this._elRef);
-    this._fmMonitorSubscription?.unsubscribe();
   }
 
   // #region ControlValueAccessor
