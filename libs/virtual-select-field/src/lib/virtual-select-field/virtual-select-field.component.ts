@@ -87,6 +87,8 @@ import { VirtualSelectConfig } from './virtual-select-field.models';
 
 const ARROW_DOWN_KEY = 'ArrowDown';
 const ARROW_UP_KEY = 'ArrowUp';
+const ARROW_RIGHT_KEY = 'ArrowRight';
+const ARROW_LEFT_KEY = 'ArrowLeft';
 const ENTER_CODE = 'Enter';
 const SPACE_CODE = 'Space';
 const KEY_A_CODE = 'KeyA';
@@ -528,7 +530,7 @@ export class VirtualSelectFieldComponent<TValue>
     if (this.panelOpen()) {
       this.doPanelOpenedKeydown(event);
     } else {
-      // this.doPanelClosedKeydown(event);
+      this.doPanelClosedKeydown(event);
     }
   }
 
@@ -551,13 +553,13 @@ export class VirtualSelectFieldComponent<TValue>
     ) {
       event.preventDefault();
 
-      const option = this.optionFor.options$.value.find(
-        (option) => option.value === activeItem.value
-      );
+      const option = this.findOptionByValue(activeItem.value);
 
-      this._selectionModel.toggle(option!);
+      this._selectionModel.toggle(option);
 
       this.updateRenderedOptionsState(this.optionFor.options$.value);
+
+      this.emitValue();
     } else if (
       !isTyping &&
       this.multiple &&
@@ -597,11 +599,44 @@ export class VirtualSelectFieldComponent<TValue>
         keyManager.activeItem &&
         keyManager.activeItemIndex !== previouslyFocusedIndex
       ) {
-        const option = this.findOptionByValue(keyManager.activeItem.value);
+        this.selectOptionByValue(keyManager.activeItem.value);
+      }
+    }
+  }
 
-        this._selectionModel.toggle(option);
+  private doPanelClosedKeydown(event: KeyboardEvent): void {
+    const keyManager = this._keyManager!;
+    const isTyping = keyManager.isTyping();
 
-        this.updateRenderedOptionsState(this.optionFor.options$.value);
+    const isArrowKey =
+      event.key === ARROW_DOWN_KEY ||
+      event.key === ARROW_UP_KEY ||
+      event.key === ARROW_RIGHT_KEY ||
+      event.key === ARROW_LEFT_KEY;
+
+    if (
+      (!isTyping &&
+        (event.code === SPACE_CODE || event.code === ENTER_CODE) &&
+        !hasModifierKey(event)) ||
+      ((this.multiple || event.altKey) && isArrowKey)
+    ) {
+      event.preventDefault(); // prevents the page from scrolling down when pressing space
+      this.open();
+    } else if (!this.multiple) {
+      const previouslySelectedOptionIndex = keyManager.activeItemIndex;
+      keyManager.onKeydown(event);
+      const selectedOptionIndex = keyManager.activeItemIndex;
+
+      if (
+        selectedOptionIndex &&
+        previouslySelectedOptionIndex !== selectedOptionIndex
+      ) {
+        this.selectOptionByValue(keyManager.activeItem!.value);
+
+        // TODO: Add live announcer
+        // We set a duration on the live announcement, because we want the live element to be
+        // cleared after a while so that users can't navigate to it using the arrow keys.
+        // this._liveAnnouncer.announce((selectedOption as MatOption).viewValue, 10000);
       }
     }
   }
@@ -610,20 +645,6 @@ export class VirtualSelectFieldComponent<TValue>
     (index: number, options: { label: string; value: TValue }) => {
       return options.value;
     };
-
-  private findOptionByValue(
-    value: TValue
-  ): VirtualSelectFieldOptionModel<TValue> {
-    const result = this.optionFor.options$.value.find(
-      (option) => option.value === value
-    );
-
-    if (!result) {
-      throw new Error(`Option with value ${value} not found`);
-    }
-
-    return result;
-  }
 
   protected onScrolledIndexChange(): void {
     this._scrolledIndexChange.next();
@@ -700,10 +721,9 @@ export class VirtualSelectFieldComponent<TValue>
 
     this._keyManager.tabOut.subscribe(() => {
       if (this.panelOpen()) {
-        // TODO: select active element on tab out in single mode
-        // if (!this.multiple && this._keyManager.activeItem) {
-        //   this._keyManager.activeItem._selectViaInteraction();
-        // }
+        if (this._keyManager?.activeItem) {
+          this.selectOptionByValue(this._keyManager!.activeItem!.value);
+        }
 
         this.focus();
         this.close();
@@ -727,6 +747,10 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   private shouldScrollToActiveItem(targetIndex: number): boolean {
+    if (!this.panelOpen()) {
+      return false;
+    }
+
     const scrollTop =
       this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
 
@@ -735,6 +759,30 @@ export class VirtualSelectFieldComponent<TValue>
     const targetScroll = ITEM_SIZE * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;
+  }
+
+  private selectOptionByValue(value: TValue) {
+    const option = this.findOptionByValue(value);
+
+    this._selectionModel.select(option);
+
+    this.updateRenderedOptionsState(this.optionFor.options$.value);
+
+    this.emitValue();
+  }
+
+  private findOptionByValue(
+    value: TValue
+  ): VirtualSelectFieldOptionModel<TValue> {
+    const result = this.optionFor.options$.value.find(
+      (option) => option.value === value
+    );
+
+    if (!result) {
+      throw new Error(`Option with value ${value} not found`);
+    }
+
+    return result;
   }
 
   private setActiveOptionByValues(value: TValue) {
