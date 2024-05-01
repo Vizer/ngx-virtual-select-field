@@ -1,98 +1,168 @@
-<mat-form-field class="field">
-  <mat-label>Virtual Example</mat-label>
-  <lib-virtual-select-field placeholder="virtual select">
-    <lib-virtual-select-field-option
-      *libVirtualSelectFieldOptionFor="let option of options"
-      [value]="option.value"
-      [disabled]="option.disabled"
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      (valueChange)="singleValue = $event"
     >
-      {{ option.label }}</lib-virtual-select-field-option
-    >
-  </lib-virtual-select-field>
-</mat-form-field>
-
-<mat-form-field class="field">
-  <mat-label>Virtual Example</mat-label>
-  <lib-virtual-select-field placeholder="virtual select" [value]="[16]">
-    <lib-virtual-select-field-option
-      *libVirtualSelectFieldOptionFor="let option of options"
-      [value]="option.value"
-      [disabled]="option.disabled"
-    >
-      {{ option.label }}</lib-virtual-select-field-option
-    >
-  </lib-virtual-select-field>
-</mat-form-field>
-
-<mat-form-field class="field">
-  <mat-label>Multiselect Virtual Example</mat-label>
-  <lib-virtual-select-field
-    placeholder="virtual select"
-    multiple
-    [(value)]="multiselectValue"
-  >
-    <lib-virtual-select-field-trigger>
-      {{ multiselectValue.length }} selected
-    </lib-virtual-select-field-trigger>
-
-    <lib-virtual-select-field-option
-      *libVirtualSelectFieldOptionFor="let option of options"
-      [value]="option.value"
-      [disabled]="option.disabled"
-    >
-      {{ option.label }}</lib-virtual-select-field-option
-    >
-  </lib-virtual-select-field>
-</mat-form-field>
-
-<mat-form-field class="field">
-  <mat-label>Multiselect Virtual Example</mat-label>
-  <lib-virtual-select-field placeholder="virtual select" multiple>
-    <lib-virtual-select-field-option
-      *libVirtualSelectFieldOptionFor="let option of options"
-      [value]="option.value"
-      [disabled]="option.disabled"
-    >
-      {{ option.label }}</lib-virtual-select-field-option
-    >
-  </lib-virtual-select-field>
-</mat-form-field>
-
-<h3 class="mat-title">Form</h3>
-<div>
-  <form [formGroup]="form" class="form-container">
-    <mat-form-field class="field">
-      <mat-label>Virtual Example</mat-label>
-      <lib-virtual-select-field
-        placeholder="virtual select"
-        formControlName="multiselect"
-        multiple
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
       >
-        <lib-virtual-select-field-option
-          *libVirtualSelectFieldOptionFor="let option of options"
-          [value]="option.value"
-          [disabled]="option.disabled"
-        >
-          {{ option.label }}</lib-virtual-select-field-option
-        >
-      </lib-virtual-select-field>
-    </mat-form-field>
-
-    <mat-form-field class="field">
-      <mat-label>Virtual Example</mat-label>
-      <lib-virtual-select-field
-        placeholder="virtual select"
-        formControlName="singleselect"
+        {{ option.label }}</lib-virtual-select-field-option
       >
-        <lib-virtual-select-field-option
-          *libVirtualSelectFieldOptionFor="let option of options"
-          [value]="option.value"
-          [disabled]="option.disabled"
-        >
-          {{ option.label }}</lib-virtual-select-field-option
-        >
-      </lib-virtual-select-field>
-    </mat-form-field>
-  </form>
+    </lib-virtual-select-field>
+  </mat-form-field>
+  {{ singleValue }}
 </div>
-<router-outlet></router-outlet>
+
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      [value]="singleValueWithSelected"
+      (valueChange)="singleValueWithSelected = $event"
+    >
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+  {{ singleValueWithSelected }}
+</div>
+
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Multiselect Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      multiple
+      [(value)]="multiselectValueWithDefault"
+    >
+      <lib-virtual-select-field-trigger>
+        {{ multiselectValueWithDefault.length }} selected
+      </lib-virtual-select-field-trigger>
+
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+  {{ multiselectValueWithDefault }}
+</div>
+
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Multiselect Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      multiple
+      [value]="multiselectValue"
+      (valueChange)="multiselectValue = $event"
+    >
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+  {{ multiselectValue | json}}
+</div>
+
+<h3 class="mat-headline-5">Form</h3>
+
+<form [formGroup]="form" class="form-container">
+  <mat-form-field class="field">
+    <mat-label>Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      formControlName="multiselect"
+      multiple
+    >
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+
+  <mat-form-field class="field">
+    <mat-label>Virtual Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      formControlName="singleselect"
+    >
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of options"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+</form>
+
+
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Nulled Example</mat-label>
+    <lib-virtual-select-field
+      placeholder="virtual select"
+      (valueChange)="singleValue = $event"
+    >
+      <lib-virtual-select-field-option
+        *libVirtualSelectFieldOptionFor="let option of optionsWithNull"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</lib-virtual-select-field-option
+      >
+    </lib-virtual-select-field>
+  </mat-form-field>
+  {{ singleValue }}
+</div>
+
+<h3 class="mat-headline-5">Mat Select</h3>
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Mat Single Select Example</mat-label>
+    <mat-select [(value)]="materialSingleSelect">
+
+      @for (item of options.slice(0,100); track $index) {
+      <mat-option [value]="item.value">{{ item.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  {{ materialSingleSelect }}
+</div>
+
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>Mat Multiple Select Example</mat-label>
+    <mat-select [(value)]="materialMultiSingleSelect" multiple>
+
+
+      @for (item of options.slice(0,100); track $index) {
+      <mat-option [value]="item.value">{{ item.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  {{ materialMultiSingleSelect | json }}
+</div>

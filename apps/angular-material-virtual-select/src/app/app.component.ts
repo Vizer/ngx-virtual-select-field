@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { JsonPipe } from '@angular/common';
 import {
   VIRTUAL_SELECT,
@@ -21,6 +22,7 @@ import { NxWelcomeComponent } from './nx-welcome.component';
     MatInputModule,
     ReactiveFormsModule,
     JsonPipe,
+    MatSelectModule,
   ],
   selector: 'angular-material-virtual-select-root',
   templateUrl: './app.component.html',
@@ -29,7 +31,17 @@ import { NxWelcomeComponent } from './nx-welcome.component';
 export class AppComponent {
   title = 'angular-material-virtual-select';
 
-  multiselectValue: number[] = [1, 9, 76];
+  singleValue: number | null = null;
+
+  multiselectValue: number[] | null = null;
+
+  singleValueWithSelected: number = 16;
+
+  multiselectValueWithDefault: number[] = [1, 9, 76];
+
+
+  materialSingleSelect: number | null = null;
+  materialMultiSingleSelect: number[] | null = null;
 
   options: VirtualSelectFieldOptionModel<number>[] = new Array(100000)
     .fill(null)
@@ -40,11 +52,15 @@ export class AppComponent {
     }));
 
   form: FormGroup;
+  optionsWithNull: (VirtualSelectFieldOptionModel<null> | VirtualSelectFieldOptionModel<number>)[] = [{
+    value: null,
+    label: 'Null',
+  }, ...this.options];
 
   constructor(formBuilder: FormBuilder) {
     this.form = formBuilder.group({
-      multiselect: [[3,2], Validators.required],
-      singleselect: [[2], Validators.required],
+      multiselect: [[2,3,4], Validators.required],
+      singleselect: [2, Validators.required],
     });
   }
 }

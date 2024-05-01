@@ -3,11 +3,17 @@
   flex-direction: column;
 }
 
-.field {
-  width: 50%;
+.field-container {
+  display: flex;
+  flex-direction: row;
+
+  .field {
+    width: 50%;
+  }
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
+  width: 50%;
 }
