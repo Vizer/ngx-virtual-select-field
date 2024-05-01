@@ -43,7 +43,7 @@ describe('VirtualSelectFieldComponent', () => {
 
   describe('as a control value accessor', () => {
     it('should bind to form control', async () => {
-      const expectedValue = ['foo'];
+      const expectedValue = 'foo';
 
       const result = await render(
         `
