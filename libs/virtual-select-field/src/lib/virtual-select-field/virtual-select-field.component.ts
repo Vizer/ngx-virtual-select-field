@@ -109,13 +109,12 @@ const KEY_A_CODE = 'KeyA';
     '(keydown)': 'onKeyDown($event)',
   },
 })
-// TODO: implement single value typings
 export class VirtualSelectFieldComponent<TValue>
   implements
     OnInit,
     OnDestroy,
     AfterContentInit,
-    MatFormFieldControl<TValue[]>,
+    MatFormFieldControl<TValue[] | TValue>,
     ControlValueAccessor,
     VirtualSelectFieldOptionParent
 {
@@ -141,7 +140,8 @@ export class VirtualSelectFieldComponent<TValue>
   typeaheadDebounceInterval: number = 100;
 
   @Output()
-  valueChange: EventEmitter<TValue[]> = new EventEmitter<TValue[]>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  valueChange = new EventEmitter<any>();
 
   @ViewChild(CdkVirtualScrollViewport, { static: false })
   cdkVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -179,7 +179,7 @@ export class VirtualSelectFieldComponent<TValue>
   private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
   private _stateChanges = new Subject<void>();
 
-  private _onChange: (value: TValue[]) => void = () => void 0;
+  private _onChange: (value: TValue[] | TValue) => void = () => void 0;
   private _onTouched: () => void = () => void 0;
 
   private _value: TValue[] = [];
@@ -255,12 +255,18 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   @Input()
-  set value(value: TValue[]) {
+  set value(value: TValue[] | TValue | null) {
     if (this.value === value) {
       return;
     }
 
-    this._value = value ? value : [];
+    value = value ? value : [];
+
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+
+    this._value = value;
 
     this._selectionModel?.setSelection(
       ...this._value.map(
@@ -271,9 +277,12 @@ export class VirtualSelectFieldComponent<TValue>
     this._stateChanges.next();
   }
 
-  get value() {
-    // TODO: migrate to selectionModel
-    return this._value;
+  get value(): TValue[] | TValue {
+    if (this.multiple) {
+      return this._value;
+    } else {
+      return this._value[0];
+    }
   }
 
   @Input()
@@ -445,7 +454,7 @@ export class VirtualSelectFieldComponent<TValue>
     this.value = value;
   }
 
-  registerOnChange(fn: (value: TValue[]) => void) {
+  registerOnChange(fn: (value: TValue[] | TValue) => void) {
     this._onChange = fn;
   }
 
@@ -640,8 +649,8 @@ export class VirtualSelectFieldComponent<TValue>
   protected emitValue(): void {
     this._value = this._selectionModel.selected.map((option) => option.value);
 
-    this.valueChange.emit(this._value);
-    this._onChange?.(this._value);
+    this.valueChange.emit(this.value);
+    this._onChange?.(this.value);
   }
 
   protected toggle(): void {
@@ -664,7 +673,7 @@ export class VirtualSelectFieldComponent<TValue>
   protected close() {
     this.panelOpen.set(false);
     this._touched = true;
-    this._onTouched()
+    this._onTouched();
     this._stateChanges.next();
   }
 
