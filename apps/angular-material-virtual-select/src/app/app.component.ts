@@ -52,6 +52,7 @@ export class AppComponent {
     }));
 
   form: FormGroup;
+  matForm: FormGroup;
   optionsWithNull: (VirtualSelectFieldOptionModel<null> | VirtualSelectFieldOptionModel<number>)[] = [{
     value: null,
     label: 'Null',
@@ -59,6 +60,11 @@ export class AppComponent {
 
   constructor(formBuilder: FormBuilder) {
     this.form = formBuilder.group({
+      multiselect: [[2,3,4], Validators.required],
+      singleselect: [2, Validators.required],
+    });
+
+    this.matForm = formBuilder.group({
       multiselect: [[2,3,4], Validators.required],
       singleselect: [2, Validators.required],
     });

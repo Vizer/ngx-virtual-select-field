@@ -79,7 +79,7 @@
       >
     </lib-virtual-select-field>
   </mat-form-field>
-  {{ multiselectValue | json}}
+  {{ multiselectValue | json }}
 </div>
 
 <div class="field-container">
@@ -139,7 +139,6 @@
   </mat-form-field>
 </form>
 
-
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Nulled Example</mat-label>
@@ -164,7 +163,6 @@
   <mat-form-field class="field">
     <mat-label>Mat Single Select Example</mat-label>
     <mat-select [(value)]="materialSingleSelect">
-
       @for (item of options.slice(0,100); track $index) {
       <mat-option [value]="item.value">{{ item.label }}</mat-option>
       }
@@ -177,8 +175,6 @@
   <mat-form-field class="field">
     <mat-label>Mat Multiple Select Example</mat-label>
     <mat-select [(value)]="materialMultiSingleSelect" multiple>
-
-
       @for (item of options.slice(0,100); track $index) {
       <mat-option [value]="item.value">{{ item.label }}</mat-option>
       }
@@ -191,10 +187,24 @@
   <mat-form-field class="field">
     <mat-label>Disabled Mat Multiple Select Example</mat-label>
     <mat-select disabled [value]="[2]" multiple>
-
       @for (item of options.slice(0,100); track $index) {
       <mat-option [value]="item.value">{{ item.label }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
 </div>
+
+<form [formGroup]="matForm" class="form-container">
+  <mat-form-field class="field">
+    <mat-label>Mat Form Virtual Example</mat-label>
+    <mat-select
+      placeholder="virtual select"
+      formControlName="multiselect"
+      multiple
+    >
+      @for (item of options.slice(0,100); track $index) {
+      <mat-option [value]="item.value">{{ item.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</form>
