@@ -3,11 +3,15 @@
 
 /* #region Variables */
 
+$noop-animation: '_mat-animation-noopable';
+$container-class: 'mat-mdc-form-field';
+$focused-class: 'mat-focused';
+
 $name-prefix: 'lib-virtual-select-field';
 
 :host {
   --#{$name-prefix}-trigger-text-color: inherit;
-  --#{$name-prefix}-trigger-text-color--disabled:  grey;
+  --#{$name-prefix}-trigger-text-color--disabled: grey;
   --#{$name-prefix}-trigger-font-family: inherit;
   --#{$name-prefix}-trigger-line-height: inherit;
   --#{$name-prefix}-trigger-font-size: inherit;
@@ -20,9 +24,9 @@ $name-prefix: 'lib-virtual-select-field';
 
   --#{$name-prefix}-arrow-size: 5px;
   --#{$name-prefix}-arrow-color--enabled: inherit;
-  --#{$name-prefix}-arrow-color--focused: inherit;
-  --#{$name-prefix}-arrow-color--invalid: inherit;
-  --#{$name-prefix}-arrow-color--disabled: inherit;
+  --#{$name-prefix}-arrow-color--focused: blue;
+  --#{$name-prefix}-arrow-color--invalid: red;
+  --#{$name-prefix}-arrow-color--disabled: grey;
 }
 
 :host {
@@ -67,7 +71,7 @@ $name-prefix: 'lib-virtual-select-field';
   transition: var(--#{$name-prefix}-placeholder-transition);
   color: var(--#{$name-prefix}-placeholder-text-color);
 
-  ._mat-animation-noopable & {
+  .#{$noop-animation} & {
     transition: none;
   }
 
@@ -93,15 +97,15 @@ $name-prefix: 'lib-virtual-select-field';
 
   color: var(--#{$name-prefix}-arrow-color--enabled);
 
-  .mat-mdc-form-field.mat-focused & {
-    color: var(--#{$name-prefix}-arrow-color--focused);
-  }
-
-  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-invalid & {
+  :host-context(.#{$name-prefix}-invalid) & {
     color: var(--#{$name-prefix}-arrow-color--invalid);
   }
 
-  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled & {
+  :host-context(.#{$focused-class}):not(.#{$name-prefix}-invalid) & {
+    color: var(--#{$name-prefix}-arrow-color--focused);
+  }
+
+  :host-context(.#{$name-prefix}-disabled) & {
     color: var(--#{$name-prefix}-arrow-color--disabled);
   }
 
@@ -117,7 +121,7 @@ $name-prefix: 'lib-virtual-select-field';
       // background for SVGs so we have to fall back to `CanvasText`.
       fill: CanvasText;
 
-      .mat-mdc-select-disabled & {
+      :host-context(.#{$name-prefix}-disabled) & {
         fill: GrayText;
       }
     }

@@ -107,7 +107,9 @@ const KEY_A_CODE = 'KeyA';
   ],
   host: {
     '(keydown)': 'onKeyDown($event)',
+    'class': 'lib-virtual-select-field',
     '[class.lib-virtual-select-field-disabled]': 'disabled',
+    '[class.lib-virtual-select-field-invalid]': 'errorState',
   },
 })
 export class VirtualSelectFieldComponent<TValue>
