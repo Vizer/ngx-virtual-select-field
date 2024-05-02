@@ -1,14 +1,14 @@
 <div
-  class="lib-virtual-select-trigger"
+  class="lib-virtual-select-field-trigger"
   (click)="toggle()"
   cdk-overlay-origin
   #fallbackOverlayOrigin="cdkOverlayOrigin"
   #trigger
 >
   <!-- [attr.id]="_valueId" -->
-  <div class="lib-virtual-select-value">
+  <div class="lib-virtual-select-field-value">
     @if (empty) {
-    <span class="lib-select-placeholder">{{ placeholder }}</span>
+    <span class="lib-virtual-select-field-placeholder">{{ placeholder }}</span>
     } @else {
     <span>
       @if (customTrigger) {
@@ -20,8 +20,8 @@
     }
   </div>
 
-  <div class="lib-virtual-select-arrow-wrapper">
-    <div class="lib-select-arrow">
+  <div class="lib-virtual-select-field-arrow-wrapper">
+    <div class="lib-virtual-select-field-arrow">
       <!-- Use an inline SVG, because it works better than a CSS triangle in high contrast mode. -->
       <svg
         viewBox="0 0 24 24"

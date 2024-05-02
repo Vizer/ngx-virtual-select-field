@@ -332,7 +332,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   // NOTE: material components use class mat-form-field-hide-placeholder
-  @HostBinding('class.lib-virtual-select-hide-placeholder')
+  @HostBinding('class.lib-virtual-select-field-hide-placeholder')
   get hidePlaceholder() {
     return !this.focused || !this.empty;
   }

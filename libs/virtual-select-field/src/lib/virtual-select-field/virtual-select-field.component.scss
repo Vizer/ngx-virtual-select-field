@@ -1,70 +1,77 @@
 @use 'sass:math';
 @use '@angular/cdk';
-// @use '@material/typography/typography' as mdc-typography;
-@use '@angular/material/core/style/elevation';
-@use '@angular/material/core/style/vendor-prefixes';
 @use '@angular/material/core/style/variables';
-@use '@angular/material/core/tokens/token-utils';
-@use '@angular/material/core/tokens/m2/mat/select' as tokens-mat-select;
 
-:host {
-  --lib-select-arrow-size: 5px;
 
-  outline: none;
+$name-prefix: 'lib-virtual-select-field';
 
-  @include token-utils.use-tokens(
-    tokens-mat-select.$prefix,
-    tokens-mat-select.get-token-slots()
-  ) {
-    // @include mdc-typography.smooth-font();
-    @include token-utils.create-token-slot(color, enabled-trigger-text-color);
-    @include token-utils.create-token-slot(font-family, trigger-text-font);
-    @include token-utils.create-token-slot(
-      line-height,
-      trigger-text-line-height
-    );
-    @include token-utils.create-token-slot(font-size, trigger-text-size);
-    @include token-utils.create-token-slot(font-weight, trigger-text-weight);
-    @include token-utils.create-token-slot(
-      letter-spacing,
-      trigger-text-tracking
-    );
-  }
+:root {
+  --#{$name-prefix}-trigger-text-color: inherit;
+  --#{$name-prefix}-trigger-text-color--disabled: var(
+    --#{$name-prefix}-trigger-color
+  );
+  --#{$name-prefix}-trigger-font-family: inherit;
+  --#{$name-prefix}-trigger-line-height: inherit;
+  --#{$name-prefix}-trigger-font-size: inherit;
+  --#{$name-prefix}-trigger-font-weight: inherit;
+  --#{$name-prefix}-trigger-letter-spacing: inherit;
+
+  --#{$name-prefix}-placeholder-text-color: inherit;
+  --#{$name-prefix}-placeholder-transition: color
+    variables.$swift-ease-out-duration
+    math.div(variables.$swift-ease-out-duration, 3)
+    variables.$swift-ease-out-timing-function;
+
+  --#{$name-prefix}-arrow-size: 5px;
+  --#{$name-prefix}-arrow-color--enabled: inherit;
+  --#{$name-prefix}-arrow-color--focused: inherit;
+  --#{$name-prefix}-arrow-color--invalid: inherit;
+  --#{$name-prefix}-arrow-color--disabled: inherit;
 }
 
-.lib-virtual-select-trigger {
+:host {
+  color: var(--#{$name-prefix}-trigger-text-color);
+  font-family: var(--#{$name-prefix}-trigger-font-family);
+  line-height: var(--#{$name-prefix}-trigger-line-height);
+  font-size: var(--#{$name-prefix}-trigger-font-size);
+  font-weight: var(--#{$name-prefix}-trigger-font-weight);
+  letter-spacing: var(--#{$name-prefix}-trigger-letter-spacing);
+
+  outline: none;
+}
+
+.#{$name-prefix}-trigger {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
   width: 100%;
+
+  .#{$name-prefix}-disabled & {
+    cursor: default;
+    color: var(--#{$name-prefix}-trigger-text-color--disabled);
+  }
 }
 
-.lib-virtual-select-value {
+.#{$name-prefix}-value {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
 }
 
-.lib-select-placeholder {
+.#{$name-prefix}-placeholder {
   // Delay the transition until the label has animated about a third of the way through, in
   // order to prevent the placeholder from overlapping for a split second.
-  transition: color variables.$swift-ease-out-duration
-    math.div(variables.$swift-ease-out-duration, 3)
-    variables.$swift-ease-out-timing-function;
-
-  @include token-utils.use-tokens(
-    tokens-mat-select.$prefix,
-    tokens-mat-select.get-token-slots()
-  ) {
-    @include token-utils.create-token-slot(color, placeholder-text-color);
-  }
+  transition: var(--#{$name-prefix}-placeholder-transition);
+  color: var(--#{$name-prefix}-placeholder-text-color);
 
   ._mat-animation-noopable & {
     transition: none;
   }
 
-  :host-context(.lib-virtual-select-hide-placeholder) & {
+  :host-context(.#{$name-prefix}-hide-placeholder) & {
     color: transparent;
 
     // Overwrite browser specific CSS properties that can overwrite the `color` property.
@@ -79,13 +86,24 @@
   }
 }
 
-.lib-virtual-select-field {
+.#{$name-prefix} {
   &-panel {
-    --lib-virtual-select-field-item-height: 48px;
-    background: black;
-    color: white;
+    --#{$name-prefix}-panel-visible-items: 8;
+    --#{$name-prefix}-panel-background: black;
+    --#{$name-prefix}-panel-box-shadow: none;
+    --#{$name-prefix}-panel-option-height: 48px;
+
     width: 100%;
-    height: calc(var(--lib-virtual-select-field-item-height) * 8);
+    height: calc(
+      var(--#{$name-prefix}-panel-option-height) *
+        var(--#{$name-prefix}-panel-visible-items)
+    );
+    background: var(--#{$name-prefix}-panel-background);
+    box-shadow: var(--#{$name-prefix}-panel-box-shadow);
+
+    @include cdk.high-contrast(active, off) {
+      outline: solid 1px;
+    }
   }
 
   &-list-wrapper {
@@ -94,7 +112,7 @@
   }
 }
 
-.lib-virtual-select-arrow-wrapper {
+.#{$name-prefix}-arrow-wrapper {
   height: 24px;
   flex-shrink: 0;
   display: inline-flex;
@@ -105,28 +123,23 @@
   }
 }
 
-.lib-select-arrow {
-  width: calc(var(--lib-select-arrow-size) * 2);
-  height: var(--lib-select-arrow-size);
+.#{$name-prefix}-arrow {
+  width: calc(var(--#{$name-prefix}-arrow-size) * 2);
+  height: var(--#{$name-prefix}-arrow-size);
   position: relative;
 
-  @include token-utils.use-tokens(
-    tokens-mat-select.$prefix,
-    tokens-mat-select.get-token-slots()
-  ) {
-    @include token-utils.create-token-slot(color, enabled-arrow-color);
+  color: var(--#{$name-prefix}-arrow-color--enabled);
 
-    .mat-mdc-form-field.mat-focused & {
-      @include token-utils.create-token-slot(color, focused-arrow-color);
-    }
+  .mat-mdc-form-field.mat-focused & {
+    color: var(--#{$name-prefix}-arrow-color--focused);
+  }
 
-    .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-invalid & {
-      @include token-utils.create-token-slot(color, invalid-arrow-color);
-    }
+  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-invalid & {
+    color: var(--#{$name-prefix}-arrow-color--invalid);
+  }
 
-    .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled & {
-      @include token-utils.create-token-slot(color, disabled-arrow-color);
-    }
+  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled & {
+    color: var(--#{$name-prefix}-arrow-color--disabled);
   }
 
   svg {
