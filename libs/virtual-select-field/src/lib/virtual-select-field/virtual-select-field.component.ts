@@ -107,6 +107,7 @@ const KEY_A_CODE = 'KeyA';
   ],
   host: {
     '(keydown)': 'onKeyDown($event)',
+    '[class.lib-virtual-select-field-disabled]': 'disabled',
   },
 })
 export class VirtualSelectFieldComponent<TValue>
@@ -233,6 +234,7 @@ export class VirtualSelectFieldComponent<TValue>
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
+      this._disabled = this.ngControl.disabled ?? false;
     }
 
     // NOTE: View port ruler change stream runs outside the zone.
@@ -343,10 +345,6 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   ngOnInit() {
-    // TODO: mb move to constructor
-    // TODO: mb use disabled property instead of false
-    this._disabled = this.ngControl?.disabled ?? false;
-
     // TODO: consider using this._selectionModel.changed
     this._selectionModel = new SelectionModel<
       VirtualSelectFieldOptionModel<TValue>
@@ -396,9 +394,6 @@ export class VirtualSelectFieldComponent<TValue>
         )
       )
       .subscribe();
-
-    // TODO: mb merge subscriptions
-    // TODO: consider other options for receive updates from optionFor directive
   }
 
   private updateOptionSelection(

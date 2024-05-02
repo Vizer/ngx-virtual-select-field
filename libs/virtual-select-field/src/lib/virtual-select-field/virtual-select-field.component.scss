@@ -7,9 +7,7 @@ $name-prefix: 'lib-virtual-select-field';
 
 :host {
   --#{$name-prefix}-trigger-text-color: inherit;
-  --#{$name-prefix}-trigger-text-color--disabled: var(
-    --#{$name-prefix}-trigger-color
-  );
+  --#{$name-prefix}-trigger-text-color--disabled:  grey;
   --#{$name-prefix}-trigger-font-family: inherit;
   --#{$name-prefix}-trigger-line-height: inherit;
   --#{$name-prefix}-trigger-font-size: inherit;
@@ -50,7 +48,7 @@ $name-prefix: 'lib-virtual-select-field';
   box-sizing: border-box;
   width: 100%;
 
-  .#{$name-prefix}-disabled & {
+  :host-context(.#{$name-prefix}-disabled) & {
     cursor: default;
     color: var(--#{$name-prefix}-trigger-text-color--disabled);
   }
