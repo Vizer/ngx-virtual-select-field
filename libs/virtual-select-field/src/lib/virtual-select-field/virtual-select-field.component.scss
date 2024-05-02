@@ -10,26 +10,6 @@ $focused-class: 'mat-focused';
 $name-prefix: 'lib-virtual-select-field';
 
 :host {
-  --#{$name-prefix}-trigger-text-color: inherit;
-  --#{$name-prefix}-trigger-text-color--disabled: grey;
-  --#{$name-prefix}-trigger-font-family: inherit;
-  --#{$name-prefix}-trigger-line-height: inherit;
-  --#{$name-prefix}-trigger-font-size: inherit;
-  --#{$name-prefix}-trigger-font-weight: inherit;
-  --#{$name-prefix}-trigger-letter-spacing: inherit;
-
-  --#{$name-prefix}-placeholder-text-color: inherit;
-  --#{$name-prefix}-placeholder-transition: color 400ms math.div(400ms, 3)
-    cubic-bezier(0.25, 0.8, 0.25, 1);
-
-  --#{$name-prefix}-arrow-size: 5px;
-  --#{$name-prefix}-arrow-color--enabled: inherit;
-  --#{$name-prefix}-arrow-color--focused: blue;
-  --#{$name-prefix}-arrow-color--invalid: red;
-  --#{$name-prefix}-arrow-color--disabled: grey;
-}
-
-:host {
   color: var(--#{$name-prefix}-trigger-text-color);
   font-family: var(--#{$name-prefix}-trigger-font-family);
   line-height: var(--#{$name-prefix}-trigger-line-height);
@@ -145,11 +125,6 @@ $name-prefix: 'lib-virtual-select-field';
 
 .#{$name-prefix} {
   &-panel {
-    --#{$name-prefix}-panel-visible-items: 8;
-    --#{$name-prefix}-panel-background: black;
-    --#{$name-prefix}-panel-box-shadow: none;
-    --#{$name-prefix}-panel-option-height: 48px;
-
     width: 100%;
     height: calc(
       var(--#{$name-prefix}-panel-option-height) *

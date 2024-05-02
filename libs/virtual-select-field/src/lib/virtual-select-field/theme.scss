@@ -1,0 +1,64 @@
+@use 'sass:math';
+@use '@angular/material/core/style/variables';
+
+/* #region Variables */
+
+$name-prefix: 'lib-virtual-select-field';
+
+@mixin inherit-material-theme(){
+
+  :root {
+    --#{$name-prefix}-trigger-text-color: var(--mat-select-enabled-trigger-text-color);
+    --#{$name-prefix}-trigger-text-color--disabled: var(--mat-select-disabled-trigger-text-color);
+    --#{$name-prefix}-trigger-font-family: var(--mat-select-trigger-text-font);
+    --#{$name-prefix}-trigger-line-height: var(--mat-select-trigger-text-line-height);
+    --#{$name-prefix}-trigger-font-size: var(--mat-select-trigger-text-size);
+    --#{$name-prefix}-trigger-font-weight: var(--mat-select-trigger-text-weight);
+    --#{$name-prefix}-trigger-letter-spacing: var(--mat-select-trigger-text-tracking);
+
+    --#{$name-prefix}-placeholder-text-color: var(--mat-select-placeholder-text-color);
+    --#{$name-prefix}-placeholder-transition: color variables.$swift-ease-out-duration
+      math.div(variables.$swift-ease-out-duration, 3)
+      variables.$swift-ease-out-timing-function;
+
+    --#{$name-prefix}-arrow-size: 5px;
+    --#{$name-prefix}-arrow-color--enabled: var(--mat-select-enabled-arrow-color);
+    --#{$name-prefix}-arrow-color--focused: var(--mat-select-focused-arrow-color);
+    --#{$name-prefix}-arrow-color--invalid: var(--mat-select-invalid-arrow-color);
+    --#{$name-prefix}-arrow-color--disabled: var(--mat-select-disabled-arrow-color);
+
+    --#{$name-prefix}-panel-visible-items: 8;
+    --#{$name-prefix}-panel-background: var(--mat-select-panel-background-color);
+    --#{$name-prefix}-panel-box-shadow: var(--mat-select-container-elevation-shadow);
+    --#{$name-prefix}-panel-option-height: 48px;
+  }
+}
+
+@mixin create-default-theme() {
+  :root {
+  --#{$name-prefix}-trigger-text-color: inherit;
+  --#{$name-prefix}-trigger-text-color--disabled: grey;
+  --#{$name-prefix}-trigger-font-family: inherit;
+  --#{$name-prefix}-trigger-line-height: inherit;
+  --#{$name-prefix}-trigger-font-size: inherit;
+  --#{$name-prefix}-trigger-font-weight: inherit;
+  --#{$name-prefix}-trigger-letter-spacing: inherit;
+
+  --#{$name-prefix}-placeholder-text-color: inherit;
+  --#{$name-prefix}-placeholder-transition: color 400ms math.div(400ms, 3)
+    cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  --#{$name-prefix}-arrow-size: 5px;
+  --#{$name-prefix}-arrow-color--enabled: inherit;
+  --#{$name-prefix}-arrow-color--focused: blue;
+  --#{$name-prefix}-arrow-color--invalid: red;
+  --#{$name-prefix}-arrow-color--disabled: grey;
+
+  --#{$name-prefix}-panel-visible-items: 8;
+  --#{$name-prefix}-panel-background: black;
+  --#{$name-prefix}-panel-box-shadow: none;
+  --#{$name-prefix}-panel-option-height: 48px;
+}
+}
+
+/* #endregion */

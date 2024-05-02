@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'sass:math';
 @use '@angular/material' as mat;
+
+@use '../../../libs/virtual-select-field/src/lib/virtual-select-field/theme' as theme;
 
 @include mat.core();
 
@@ -30,3 +33,5 @@ body {
   color: white;
   font-family: Roboto, sans-serif;
 }
+
+@include theme.inherit-material-theme()
