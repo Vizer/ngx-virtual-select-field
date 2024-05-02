@@ -1,11 +1,11 @@
 @use 'sass:math';
 @use '@angular/cdk';
-@use '@angular/material/core/style/variables';
 
+/* #region Variables */
 
 $name-prefix: 'lib-virtual-select-field';
 
-:root {
+:host {
   --#{$name-prefix}-trigger-text-color: inherit;
   --#{$name-prefix}-trigger-text-color--disabled: var(
     --#{$name-prefix}-trigger-color
@@ -17,10 +17,8 @@ $name-prefix: 'lib-virtual-select-field';
   --#{$name-prefix}-trigger-letter-spacing: inherit;
 
   --#{$name-prefix}-placeholder-text-color: inherit;
-  --#{$name-prefix}-placeholder-transition: color
-    variables.$swift-ease-out-duration
-    math.div(variables.$swift-ease-out-duration, 3)
-    variables.$swift-ease-out-timing-function;
+  --#{$name-prefix}-placeholder-transition: color 400ms math.div(400ms, 3)
+    cubic-bezier(0.25, 0.8, 0.25, 1);
 
   --#{$name-prefix}-arrow-size: 5px;
   --#{$name-prefix}-arrow-color--enabled: inherit;
@@ -39,6 +37,10 @@ $name-prefix: 'lib-virtual-select-field';
 
   outline: none;
 }
+
+/* #endregion */
+
+/* #region Trigger */
 
 .#{$name-prefix}-trigger {
   display: inline-flex;
@@ -86,43 +88,6 @@ $name-prefix: 'lib-virtual-select-field';
   }
 }
 
-.#{$name-prefix} {
-  &-panel {
-    --#{$name-prefix}-panel-visible-items: 8;
-    --#{$name-prefix}-panel-background: black;
-    --#{$name-prefix}-panel-box-shadow: none;
-    --#{$name-prefix}-panel-option-height: 48px;
-
-    width: 100%;
-    height: calc(
-      var(--#{$name-prefix}-panel-option-height) *
-        var(--#{$name-prefix}-panel-visible-items)
-    );
-    background: var(--#{$name-prefix}-panel-background);
-    box-shadow: var(--#{$name-prefix}-panel-box-shadow);
-
-    @include cdk.high-contrast(active, off) {
-      outline: solid 1px;
-    }
-  }
-
-  &-list-wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.#{$name-prefix}-arrow-wrapper {
-  height: 24px;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-
-  :host-context(.mat-form-field-appearance-fill) & {
-    transform: translateY(-8px);
-  }
-}
-
 .#{$name-prefix}-arrow {
   width: calc(var(--#{$name-prefix}-arrow-size) * 2);
   height: var(--#{$name-prefix}-arrow-size);
@@ -160,3 +125,46 @@ $name-prefix: 'lib-virtual-select-field';
     }
   }
 }
+
+.#{$name-prefix}-arrow-wrapper {
+  height: 24px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+
+  :host-context(.mat-form-field-appearance-fill) & {
+    transform: translateY(-8px);
+  }
+}
+
+/* #endregion */
+
+/* #region Panel */
+
+.#{$name-prefix} {
+  &-panel {
+    --#{$name-prefix}-panel-visible-items: 8;
+    --#{$name-prefix}-panel-background: black;
+    --#{$name-prefix}-panel-box-shadow: none;
+    --#{$name-prefix}-panel-option-height: 48px;
+
+    width: 100%;
+    height: calc(
+      var(--#{$name-prefix}-panel-option-height) *
+        var(--#{$name-prefix}-panel-visible-items)
+    );
+    background: var(--#{$name-prefix}-panel-background);
+    box-shadow: var(--#{$name-prefix}-panel-box-shadow);
+
+    @include cdk.high-contrast(active, off) {
+      outline: solid 1px;
+    }
+  }
+
+  &-list-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* #endregion */
