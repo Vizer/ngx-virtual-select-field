@@ -1,55 +1,53 @@
+$name-prefix: 'lib-virtual-select-field-option';
+
 :host {
-  --lib-virtual-select-field-option-selected-state-label-text-color: var(
+  --#{$name-prefix}-gap: 8px;
+  --#{$name-prefix}-padding: 0 16px;
+  --#{$name-prefix}-background-color--active: #383838;
+
+  --#{$name-prefix}-selected-state-label-text-color: var(
     --mat-option-selected-state-label-text-color,
     inherit
   );
 
-  --lib-virtual-select-field-option-item-height: 48px;
-  --lib-virtual-select-field-option-active-background-color: #383838;
-  --lib-virtual-select-field-option-hover-background-color: #515151;
-  --lib-virtual-select-field-option-selected-background-color: #202020;
-  --lib-virtual-select-field-option-disabled-state-opacity: 0.5;
+  --#{$name-prefix}-item-height: 48px;
+  --#{$name-prefix}-background-color--active: #383838;
+  --#{$name-prefix}-background-color--hover: #515151;
+  --#{$name-prefix}-background-color--selected: #202020;
+  --#{$name-prefix}-disabled-state-opacity: 0.5;
 
-  display: inline-flex;
-  flex-direction: row;
-  gap: 8px;
-  height: var(--lib-virtual-select-field-option-item-height);
-  line-height: var(--lib-virtual-select-field-option-item-height);
-  padding: 0 16px;
   cursor: pointer;
   position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  gap: var(--#{$name-prefix}-gap);
+  padding: var(--#{$name-prefix}-padding);
+  height: var(--#{$name-prefix}-item-height);
+  line-height: var(--#{$name-prefix}-item-height);
 
-  &.lib-virtual-select-field-option {
+  &.#{$name-prefix} {
     display: flex;
     align-items: center;
+    box-sizing: border-box;
     height: 100%;
     width: 100%;
-    box-sizing: border-box;
 
     &--active {
-      background-color: var(
-        --lib-virtual-select-field-option-active-background-color
-      );
+      background-color: var(--#{$name-prefix}-background-color--active);
     }
 
-    &--selected:not(.lib-virtual-select-field-option--multiple) {
-      background-color: var(
-        --lib-virtual-select-field-option-selected-background-color
-      );
-      color: var(
-        --lib-virtual-select-field-option-selected-state-label-text-color
-      );
+    &--selected:not(.#{$name-prefix}--multiple) {
+      background-color: var(--#{$name-prefix}-background-color--selected);
+      color: var(--#{$name-prefix}-selected-state-label-text-color);
     }
 
     &--disabled {
       pointer-events: none;
-      opacity: var(--lib-virtual-select-field-option-disabled-state-opacity);
+      opacity: var(--#{$name-prefix}-disabled-state-opacity);
     }
 
     &:hover {
-      background-color: var(
-        --lib-virtual-select-field-option-hover-background-color
-      );
+      background-color: var(--#{$name-prefix}-background-color--hover);
     }
 
     & &__label {
