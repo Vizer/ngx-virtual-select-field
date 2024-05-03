@@ -38,3 +38,14 @@ Features:
       </lib-virtual-select-field>
     </mat-form-field>
     ```
+1. Include theme
+    ```scss
+    @use '{insert package name here}/theme' as theme;
+
+
+    @include theme.inherit-material-theme(); // this will inherit css variables from material theme
+
+    // or
+
+    @include theme.create-default-theme(); // this will create default dark theme
+    ```
