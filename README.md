@@ -32,7 +32,7 @@ Features:
     <mat-form-field>
       <mat-label>Virtual Select Field Example</mat-label>
       <ngx-virtual-select-field [value]="value" (valueChange)="value = $event">
-        <ngx-virtual-select-field-option *libVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
+        <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
           {{ option.label }}
         </ngx-virtual-select-field-option>
       </ngx-virtual-select-field>

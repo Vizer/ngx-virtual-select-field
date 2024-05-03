@@ -3,12 +3,12 @@ import { BehaviorSubject } from 'rxjs';
 import { VirtualSelectFieldOptionModel } from './virtual-select-field-option-for.models';
 
 @Directive({
-  selector: '[libVirtualSelectFieldOptionFor]',
+  selector: '[ngxVirtualSelectFieldOptionFor]',
   standalone: true,
 })
 export class VirtualSelectFieldOptionForDirective<TValue> {
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('libVirtualSelectFieldOptionForOf')
+  @Input('ngxVirtualSelectFieldOptionForOf')
   set options(options: VirtualSelectFieldOptionModel<TValue>[]) {
     this.options$.next(options);
   }

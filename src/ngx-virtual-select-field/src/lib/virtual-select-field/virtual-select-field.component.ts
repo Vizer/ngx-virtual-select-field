@@ -366,7 +366,7 @@ export class VirtualSelectFieldComponent<TValue>
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
         startWith(null),
-        // withLatestFrom(this.optionFor.options$),
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         map((_selected) =>
           this._selectionModel.selected
             .map((option) => option?.label ?? '')

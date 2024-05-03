@@ -16,7 +16,7 @@ describe('VirtualSelectFieldComponent', () => {
           <mat-label>Test Field</mat-label>
           <ngx-virtual-select-field [placeholder]="placeholder">
             <ngx-virtual-select-field-option
-              *libVirtualSelectFieldOptionFor="let option of options"
+              *ngxVirtualSelectFieldOptionFor="let option of options"
               [value]="option.value"
             >
               {{ option.label }}
@@ -49,7 +49,7 @@ describe('VirtualSelectFieldComponent', () => {
         `
           <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder">
             <ngx-virtual-select-field-option
-              *libVirtualSelectFieldOptionFor="let option of options"
+              *ngxVirtualSelectFieldOptionFor="let option of options"
               [value]="option.value"
             >
               {{ option.label }}

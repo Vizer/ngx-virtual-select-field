@@ -6,7 +6,7 @@
       (valueChange)="singleValue = $event"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -26,7 +26,7 @@
       (valueChange)="singleValueWithSelected = $event"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -50,7 +50,7 @@
       </ngx-virtual-select-field-trigger>
 
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -71,7 +71,7 @@
       (valueChange)="multiselectValue = $event"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -92,7 +92,7 @@
       [value]="[2]"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -113,7 +113,7 @@
       multiple
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -129,7 +129,7 @@
       formControlName="singleselect"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of options"
+        *ngxVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
@@ -147,7 +147,7 @@
       (valueChange)="singleValue = $event"
     >
       <ngx-virtual-select-field-option
-        *libVirtualSelectFieldOptionFor="let option of optionsWithNull"
+        *ngxVirtualSelectFieldOptionFor="let option of optionsWithNull"
         [value]="option.value"
         [disabled]="option.disabled"
       >
