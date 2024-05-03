@@ -1,31 +1,16 @@
-$name-prefix: 'lib-virtual-select-field-option';
+$option-prefix: 'lib-virtual-select-field-option';
 
 :host {
-  --#{$name-prefix}-gap: 8px;
-  --#{$name-prefix}-padding: 0 16px;
-  --#{$name-prefix}-background-color--active: #383838;
-
-  --#{$name-prefix}-selected-state-label-text-color: var(
-    --mat-option-selected-state-label-text-color,
-    inherit
-  );
-
-  --#{$name-prefix}-item-height: 48px;
-  --#{$name-prefix}-background-color--active: #383838;
-  --#{$name-prefix}-background-color--hover: #515151;
-  --#{$name-prefix}-background-color--selected: #202020;
-  --#{$name-prefix}-disabled-state-opacity: 0.5;
-
   cursor: pointer;
   position: relative;
   display: inline-flex;
   flex-direction: row;
-  gap: var(--#{$name-prefix}-gap);
-  padding: var(--#{$name-prefix}-padding);
-  height: var(--#{$name-prefix}-item-height);
-  line-height: var(--#{$name-prefix}-item-height);
+  gap: var(--#{$option-prefix}-gap);
+  padding: var(--#{$option-prefix}-padding);
+  height: var(--#{$option-prefix}-item-height);
+  line-height: var(--#{$option-prefix}-item-height);
 
-  &.#{$name-prefix} {
+  &.#{$option-prefix} {
     display: flex;
     align-items: center;
     box-sizing: border-box;
@@ -33,21 +18,24 @@ $name-prefix: 'lib-virtual-select-field-option';
     width: 100%;
 
     &--active {
-      background-color: var(--#{$name-prefix}-background-color--active);
+      background-color: var(--#{$option-prefix}-background-color--active);
     }
 
-    &--selected:not(.#{$name-prefix}--multiple) {
-      background-color: var(--#{$name-prefix}-background-color--selected);
-      color: var(--#{$name-prefix}-selected-state-label-text-color);
+    &--selected {
+      color: var(--#{$option-prefix}-selected-state-label-text-color);
+
+      &:not(.#{$option-prefix}--multiple) {
+        background-color: var(--#{$option-prefix}-background-color--selected);
+      }
     }
 
     &--disabled {
       pointer-events: none;
-      opacity: var(--#{$name-prefix}-disabled-state-opacity);
+      opacity: var(--#{$option-prefix}-disabled-state-opacity);
     }
 
     &:hover {
-      background-color: var(--#{$name-prefix}-background-color--hover);
+      background-color: var(--#{$option-prefix}-background-color--hover);
     }
 
     & &__label {
