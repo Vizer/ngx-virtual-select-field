@@ -16,11 +16,11 @@ Features:
 
 1. Import bundle into your component
     ```typescript
-    import { LibVirtualSelectFieldBundle } from 'ngx-virtual-select-field';
+    import { NgxVirtualSelectFieldBundle } from 'ngx-virtual-select-field';
     ...
     @Component({
       imports: [
-        LibVirtualSelectFieldBundle,
+        NgxVirtualSelectFieldBundle,
         ...
       ],
       ...
