@@ -6,8 +6,6 @@ import {
   ContentChildren,
   ElementRef,
   EventEmitter,
-  HostBinding,
-  HostListener,
   Inject,
   Input,
   NgZone,
@@ -106,8 +104,12 @@ const KEY_A_CODE = 'KeyA';
     },
   ],
   host: {
+    '[attr.tabindex]': 'tabIndex',
+    '(focus)': 'onFocusIn()',
+    '(blur)': 'onFocusOut()',
     '(keydown)': 'onKeyDown($event)',
     'class': 'lib-virtual-select-field',
+    '[class.lib-virtual-select-field-hide-placeholder]': 'hidePlaceholder',
     '[class.lib-virtual-select-field-disabled]': 'disabled',
     '[class.lib-virtual-select-field-invalid]': 'errorState',
   },
@@ -132,7 +134,6 @@ export class VirtualSelectFieldComponent<TValue>
   @Input({ transform: coerceBooleanProperty })
   multiple: boolean = false;
 
-  @HostBinding('attr.tabindex')
   @Input({
     // eslint-disable-next-line @angular-eslint/no-input-rename
     transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
@@ -258,8 +259,9 @@ export class VirtualSelectFieldComponent<TValue>
       return this.resolveOverlayWidth(this.preferredOverlayOrigin);
     });
 
-    this.inheritedColorTheme = this._parentFormField ? `mat-${this._parentFormField.color}` : '';
-
+    this.inheritedColorTheme = this._parentFormField
+      ? `mat-${this._parentFormField.color}`
+      : '';
   }
 
   @Input()
@@ -339,8 +341,6 @@ export class VirtualSelectFieldComponent<TValue>
     return !!this.ngControl?.invalid && this._touched;
   }
 
-  // NOTE: material components use class mat-form-field-hide-placeholder
-  @HostBinding('class.lib-virtual-select-field-hide-placeholder')
   get hidePlaceholder() {
     return !this.focused || !this.empty;
   }
@@ -499,7 +499,6 @@ export class VirtualSelectFieldComponent<TValue>
       });
   }
 
-  @HostListener('focus')
   protected onFocusIn() {
     if (!this.focused) {
       this._focused = true;
@@ -507,7 +506,6 @@ export class VirtualSelectFieldComponent<TValue>
     }
   }
 
-  @HostListener('blur')
   protected onFocusOut() {
     this._focused = false;
 
@@ -518,7 +516,6 @@ export class VirtualSelectFieldComponent<TValue>
     }
   }
 
-  // @HostListener('keydown', ['$event'])
   protected onKeyDown(event: KeyboardEvent) {
     if (this.disabled) {
       return;

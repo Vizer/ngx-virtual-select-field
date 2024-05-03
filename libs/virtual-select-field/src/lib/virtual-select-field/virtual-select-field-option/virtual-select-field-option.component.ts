@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   Inject,
-  HostListener,
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
@@ -33,6 +32,7 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'option',
+    '(click)': 'onClick()',
     '[class.lib-virtual-select-field-option--active]': 'active',
     '[class.lib-virtual-select-field-option--selected]': 'selected()',
     '[class.lib-virtual-select-field-option--multiple]': 'multiple',
@@ -108,7 +108,6 @@ export class VirtualSelectFieldOptionComponent<TValue>
     this.selected.set(true);
   }
 
-  @HostListener('click')
   protected onClick() {
     if (this.disabled) {
       return;
