@@ -176,6 +176,7 @@ export class VirtualSelectFieldComponent<TValue>
 
   ngControl: NgControl | null = inject(NgControl, { optional: true });
 
+  protected readonly inheritedColorTheme: string;
   protected readonly _destroy = new Subject<void>();
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
@@ -256,6 +257,9 @@ export class VirtualSelectFieldComponent<TValue>
 
       return this.resolveOverlayWidth(this.preferredOverlayOrigin);
     });
+
+    this.inheritedColorTheme = this._parentFormField ? `mat-${this._parentFormField.color}` : '';
+
   }
 
   @Input()

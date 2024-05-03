@@ -51,7 +51,6 @@
   (attach)="onOverlayAttached()"
 >
   <!--
-    class="mat-mdc-select-panel mdc-menu-surface mdc-menu-surface--open {{ _getPanelTheme() }}"
     [attr.id]="id + '-panel'"
     [attr.aria-multiselectable]="multiple"
     [attr.aria-label]="ariaLabel || null"
@@ -63,7 +62,7 @@
 
   <cdk-virtual-scroll-viewport
     role="listbox"
-    class="lib-virtual-select-field-panel"
+    class="lib-virtual-select-field-panel {{ inheritedColorTheme }}"
     itemSize="48"
     (scrolledIndexChange)="onScrolledIndexChange()"
   >
