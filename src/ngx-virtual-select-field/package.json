@@ -1,6 +1,22 @@
 {
   "name": "ngx-virtual-select-field",
   "version": "0.0.1",
+  "description": "Virtual Select Field for Angular Material",
+  "keywords": [
+    "angular",
+    "angular material",
+    "angular cdk",
+    "virtual scroll",
+    "material form field",
+    "select",
+    "dropdown",
+    "multiselect",
+    "single select"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": "^18.13.0 || >=20.9.0"
+  },
   "peerDependencies": {
     "@angular/common": "^17.0.0",
     "@angular/core": "^17.0.0",
