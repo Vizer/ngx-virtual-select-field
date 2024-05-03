@@ -202,6 +202,7 @@
       formControlName="multiselect"
       multiple
     >
+    <mat-option disabled [value]="-1">disabled</mat-option>
       @for (item of options.slice(0,100); track $index) {
       <mat-option [value]="item.value">{{ item.label }}</mat-option>
       }
