@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { JsonPipe } from '@angular/common';
 import {
-  VIRTUAL_SELECT,
+  LibVirtualSelectFieldBundle,
   VirtualSelectFieldOptionModel,
 } from '@angular-material-virtual-select/virtual-select-field';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,7 +17,7 @@ import { NxWelcomeComponent } from './nx-welcome.component';
   imports: [
     NxWelcomeComponent,
     RouterModule,
-    VIRTUAL_SELECT,
+    LibVirtualSelectFieldBundle,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
