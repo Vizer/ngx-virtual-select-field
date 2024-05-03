@@ -5,10 +5,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { JsonPipe } from '@angular/common';
 import {
-  LibVirtualSelectFieldBundle,
+  NgxVirtualSelectFieldBundle,
   VirtualSelectFieldOptionModel,
-} from '@angular-material-virtual-select/virtual-select-field';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+} from 'ngx-virtual-select-field';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { NxWelcomeComponent } from './nx-welcome.component';
 
@@ -17,7 +22,7 @@ import { NxWelcomeComponent } from './nx-welcome.component';
   imports: [
     NxWelcomeComponent,
     RouterModule,
-    LibVirtualSelectFieldBundle,
+    NgxVirtualSelectFieldBundle,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
@@ -39,7 +44,6 @@ export class AppComponent {
 
   multiselectValueWithDefault: number[] = [1, 9, 76];
 
-
   materialSingleSelect: number | null = null;
   materialMultiSingleSelect: number[] | null = null;
 
@@ -53,19 +57,25 @@ export class AppComponent {
 
   form: FormGroup;
   matForm: FormGroup;
-  optionsWithNull: (VirtualSelectFieldOptionModel<null> | VirtualSelectFieldOptionModel<number>)[] = [{
-    value: null,
-    label: 'Null',
-  }, ...this.options];
+  optionsWithNull: (
+    | VirtualSelectFieldOptionModel<null>
+    | VirtualSelectFieldOptionModel<number>
+  )[] = [
+    {
+      value: null,
+      label: 'Null',
+    },
+    ...this.options,
+  ];
 
   constructor(formBuilder: FormBuilder) {
     this.form = formBuilder.group({
-      multiselect: [[2,3,4], Validators.required],
+      multiselect: [[2, 3, 4], Validators.required],
       singleselect: [2, Validators.required],
     });
 
     this.matForm = formBuilder.group({
-      multiselect: [[2,3,4], Validators.required],
+      multiselect: [[2, 3, 4], Validators.required],
       singleselect: [2, Validators.required],
     });
   }

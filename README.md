@@ -16,7 +16,7 @@ Features:
 
 1. Import bundle into your component
     ```typescript
-    import { LibVirtualSelectFieldBundle } from '@angular-material-virtual-select/virtual-select-field';
+    import { LibVirtualSelectFieldBundle } from 'ngx-virtual-select-field';
     ...
     @Component({
       imports: [
@@ -40,7 +40,7 @@ Features:
     ```
 1. Include theme
     ```scss
-    @use '{insert package name here}/theme' as theme;
+    @use 'ngx-virtual-select-field/theme' as theme;
 
 
     @include theme.inherit-material-theme(); // this will inherit css variables from material theme
