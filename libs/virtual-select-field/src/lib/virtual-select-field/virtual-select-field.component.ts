@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ContentChild,
@@ -96,6 +97,7 @@ const KEY_A_CODE = 'KeyA';
   imports: [CommonModule, OverlayModule, ScrollingModule],
   templateUrl: './virtual-select-field.component.html',
   styleUrl: './virtual-select-field.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     { provide: MatFormFieldControl, useExisting: VirtualSelectFieldComponent },
     {
