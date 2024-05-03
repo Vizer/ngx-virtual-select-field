@@ -92,7 +92,7 @@ const SPACE_CODE = 'Space';
 const KEY_A_CODE = 'KeyA';
 
 @Component({
-  selector: 'lib-virtual-select-field',
+  selector: 'ngx-virtual-select-field',
   standalone: true,
   imports: [CommonModule, OverlayModule, ScrollingModule],
   templateUrl: './virtual-select-field.component.html',
@@ -110,10 +110,10 @@ const KEY_A_CODE = 'KeyA';
     '(focus)': 'onFocusIn()',
     '(blur)': 'onFocusOut()',
     '(keydown)': 'onKeyDown($event)',
-    'class': 'lib-virtual-select-field',
-    '[class.lib-virtual-select-field-hide-placeholder]': 'hidePlaceholder',
-    '[class.lib-virtual-select-field-disabled]': 'disabled',
-    '[class.lib-virtual-select-field-invalid]': 'errorState',
+    'class': 'ngx-virtual-select-field',
+    '[class.ngx-virtual-select-field-hide-placeholder]': 'hidePlaceholder',
+    '[class.ngx-virtual-select-field-disabled]': 'disabled',
+    '[class.ngx-virtual-select-field-invalid]': 'errorState',
   },
 })
 export class VirtualSelectFieldComponent<TValue>
@@ -165,8 +165,8 @@ export class VirtualSelectFieldComponent<TValue>
   optionsQuery: QueryList<VirtualSelectFieldOptionComponent<TValue>> | null =
     null;
 
-  readonly id = `lib-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
-  readonly controlType = 'lib-virtual-select-field';
+  readonly id = `ngx-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
+  readonly controlType = 'ngx-virtual-select-field';
   readonly POSITIONS = POSITIONS;
   readonly OVERLAY_PANEL_CLASS: string | string[] =
     this._defaultOptions?.overlayPanelClass || '';

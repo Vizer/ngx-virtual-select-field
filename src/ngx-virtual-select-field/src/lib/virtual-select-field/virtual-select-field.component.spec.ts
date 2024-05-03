@@ -14,14 +14,14 @@ describe('VirtualSelectFieldComponent', () => {
         `
         <mat-form-field>
           <mat-label>Test Field</mat-label>
-          <lib-virtual-select-field [placeholder]="placeholder">
-            <lib-virtual-select-field-option
+          <ngx-virtual-select-field [placeholder]="placeholder">
+            <ngx-virtual-select-field-option
               *libVirtualSelectFieldOptionFor="let option of options"
               [value]="option.value"
             >
               {{ option.label }}
-            </lib-virtual-select-field-option>
-          </lib-virtual-select-field>
+            </ngx-virtual-select-field-option>
+          </ngx-virtual-select-field>
         </mat-form-field>`,
         {
           componentProperties: {
@@ -47,13 +47,13 @@ describe('VirtualSelectFieldComponent', () => {
 
       const result = await render(
         `
-          <lib-virtual-select-field [formControl]="control" [placeholder]="placeholder">
-            <lib-virtual-select-field-option
+          <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder">
+            <ngx-virtual-select-field-option
               *libVirtualSelectFieldOptionFor="let option of options"
               [value]="option.value"
             >
               {{ option.label }}
-            </lib-virtual-select-field-option>
+            </ngx-virtual-select-field-option>
         `,
 
         {

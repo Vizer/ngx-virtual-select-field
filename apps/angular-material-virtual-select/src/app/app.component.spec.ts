@@ -10,13 +10,13 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  it('should render lib-virtual-select-field', () => {
+  it('should render ngx-virtual-select-field', () => {
     const fixture = TestBed.createComponent(AppComponent);
 
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('lib-virtual-select-field')).toBeDefined;
+    expect(compiled.querySelector('ngx-virtual-select-field')).toBeDefined;
   });
 
 });

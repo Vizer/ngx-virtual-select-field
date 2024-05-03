@@ -1,8 +1,8 @@
 @use 'sass:math';
 @use '@angular/material/core/style/variables';
 
-$name-prefix: 'lib-virtual-select-field';
-$option-prefix: 'lib-virtual-select-field-option';
+$name-prefix: 'ngx-virtual-select-field';
+$option-prefix: 'ngx-virtual-select-field-option';
 
 @mixin inherit-material-theme() {
   :root {

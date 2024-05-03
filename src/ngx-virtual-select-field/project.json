@@ -1,0 +1,44 @@
+{
+  "name": "ngx-virtual-select-field",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "src/ngx-virtual-select-field/src",
+  "prefix": "ngx",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "src/ngx-virtual-select-field/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "src/ngx-virtual-select-field/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "src/ngx-virtual-select-field/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "src/ngx-virtual-select-field/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "src/ngx-virtual-select-field/**/*.ts",
+          "src/ngx-virtual-select-field/**/*.html",
+          "src/ngx-virtual-select-field/package.json"
+        ]
+      }
+    }
+  }
+}

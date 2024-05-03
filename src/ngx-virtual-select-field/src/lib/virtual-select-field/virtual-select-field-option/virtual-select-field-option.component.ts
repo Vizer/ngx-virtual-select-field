@@ -24,7 +24,7 @@ import {
 import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
 
 @Component({
-  selector: 'lib-virtual-select-field-option',
+  selector: 'ngx-virtual-select-field-option',
   standalone: true,
   imports: [CommonModule, MatPseudoCheckboxModule, MatRippleModule],
   templateUrl: './virtual-select-field-option.component.html',
@@ -33,11 +33,11 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
   host: {
     role: 'option',
     '(click)': 'onClick()',
-    '[class.lib-virtual-select-field-option--active]': 'active',
-    '[class.lib-virtual-select-field-option--selected]': 'selected()',
-    '[class.lib-virtual-select-field-option--multiple]': 'multiple',
-    '[class.lib-virtual-select-field-option--disabled]': 'disabled',
-    class: 'lib-virtual-select-field-option',
+    '[class.ngx-virtual-select-field-option--active]': 'active',
+    '[class.ngx-virtual-select-field-option--selected]': 'selected()',
+    '[class.ngx-virtual-select-field-option--multiple]': 'multiple',
+    '[class.ngx-virtual-select-field-option--disabled]': 'disabled',
+    class: 'ngx-virtual-select-field-option',
   },
 })
 export class VirtualSelectFieldOptionComponent<TValue>

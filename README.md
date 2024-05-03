@@ -31,11 +31,11 @@ Features:
     ```html
     <mat-form-field>
       <mat-label>Virtual Select Field Example</mat-label>
-      <lib-virtual-select-field [value]="value" (valueChange)="value = $event">
-        <lib-virtual-select-field-option *libVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
+      <ngx-virtual-select-field [value]="value" (valueChange)="value = $event">
+        <ngx-virtual-select-field-option *libVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
           {{ option.label }}
-        </lib-virtual-select-field-option>
-      </lib-virtual-select-field>
+        </ngx-virtual-select-field-option>
+      </ngx-virtual-select-field>
     </mat-form-field>
     ```
 1. Include theme

@@ -7,7 +7,7 @@ export const VIRTUAL_SELECT_FIELD_TRIGGER =
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: 'lib-virtual-select-field-trigger',
+  selector: 'ngx-virtual-select-field-trigger',
   providers: [
     {
       provide: VIRTUAL_SELECT_FIELD_TRIGGER,

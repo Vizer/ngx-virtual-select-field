@@ -1,18 +1,18 @@
 <div
-  class="lib-virtual-select-field-trigger"
+  class="ngx-virtual-select-field-trigger"
   (click)="toggle()"
   cdk-overlay-origin
   #fallbackOverlayOrigin="cdkOverlayOrigin"
   #trigger
 >
   <!-- [attr.id]="_valueId" -->
-  <div class="lib-virtual-select-field-value">
+  <div class="ngx-virtual-select-field-value">
     @if (empty) {
-    <span class="lib-virtual-select-field-placeholder">{{ placeholder }}</span>
+    <span class="ngx-virtual-select-field-placeholder">{{ placeholder }}</span>
     } @else {
     <span>
       @if (customTrigger) {
-      <ng-content select="lib-virtual-select-field-trigger"></ng-content>
+      <ng-content select="ngx-virtual-select-field-trigger"></ng-content>
       } @else {
       <span>{{ triggerValue$ | async }}</span>
       }
@@ -20,8 +20,8 @@
     }
   </div>
 
-  <div class="lib-virtual-select-field-arrow-wrapper">
-    <div class="lib-virtual-select-field-arrow">
+  <div class="ngx-virtual-select-field-arrow-wrapper">
+    <div class="ngx-virtual-select-field-arrow">
       <!-- Use an inline SVG, because it works better than a CSS triangle in high contrast mode. -->
       <svg
         viewBox="0 0 24 24"
@@ -62,13 +62,13 @@
 
   <cdk-virtual-scroll-viewport
     role="listbox"
-    class="lib-virtual-select-field-panel {{ inheritedColorTheme }}"
+    class="ngx-virtual-select-field-panel {{ inheritedColorTheme }}"
     itemSize="48"
     (scrolledIndexChange)="onScrolledIndexChange()"
   >
     <div
       tabindex="-1"
-      class="lib-virtual-select-field-list-wrapper"
+      class="ngx-virtual-select-field-list-wrapper"
       (keydown)="onKeyDown($event)"
     >
       <ng-container

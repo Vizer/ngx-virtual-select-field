@@ -1,18 +1,18 @@
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       (valueChange)="singleValue = $event"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
   {{ singleValue }}
 </div>
@@ -20,19 +20,19 @@
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       [value]="singleValueWithSelected"
       (valueChange)="singleValueWithSelected = $event"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
   {{ singleValueWithSelected }}
 </div>
@@ -40,23 +40,23 @@
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Multiselect Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       multiple
       [(value)]="multiselectValueWithDefault"
     >
-      <lib-virtual-select-field-trigger>
+      <ngx-virtual-select-field-trigger>
         {{ multiselectValueWithDefault.length }} selected
-      </lib-virtual-select-field-trigger>
+      </ngx-virtual-select-field-trigger>
 
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
   {{ multiselectValueWithDefault }}
 </div>
@@ -64,20 +64,20 @@
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Multiselect Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       multiple
       [value]="multiselectValue"
       (valueChange)="multiselectValue = $event"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
   {{ multiselectValue | json }}
 </div>
@@ -85,20 +85,20 @@
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>disabled Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       multiple
       disabled
       [value]="[2]"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
 </div>
 
@@ -107,53 +107,53 @@
 <form [formGroup]="form" class="form-container">
   <mat-form-field class="field">
     <mat-label>Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       formControlName="multiselect"
       multiple
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
 
   <mat-form-field class="field">
     <mat-label>Virtual Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       formControlName="singleselect"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of options"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
 </form>
 
 <div class="field-container">
   <mat-form-field class="field">
     <mat-label>Nulled Example</mat-label>
-    <lib-virtual-select-field
+    <ngx-virtual-select-field
       placeholder="virtual select"
       (valueChange)="singleValue = $event"
     >
-      <lib-virtual-select-field-option
+      <ngx-virtual-select-field-option
         *libVirtualSelectFieldOptionFor="let option of optionsWithNull"
         [value]="option.value"
         [disabled]="option.disabled"
       >
-        {{ option.label }}</lib-virtual-select-field-option
+        {{ option.label }}</ngx-virtual-select-field-option
       >
-    </lib-virtual-select-field>
+    </ngx-virtual-select-field>
   </mat-form-field>
   {{ singleValue }}
 </div>

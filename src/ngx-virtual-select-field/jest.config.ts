@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'virtual-select-field',
+  displayName: 'ngx-virtual-select-field',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/virtual-select-field',
+  coverageDirectory: '../../coverage/src/ngx-virtual-select-field',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

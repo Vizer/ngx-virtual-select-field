@@ -7,7 +7,7 @@ $noop-animation: '_mat-animation-noopable';
 $container-class: 'mat-mdc-form-field';
 $focused-class: 'mat-focused';
 
-$name-prefix: 'lib-virtual-select-field';
+$name-prefix: 'ngx-virtual-select-field';
 
 :host {
   color: var(--#{$name-prefix}-trigger-text-color);
