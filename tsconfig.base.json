@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@angular-material-virtual-select/virtual-select-field": [
-        "libs/virtual-select-field/src/index.ts"
+        "src/virtual-select-field/src/index.ts"
       ]
     }
   },
