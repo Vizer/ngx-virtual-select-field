@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "test": "nx run-many --target=test --all"
+    "test": "nx run-many --target=test --all",
+    "build:ngx-virtual-select-field": "nx build ngx-virtual-select-field",
+    "publish:ngx-virtual-select-field": "cd dist/src/ngx-virtual-select-field && npm publish"
   },
   "private": true,
   "dependencies": {
