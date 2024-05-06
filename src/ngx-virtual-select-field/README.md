@@ -12,7 +12,7 @@ Features:
 - keyboard navigation and shortcuts
 - Theming trough css variables
 
-## Hot to use
+## How to use
 
 1. Import bundle into your component
     ```typescript
