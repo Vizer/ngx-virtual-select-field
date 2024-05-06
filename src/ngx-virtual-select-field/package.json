@@ -28,5 +28,10 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "exports": {
+    "./theme": {
+      "sass": "./theme/index.scss"
+    }
+  }
 }
