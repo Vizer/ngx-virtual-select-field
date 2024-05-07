@@ -22,4 +22,4 @@ export const NgxVirtualSelectFieldBundle = [
   VirtualSelectFieldOptionForDirective,
   VirtualSelectFieldTriggerDirective,
   VirtualSelectFieldOptionComponent,
-];
+] as const;
