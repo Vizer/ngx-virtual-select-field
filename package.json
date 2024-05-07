@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "test": "nx run-many --target=test --all",
-    "build:ngx-virtual-select-field": "nx build ngx-virtual-select-field",
+    "build:ngx-virtual-select-field": "nx run ngx-virtual-select-field:build:production",
     "publish:ngx-virtual-select-field": "cd dist/src/ngx-virtual-select-field && npm publish"
   },
   "private": true,
