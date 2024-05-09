@@ -2,7 +2,7 @@
 @use 'sass:math';
 @use '@angular/material' as mat;
 
-@use 'ngx-virtual-select-field/theme' as theme;
+@use '../../../src/ngx-virtual-select-field/theme' as theme;
 
 @include mat.core();
 
