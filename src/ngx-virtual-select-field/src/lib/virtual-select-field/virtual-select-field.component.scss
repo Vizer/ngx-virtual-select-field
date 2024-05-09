@@ -128,7 +128,7 @@ $name-prefix: 'ngx-virtual-select-field';
     width: 100%;
     height: calc(
       var(--#{$name-prefix}-panel-option-height) *
-        var(--#{$name-prefix}-panel-visible-items)
+        var(--#{$name-prefix}-panel-viewport-page-size)
     );
     background: var(--#{$name-prefix}-panel-background);
     box-shadow: var(--#{$name-prefix}-panel-box-shadow);

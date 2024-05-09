@@ -78,7 +78,7 @@ import {
   OPTION_HEIGHT,
   PANEL_WIDTH_AUTO,
   POSITIONS,
-  VIEWPORT_VISIBLE_ITEMS,
+  PANEL_VIEWPORT_PAGE_SIZE,
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
@@ -138,6 +138,13 @@ export class VirtualSelectFieldComponent<TValue>
       value == null ? OPTION_HEIGHT : numberAttribute(value),
   })
   optionHeight: number = this._defaultOptions?.optionHeight ?? OPTION_HEIGHT;
+
+  @Input({
+    transform: (value: unknown) =>
+      value == null ? PANEL_VIEWPORT_PAGE_SIZE : numberAttribute(value),
+  })
+  panelViewportPageSize: number =
+    this._defaultOptions?.panelViewportPageSize ?? PANEL_VIEWPORT_PAGE_SIZE;
 
   @Input({ transform: coerceBooleanProperty })
   multiple: boolean = false;
@@ -499,7 +506,7 @@ export class VirtualSelectFieldComponent<TValue>
             (option) => option === this._selectionModel.selected[0]
           );
 
-          targetIndex = targetIndex - VIEWPORT_VISIBLE_ITEMS / 2;
+          targetIndex = targetIndex - this.panelViewportPageSize / 2;
 
           this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
         }
@@ -759,7 +766,7 @@ export class VirtualSelectFieldComponent<TValue>
 
     // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
     const bottomScroll =
-      scrollTop + this.optionHeight * VIEWPORT_VISIBLE_ITEMS - 1;
+      scrollTop + this.optionHeight * this.panelViewportPageSize - 1;
     const targetScroll = this.optionHeight * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;

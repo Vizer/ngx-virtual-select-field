@@ -4,4 +4,6 @@ export interface VirtualSelectConfig {
   panelWidth?: string | number | null;
 
   optionHeight?: number;
+
+  panelViewportPageSize?: number;
 }
