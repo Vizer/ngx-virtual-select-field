@@ -8,7 +8,13 @@ $option-prefix: 'ngx-virtual-select-field-option';
   gap: var(--#{$option-prefix}-gap);
   padding: var(--#{$option-prefix}-padding);
   height: var(--#{$option-prefix}-item-height);
-  line-height: var(--#{$option-prefix}-item-height);
+  line-height: var(--#{$option-prefix}-line-height);
+
+  color: var(--#{$option-prefix}-color);
+  font-family: var(--#{$option-prefix}-font-family);
+  font-size: var(--#{$option-prefix}-font-size);
+  font-weight: var(--#{$option-prefix}-font-weight);
+  letter-spacing: var(--#{$option-prefix}-letter-spacing);
 
   &.#{$option-prefix} {
     display: flex;
