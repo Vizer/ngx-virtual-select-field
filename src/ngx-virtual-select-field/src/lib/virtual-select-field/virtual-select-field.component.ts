@@ -75,7 +75,7 @@ import {
 } from './virtual-select-field-option';
 
 import {
-  ITEM_SIZE,
+  OPTION_HEIGHT,
   PANEL_WIDTH_AUTO,
   POSITIONS,
   VIEWPORT_VISIBLE_ITEMS,
@@ -125,7 +125,6 @@ export class VirtualSelectFieldComponent<TValue>
     ControlValueAccessor,
     VirtualSelectFieldOptionParent
 {
-  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('aria-describedby')
   userAriaDescribedBy = '';
 
@@ -133,11 +132,16 @@ export class VirtualSelectFieldComponent<TValue>
   panelWidth: string | number | null =
     this._defaultOptions?.panelWidth ?? PANEL_WIDTH_AUTO;
 
+  @Input({
+    transform: (value: unknown) =>
+      value == null ? OPTION_HEIGHT : numberAttribute(value),
+  })
+  optionHeight: number = this._defaultOptions?.optionHeight ?? OPTION_HEIGHT;
+
   @Input({ transform: coerceBooleanProperty })
   multiple: boolean = false;
 
   @Input({
-    // eslint-disable-next-line @angular-eslint/no-input-rename
     transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
   })
   tabIndex: number = 0;
@@ -753,8 +757,9 @@ export class VirtualSelectFieldComponent<TValue>
       this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
 
     // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
-    const bottomScroll = scrollTop + ITEM_SIZE * VIEWPORT_VISIBLE_ITEMS - 1;
-    const targetScroll = ITEM_SIZE * targetIndex;
+    const bottomScroll =
+      scrollTop + this.optionHeight * VIEWPORT_VISIBLE_ITEMS - 1;
+    const targetScroll = this.optionHeight * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;
   }
