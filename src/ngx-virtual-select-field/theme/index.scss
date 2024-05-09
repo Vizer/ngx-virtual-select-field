@@ -54,6 +54,7 @@ $option-prefix: 'ngx-virtual-select-field-option';
       --mat-select-container-elevation-shadow
     );
     --#{$name-prefix}-panel-option-height: 48px;
+    --#{$name-prefix}-panel-border-radius: 4px;
   }
 
   :root {
@@ -82,6 +83,8 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$option-prefix}-padding: 0 16px;
     --#{$option-prefix}-item-height: 48px;
   }
+
+  @include overlay-position-styles();
 }
 
 @mixin create-default-theme() {
@@ -127,5 +130,25 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$option-prefix}-gap: 8px;
     --#{$option-prefix}-padding: 0 16px;
     --#{$option-prefix}-item-height: 48px;
+  }
+
+  @include overlay-position-styles();
+}
+
+@mixin overlay-position-styles() {
+  .#{$name-prefix} {
+    &-panel {
+      border-bottom-left-radius: var(--#{$name-prefix}-panel-border-radius);
+      border-bottom-right-radius: var(--#{$name-prefix}-panel-border-radius);
+    }
+
+    &-overlay--above {
+      .#{$name-prefix}-panel {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: var(--#{$name-prefix}-panel-border-radius);
+        border-top-right-radius: var(--#{$name-prefix}-panel-border-radius);
+      }
+    }
   }
 }

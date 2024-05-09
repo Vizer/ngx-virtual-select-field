@@ -21,14 +21,14 @@ export const POSITIONS: ConnectedPosition[] = [
     originY: 'top',
     overlayX: 'start',
     overlayY: 'bottom',
-    // panelClass: 'mat-mdc-select-panel-above',
+    panelClass: 'ngx-virtual-select-field-overlay--above',
   },
   {
     originX: 'end',
     originY: 'top',
     overlayX: 'end',
     overlayY: 'bottom',
-    // panelClass: 'mat-mdc-select-panel-above',
+    panelClass: 'ngx-virtual-select-field-overlay--above',
   },
 ];
 
