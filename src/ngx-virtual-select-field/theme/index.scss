@@ -70,7 +70,7 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$option-prefix}-background-color--active: var(
       --mat-option-focus-state-layer-color
     );
-    --#{$option-prefix}-background-color--hover: #var(
+    --#{$option-prefix}-background-color--hover: var(
       --mat-option-hover-state-layer-color
     );
     --#{$option-prefix}-background-color--selected: var(
