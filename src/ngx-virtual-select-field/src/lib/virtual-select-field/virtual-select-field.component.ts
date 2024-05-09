@@ -82,14 +82,15 @@ import {
   VIRTUAL_SELECT_CONFIG,
 } from './virtual-select-field.constants';
 import { VirtualSelectConfig } from './virtual-select-field.models';
-
-const ARROW_DOWN_KEY = 'ArrowDown';
-const ARROW_UP_KEY = 'ArrowUp';
-const ARROW_RIGHT_KEY = 'ArrowRight';
-const ARROW_LEFT_KEY = 'ArrowLeft';
-const ENTER_CODE = 'Enter';
-const SPACE_CODE = 'Space';
-const KEY_A_CODE = 'KeyA';
+import {
+  ARROW_DOWN_KEY,
+  ARROW_LEFT_KEY,
+  ARROW_RIGHT_KEY,
+  ARROW_UP_KEY,
+  ENTER_CODE,
+  KEY_A_CODE,
+  SPACE_CODE,
+} from './keycodes';
 
 @Component({
   selector: 'ngx-virtual-select-field',
@@ -110,7 +111,7 @@ const KEY_A_CODE = 'KeyA';
     '(focus)': 'onFocusIn()',
     '(blur)': 'onFocusOut()',
     '(keydown)': 'onKeyDown($event)',
-    'class': 'ngx-virtual-select-field',
+    class: 'ngx-virtual-select-field',
     '[class.ngx-virtual-select-field-hide-placeholder]': 'hidePlaceholder',
     '[class.ngx-virtual-select-field-disabled]': 'disabled',
     '[class.ngx-virtual-select-field-invalid]': 'errorState',
