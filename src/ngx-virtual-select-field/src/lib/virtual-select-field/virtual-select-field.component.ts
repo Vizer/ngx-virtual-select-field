@@ -157,6 +157,9 @@ export class VirtualSelectFieldComponent<TValue>
   @Input({ transform: numberAttribute })
   typeaheadDebounceInterval: number = 100;
 
+  @Input()
+  panelClass: string | string[] | null = null;
+
   @Output()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueChange = new EventEmitter<any>();
@@ -179,18 +182,16 @@ export class VirtualSelectFieldComponent<TValue>
 
   readonly id = `ngx-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'ngx-virtual-select-field';
-  readonly POSITIONS = POSITIONS;
-  readonly OVERLAY_PANEL_CLASS: string | string[] =
-    this._defaultOptions?.overlayPanelClass || '';
 
   autofilled = false;
   panelOpen = signal(false);
   triggerValue$: Observable<string> | null = null;
-
   overlayWidth: Signal<string | number>;
 
-  ngControl: NgControl | null = inject(NgControl, { optional: true });
-
+  protected readonly POSITIONS = POSITIONS;
+  protected readonly overlayPanelClass: string | string[] =
+    this._defaultOptions?.overlayPanelClass || '';
+  readonly ngControl: NgControl | null = inject(NgControl, { optional: true });
   protected readonly inheritedColorTheme: string;
   protected readonly _destroy = new Subject<void>();
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;

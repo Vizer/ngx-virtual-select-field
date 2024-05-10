@@ -44,18 +44,16 @@
   [cdkConnectedOverlayOpen]="panelOpen()"
   [cdkConnectedOverlayOrigin]="preferredOverlayOrigin || fallbackOverlayOrigin"
   [cdkConnectedOverlayPositions]="POSITIONS"
-  [cdkConnectedOverlayPanelClass]="OVERLAY_PANEL_CLASS"
+  [cdkConnectedOverlayPanelClass]="overlayPanelClass"
   [cdkConnectedOverlayWidth]="overlayWidth()"
   (backdropClick)="close()"
   (detach)="close()"
   (attach)="onOverlayAttached()"
->
+  >
   <!--
-    [attr.id]="id + '-panel'"
     [attr.aria-multiselectable]="multiple"
     [attr.aria-label]="ariaLabel || null"
     [attr.aria-labelledby]="_getPanelAriaLabelledby()"
-    [ngClass]="panelClass"
     [@transformPanel]="'showing'"
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
     -->
@@ -64,6 +62,7 @@
     role="listbox"
     class="ngx-virtual-select-field-panel {{ inheritedColorTheme }}"
     [itemSize]="optionHeight"
+    [ngClass]="panelClass"
     (scrolledIndexChange)="onScrolledIndexChange()"
   >
     <div
