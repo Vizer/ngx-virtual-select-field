@@ -1,9 +1,10 @@
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { render } from '@testing-library/angular';
-import { VirtualSelectFieldComponent } from './virtual-select-field.component';
-import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+
+import { NgxVirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+import { NgxVirtualSelectFieldComponent } from './virtual-select-field.component';
 
 describe('VirtualSelectFieldComponent', () => {
   describe('as a mat-form-field-control', () => {
@@ -30,8 +31,8 @@ describe('VirtualSelectFieldComponent', () => {
           },
           imports: [
             MatFormFieldModule,
-            VirtualSelectFieldComponent,
-            VirtualSelectFieldOptionForDirective,
+            NgxVirtualSelectFieldComponent,
+            NgxVirtualSelectFieldOptionForDirective,
           ],
         }
       );
@@ -62,14 +63,14 @@ describe('VirtualSelectFieldComponent', () => {
           },
           imports: [
             ReactiveFormsModule,
-            VirtualSelectFieldComponent,
-            VirtualSelectFieldOptionForDirective,
+            NgxVirtualSelectFieldComponent,
+            NgxVirtualSelectFieldOptionForDirective,
           ],
         }
       );
 
       const childComponentInstance = result.fixture.debugElement.query(
-        By.directive(VirtualSelectFieldComponent)
+        By.directive(NgxVirtualSelectFieldComponent)
       ).componentInstance;
 
       expect(childComponentInstance.value).toBe(expectedValue);

@@ -60,18 +60,18 @@ import {
 } from 'rxjs';
 
 import {
-  VirtualSelectFieldOptionForDirective,
-  VirtualSelectFieldOptionModel,
+  NgxVirtualSelectFieldOptionForDirective,
+  NgxVirtualSelectFieldOptionModel,
 } from './virtual-select-field-option-for';
 import {
-  VIRTUAL_SELECT_FIELD_TRIGGER,
-  VirtualSelectFieldTriggerDirective,
+  NGX_VIRTUAL_SELECT_FIELD_TRIGGER,
+  NgxVirtualSelectFieldTriggerDirective,
 } from './virtual-select-field-trigger';
 import {
-  VIRTUAL_SELECT_FIELD_OPTION_PARENT,
-  VirtualSelectFieldOptionComponent,
-  VirtualSelectFieldOptionParent,
-  VirtualSelectFieldOptionSelectionChangeEvent,
+  NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+  NgxVirtualSelectFieldOptionComponent,
+  NgxVirtualSelectFieldOptionParent,
+  NgxVirtualSelectFieldOptionSelectionChangeEvent,
 } from './virtual-select-field-option';
 
 import {
@@ -79,9 +79,9 @@ import {
   PANEL_WIDTH_AUTO,
   POSITIONS,
   PANEL_VIEWPORT_PAGE_SIZE,
-  VIRTUAL_SELECT_CONFIG,
+  NGX_VIRTUAL_SELECT_FIELD_CONFIG,
 } from './virtual-select-field.constants';
-import { VirtualSelectConfig } from './virtual-select-field.models';
+import { NgxVirtualSelectFieldConfig } from './virtual-select-field.models';
 import {
   ARROW_DOWN_KEY,
   ARROW_LEFT_KEY,
@@ -100,10 +100,10 @@ import {
   styleUrl: './virtual-select-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: MatFormFieldControl, useExisting: VirtualSelectFieldComponent },
+    { provide: MatFormFieldControl, useExisting: NgxVirtualSelectFieldComponent },
     {
-      provide: VIRTUAL_SELECT_FIELD_OPTION_PARENT,
-      useExisting: VirtualSelectFieldComponent,
+      provide: NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+      useExisting: NgxVirtualSelectFieldComponent,
     },
   ],
   host: {
@@ -117,14 +117,14 @@ import {
     '[class.ngx-virtual-select-field-invalid]': 'errorState',
   },
 })
-export class VirtualSelectFieldComponent<TValue>
+export class NgxVirtualSelectFieldComponent<TValue>
   implements
     OnInit,
     OnDestroy,
     AfterContentInit,
     MatFormFieldControl<TValue[] | TValue>,
     ControlValueAccessor,
-    VirtualSelectFieldOptionParent
+    NgxVirtualSelectFieldOptionParent
 {
   @Input('aria-describedby')
   userAriaDescribedBy = '';
@@ -170,17 +170,17 @@ export class VirtualSelectFieldComponent<TValue>
   @ViewChild(CdkConnectedOverlay, { static: false })
   cdkConnectedOverlay!: CdkConnectedOverlay;
 
-  @ContentChild(VirtualSelectFieldOptionForDirective)
-  optionFor!: VirtualSelectFieldOptionForDirective<TValue>;
+  @ContentChild(NgxVirtualSelectFieldOptionForDirective)
+  optionFor!: NgxVirtualSelectFieldOptionForDirective<TValue>;
 
-  @ContentChild(VIRTUAL_SELECT_FIELD_TRIGGER)
-  customTrigger: VirtualSelectFieldTriggerDirective | null = null;
+  @ContentChild(NGX_VIRTUAL_SELECT_FIELD_TRIGGER)
+  customTrigger: NgxVirtualSelectFieldTriggerDirective | null = null;
 
-  @ContentChildren(VirtualSelectFieldOptionComponent)
-  optionsQuery: QueryList<VirtualSelectFieldOptionComponent<TValue>> | null =
+  @ContentChildren(NgxVirtualSelectFieldOptionComponent)
+  optionsQuery: QueryList<NgxVirtualSelectFieldOptionComponent<TValue>> | null =
     null;
 
-  readonly id = `ngx-virtual-select-field-${VirtualSelectFieldComponent.nextId++}`;
+  readonly id = `ngx-virtual-select-field-${NgxVirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'ngx-virtual-select-field';
 
   autofilled = false;
@@ -209,17 +209,17 @@ export class VirtualSelectFieldComponent<TValue>
   private _touched = false;
   private _placeholder = '';
   private _selectionModel!: SelectionModel<
-    VirtualSelectFieldOptionModel<TValue>
+    NgxVirtualSelectFieldOptionModel<TValue>
   >;
   private _viewPortRulerChange: Signal<void>;
   private _scrolledIndexChange = new Subject<void>();
   private _keyManager: ListKeyManager<
-    VirtualSelectFieldOptionModel<TValue>
+    NgxVirtualSelectFieldOptionModel<TValue>
   > | null = null;
 
   // NOTE: recursive defer observable to await for options to be rendered
   private readonly _optionSelectionChanges: Observable<
-    VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+    NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
   > = defer(() => {
     const options = this.optionsQuery;
 
@@ -236,7 +236,7 @@ export class VirtualSelectFieldComponent<TValue>
       take(1),
       switchMap(() => this._optionSelectionChanges)
     );
-  }) as Observable<VirtualSelectFieldOptionSelectionChangeEvent<TValue>>;
+  }) as Observable<NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>>;
 
   // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
@@ -248,8 +248,8 @@ export class VirtualSelectFieldComponent<TValue>
     readonly _elementRef: ElementRef,
     private _ngZone: NgZone,
     @Optional()
-    @Inject(VIRTUAL_SELECT_CONFIG)
-    protected _defaultOptions?: VirtualSelectConfig
+    @Inject(NGX_VIRTUAL_SELECT_FIELD_CONFIG)
+    protected _defaultOptions?: NgxVirtualSelectFieldConfig
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
@@ -368,7 +368,7 @@ export class VirtualSelectFieldComponent<TValue>
   ngOnInit() {
     // TODO: consider using this._selectionModel.changed
     this._selectionModel = new SelectionModel<
-      VirtualSelectFieldOptionModel<TValue>
+      NgxVirtualSelectFieldOptionModel<TValue>
     >(this.multiple, [], true);
 
     // NOTE: mat select listens to stateChanges of options components.
@@ -402,7 +402,7 @@ export class VirtualSelectFieldComponent<TValue>
             this._optionSelectionChanges.pipe(
               tap(
                 (
-                  selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+                  selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
                 ) => this.updateOptionSelection(selectionEvent, options)
               )
             ),
@@ -418,8 +418,8 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   private updateOptionSelection(
-    selectionEvent: VirtualSelectFieldOptionSelectionChangeEvent<TValue>,
-    options: VirtualSelectFieldOptionModel<TValue>[]
+    selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>,
+    options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
     const selectedIndex = options.findIndex(
       (option) => option.value === selectionEvent.value
@@ -453,7 +453,7 @@ export class VirtualSelectFieldComponent<TValue>
   }
 
   private updateRenderedOptionsState(
-    options: VirtualSelectFieldOptionModel<TValue>[]
+    options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
     this.optionsQuery!.forEach((optionComponent) => {
       const option = options.find((o) => o.value === optionComponent.value)!;
@@ -714,7 +714,7 @@ export class VirtualSelectFieldComponent<TValue>
     return this.panelWidth === null ? '' : this.panelWidth;
   }
 
-  private initListKeyManager(options: VirtualSelectFieldOptionModel<TValue>[]) {
+  private initListKeyManager(options: NgxVirtualSelectFieldOptionModel<TValue>[]) {
     // TODO [refactor]: mb move to separate method
     const normalizedOptions = options.map((option) => ({
       value: option.value,
@@ -726,7 +726,7 @@ export class VirtualSelectFieldComponent<TValue>
     this._keyManager?.destroy();
 
     this._keyManager = new ListKeyManager<
-      VirtualSelectFieldOptionModel<TValue>
+      NgxVirtualSelectFieldOptionModel<TValue>
     >(normalizedOptions)
       .withTypeAhead(this.typeaheadDebounceInterval)
       .withVerticalOrientation()
@@ -789,7 +789,7 @@ export class VirtualSelectFieldComponent<TValue>
 
   private findOptionByValue(
     value: TValue
-  ): VirtualSelectFieldOptionModel<TValue> {
+  ): NgxVirtualSelectFieldOptionModel<TValue> {
     const result = this.optionFor.options$.value.find(
       (option) => option.value === value
     );

@@ -1,25 +1,25 @@
-import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
+import { NgxVirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for';
 
-import { VirtualSelectFieldComponent } from './virtual-select-field.component';
+import { NgxVirtualSelectFieldComponent } from './virtual-select-field.component';
 
-import { VirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
+import { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
 
-import { VirtualSelectFieldOptionComponent } from './virtual-select-field-option';
+import { NgxVirtualSelectFieldOptionComponent } from './virtual-select-field-option';
 
 export {
-  VirtualSelectFieldOptionForDirective,
-  VirtualSelectFieldOptionModel,
+  NgxVirtualSelectFieldOptionForDirective,
+  NgxVirtualSelectFieldOptionModel,
 } from './virtual-select-field-option-for';
 
-export { VirtualSelectFieldComponent } from './virtual-select-field.component';
+export { NgxVirtualSelectFieldComponent } from './virtual-select-field.component';
 
-export { VirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
+export { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
 
-export { VirtualSelectFieldOptionComponent } from './virtual-select-field-option';
+export { NgxVirtualSelectFieldOptionComponent } from './virtual-select-field-option';
 
 export const NgxVirtualSelectFieldBundle = [
-  VirtualSelectFieldComponent,
-  VirtualSelectFieldOptionForDirective,
-  VirtualSelectFieldTriggerDirective,
-  VirtualSelectFieldOptionComponent,
+  NgxVirtualSelectFieldComponent,
+  NgxVirtualSelectFieldOptionForDirective,
+  NgxVirtualSelectFieldTriggerDirective,
+  NgxVirtualSelectFieldOptionComponent,
 ] as const;

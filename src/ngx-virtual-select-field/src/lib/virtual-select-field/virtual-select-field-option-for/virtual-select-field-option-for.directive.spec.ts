@@ -1,11 +1,11 @@
 import { TemplateRef } from '@angular/core';
-import { VirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for.directive';
+import { NgxVirtualSelectFieldOptionForDirective } from './virtual-select-field-option-for.directive';
 
-describe('VirtualSelectFieldOptionForDirective', () => {
+describe('NgxVirtualSelectFieldOptionForDirective', () => {
   it('should create an instance', () => {
     const temaplte = {} as TemplateRef<{ $implicit: { label: string; value: number } }>;
 
-    const directive = new VirtualSelectFieldOptionForDirective<number>(temaplte);
+    const directive = new NgxVirtualSelectFieldOptionForDirective<number>(temaplte);
 
     expect(directive).toBeTruthy();
   });

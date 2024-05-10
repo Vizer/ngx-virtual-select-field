@@ -1,14 +1,14 @@
 import { render } from '@testing-library/angular';
 
-import { VirtualSelectFieldOptionComponent } from './virtual-select-field-option.component';
-import { VIRTUAL_SELECT_FIELD_OPTION_PARENT } from './virtual-select-field-option.models';
+import { NgxVirtualSelectFieldOptionComponent } from './virtual-select-field-option.component';
+import { NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT } from './virtual-select-field-option.models';
 
-describe('VirtualSelectFieldOptionComponent', () => {
+describe('NgxVirtualSelectFieldOptionComponent', () => {
   it('should initialize', async () => {
-    const result = await render(VirtualSelectFieldOptionComponent, {
+    const result = await render(NgxVirtualSelectFieldOptionComponent, {
       providers: [
         {
-          provide: VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+          provide: NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
           useValue: {
             multiple: false,
           },

@@ -1,10 +1,10 @@
 import { InjectionToken } from '@angular/core';
 
-export interface VirtualSelectFieldOptionParent {
+export interface NgxVirtualSelectFieldOptionParent {
   multiple?: boolean;
 }
 
-export const VIRTUAL_SELECT_FIELD_OPTION_PARENT =
-  new InjectionToken<VirtualSelectFieldOptionParent>(
-    'VIRTUAL_SELECT_FIELD_OPTION_PARENT'
+export const NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT =
+  new InjectionToken<NgxVirtualSelectFieldOptionParent>(
+    'NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT'
   );

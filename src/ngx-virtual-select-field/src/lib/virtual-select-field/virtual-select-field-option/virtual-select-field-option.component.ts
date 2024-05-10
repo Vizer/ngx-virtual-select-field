@@ -18,8 +18,8 @@ import {
 } from '@angular/material/core';
 
 import {
-  VIRTUAL_SELECT_FIELD_OPTION_PARENT,
-  VirtualSelectFieldOptionParent,
+  NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
+  NgxVirtualSelectFieldOptionParent,
 } from './virtual-select-field-option.models';
 import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
 
@@ -40,7 +40,7 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
     class: 'ngx-virtual-select-field-option',
   },
 })
-export class VirtualSelectFieldOptionComponent<TValue>
+export class NgxVirtualSelectFieldOptionComponent<TValue>
   implements Highlightable, ListKeyManagerOption
 {
   @Input({ required: true })
@@ -51,7 +51,7 @@ export class VirtualSelectFieldOptionComponent<TValue>
 
   @Output()
   selectedChange = new EventEmitter<
-    VirtualSelectFieldOptionSelectionChangeEvent<TValue>
+    NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
   >();
 
   @ViewChild('textLabel', { static: true })
@@ -66,8 +66,8 @@ export class VirtualSelectFieldOptionComponent<TValue>
   protected readonly hostNativeElement: HTMLElement;
 
   constructor(
-    @Inject(VIRTUAL_SELECT_FIELD_OPTION_PARENT)
-    private _optionParent: VirtualSelectFieldOptionParent,
+    @Inject(NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT)
+    private _optionParent: NgxVirtualSelectFieldOptionParent,
     private _changeDetectorRef: ChangeDetectorRef,
     private _elementRef: ElementRef<HTMLElement>
   ) {
@@ -123,8 +123,8 @@ export class VirtualSelectFieldOptionComponent<TValue>
   }
 }
 
-export interface VirtualSelectFieldOptionSelectionChangeEvent<TValue> {
-  source: VirtualSelectFieldOptionComponent<TValue>;
+export interface NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue> {
+  source: NgxVirtualSelectFieldOptionComponent<TValue>;
   value: TValue;
   selected: boolean;
 }

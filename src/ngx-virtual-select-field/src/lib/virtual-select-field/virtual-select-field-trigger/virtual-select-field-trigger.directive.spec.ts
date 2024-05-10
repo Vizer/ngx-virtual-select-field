@@ -1,8 +1,8 @@
-import { VirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger.directive';
+import { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger.directive';
 
-describe('VirtualSelectFieldTriggerDirective', () => {
+describe('NgxVirtualSelectFieldTriggerDirective', () => {
   it('should create an instance', () => {
-    const directive = new VirtualSelectFieldTriggerDirective();
+    const directive = new NgxVirtualSelectFieldTriggerDirective();
     expect(directive).toBeTruthy();
   });
 });

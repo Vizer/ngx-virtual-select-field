@@ -1,4 +1,4 @@
-export interface VirtualSelectConfig {
+export interface NgxVirtualSelectFieldConfig {
   overlayPanelClass?: string | string[];
 
   panelWidth?: string | number | null;

@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { JsonPipe } from '@angular/common';
 import {
   NgxVirtualSelectFieldBundle,
-  VirtualSelectFieldOptionModel,
+  NgxVirtualSelectFieldOptionModel,
 } from 'ngx-virtual-select-field';
 import {
   FormBuilder,
@@ -47,7 +47,7 @@ export class AppComponent {
   materialSingleSelect: number | null = null;
   materialMultiSingleSelect: number[] | null = null;
 
-  options: VirtualSelectFieldOptionModel<number>[] = new Array(100000)
+  options: NgxVirtualSelectFieldOptionModel<number>[] = new Array(100000)
     .fill(null)
     .map((_, index) => ({
       value: index,
@@ -58,8 +58,8 @@ export class AppComponent {
   form: FormGroup;
   matForm: FormGroup;
   optionsWithNull: (
-    | VirtualSelectFieldOptionModel<null>
-    | VirtualSelectFieldOptionModel<number>
+    | NgxVirtualSelectFieldOptionModel<null>
+    | NgxVirtualSelectFieldOptionModel<number>
   )[] = [
     {
       value: null,

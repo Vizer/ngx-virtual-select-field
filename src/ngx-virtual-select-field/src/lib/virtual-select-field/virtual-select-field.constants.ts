@@ -1,7 +1,7 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { InjectionToken } from '@angular/core';
 
-import { VirtualSelectConfig } from './virtual-select-field.models';
+import { NgxVirtualSelectFieldConfig } from './virtual-select-field.models';
 
 export const POSITIONS: ConnectedPosition[] = [
   {
@@ -32,8 +32,8 @@ export const POSITIONS: ConnectedPosition[] = [
   },
 ];
 
-export const VIRTUAL_SELECT_CONFIG = new InjectionToken<VirtualSelectConfig>(
-  'VIRTUAL_SELECT_CONFIG'
+export const NGX_VIRTUAL_SELECT_FIELD_CONFIG = new InjectionToken<NgxVirtualSelectFieldConfig>(
+  'NGX_VIRTUAL_SELECT_FIELD_CONFIG'
 );
 
 export const PANEL_WIDTH_AUTO = 'auto';
