@@ -372,7 +372,7 @@ export class VirtualSelectFieldComponent<TValue>
     >(this.multiple, [], true);
 
     // NOTE: mat select listens to stateChanges of options components.
-    // in out case our source of update in optionFor directive
+    // here the source source of updates is optionFor directive
   }
 
   ngAfterContentInit() {
@@ -428,6 +428,10 @@ export class VirtualSelectFieldComponent<TValue>
 
     if (this.multiple) {
       this._selectionModel.toggle(selectedOption);
+    } else if (selectedOption.value === null) {
+      this._selectionModel.clear();
+      this.optionsQuery?.forEach((option) => option.deselect());
+      this.close();
     } else {
       this._selectionModel.select(selectedOption);
       this.optionsQuery?.forEach((option) => {
@@ -439,7 +443,9 @@ export class VirtualSelectFieldComponent<TValue>
       this.close();
     }
 
-    this._keyManager?.setActiveItem(selectedIndex);
+    if (this._selectionModel.isSelected(selectedOption)) {
+      this._keyManager?.setActiveItem(selectedIndex);
+    }
 
     // NOTE: this need to keep form field in focus state
     this.focus();
@@ -724,11 +730,9 @@ export class VirtualSelectFieldComponent<TValue>
     >(normalizedOptions)
       .withTypeAhead(this.typeaheadDebounceInterval)
       .withVerticalOrientation()
-      // .withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr')
       .withHomeAndEnd()
       .withPageUpDown()
       .withAllowedModifierKeys(['shiftKey']);
-    // .skipPredicate(this._skipPredicate)
 
     this._keyManager.tabOut.subscribe(() => {
       if (this.panelOpen()) {
