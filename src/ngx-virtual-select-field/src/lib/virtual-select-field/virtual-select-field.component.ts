@@ -94,6 +94,7 @@ import {
 
 @Component({
   selector: 'ngx-virtual-select-field',
+  exportAs: 'ngxVirtualSelectField',
   standalone: true,
   imports: [CommonModule, OverlayModule, ScrollingModule],
   templateUrl: './virtual-select-field.component.html',
