@@ -132,8 +132,10 @@ See more in API section below.
 
 ## API
 
-### NgxVirtualSelectFieldComponent  
-`ngx-virtual-select-field`  
+### NgxVirtualSelectFieldComponent<TValue>  
+selector: `ngx-virtual-select-field`  
+Component to define select field
+
 | Input                     | Type                         | Default      | Description       |
 |---------------------------|------------------------------|--------------|-------------------|
 | panelWidth                | `string\|number \|null`      | `auto`       |Width for overlay panel|
@@ -148,6 +150,50 @@ See more in API section below.
 | required                  | `boolean`                    | `false`      | Define if fields is required |
 | disabled                  | `boolean`                    | `false`      | Define if fields is disabled |
 
-| Output          | Type                | Description                |
-|-----------------|---------------------|----------------------------|
-| valueChange     | `EventEmitter<any>` | Value change event emitter |
+| Output          | Type                 | Description                |
+|-----------------|----------------------|----------------------------|
+| valueChange     | `TValue \| TValue[]` | Value change event emitter |
+
+### NgxVirtualSelectFieldOptionComponent<TValue>  
+selector: `ngx-virtual-select-field-option`  
+Component to define option element
+
+| Input                     | Type                         | Default      | Description         |
+|---------------------------|------------------------------|--------------|---------------------|
+| value (required)          | `TValue`                     |              | Value of the option |
+| disabled                  | `boolean`                    | `false`      | Whether the option is disabled |
+
+| Output             | Type                                                      | Description                |
+|--------------------|-----------------------------------------------------------|----------------------------|
+| selectedChange     | `NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>` | Option selected value change |
+
+
+### NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
+Interface to define option selection change event contract  
+Properties:
+| Name     | Type                                                      | Description                |
+|----------|-----------------------------------------------------------|----------------------------|
+| source   | `NgxVirtualSelectFieldOptionComponent<TValue>`            | Option component instance |
+| value    | `TValue`                                                   | Value of the option       |
+| selected | `boolean`                                                  | Whether the option is selected |
+  
+### NgxVirtualSelectFieldTriggerComponent 
+selector: `ngx-virtual-select-field-trigger`  
+Directive to define custom trigger template
+
+### NgxVirtualSelectFieldOptionForDirective  
+selector: `*ngxVirtualSelectFieldOptionFor`  
+Directive to define custom option template and iterate over options
+| Input                            | Type                                         | Description         |
+|----------------------------------|----------------------------------------------|---------------------|
+| of (required)                    | `NgxVirtualSelectFieldOptionModel<TValue>[]` | Options collection  |
+
+### NgxVirtualSelectFieldOptionModel<TValue>
+Interface to define option model contract  
+Properties:
+| Name                  | Type                                                           | Description                |
+|-----------------------|----------------------------------------------------------------|----------------------------|
+| value                 | `TValue`                                                       | Value of the option       |
+| label                 | `string`                                                       | Label of the option       |
+| disabled?             | `boolean`                                                      | Whether the option is disabled |
+| getLabel() optional   | `(option: NgxVirtualSelectFieldOptionModel<TValue>) => string` | Function to get label of the option |

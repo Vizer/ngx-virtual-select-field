@@ -43,9 +43,16 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
 export class NgxVirtualSelectFieldOptionComponent<TValue>
   implements Highlightable, ListKeyManagerOption
 {
+  /**
+   * The value of the option.
+   * @required
+   */
   @Input({ required: true })
   value!: TValue;
 
+  /**
+   * Whether the option is disabled.
+   */
   @Input({ transform: booleanAttribute })
   disabled: boolean = false;
 
