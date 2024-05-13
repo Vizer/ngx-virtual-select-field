@@ -7,13 +7,18 @@ import { NgxVirtualSelectFieldOptionModel } from './virtual-select-field-option-
   standalone: true,
 })
 export class NgxVirtualSelectFieldOptionForDirective<TValue> {
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('ngxVirtualSelectFieldOptionForOf')
+  /**
+   * The options collection to render.
+   * @required
+   */
+  @Input({ required: true, alias: 'ngxVirtualSelectFieldOptionForOf' })
   set options(options: NgxVirtualSelectFieldOptionModel<TValue>[]) {
     this.options$.next(options);
   }
 
-  options$ = new BehaviorSubject<NgxVirtualSelectFieldOptionModel<TValue>[]>([]);
+  options$ = new BehaviorSubject<NgxVirtualSelectFieldOptionModel<TValue>[]>(
+    []
+  );
 
   constructor(
     public template: TemplateRef<{
