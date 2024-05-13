@@ -129,3 +129,25 @@ Injection tokens might be used to customize all component instances
 All styles are defined with css variables, so you can easily override them in your own styles.
 
 See more in API section below.
+
+## API
+
+### NgxVirtualSelectFieldComponent  
+`ngx-virtual-select-field`  
+| Input                     | Type                         | Default      | Description       |
+|---------------------------|------------------------------|--------------|-------------------|
+| panelWidth                | `string\|number \|null`      | `auto`       |Width for overlay panel|
+| optionHeight              | `number`                     | `48`         | Height of a single option item |
+| panelViewportPageSize     | `number`                     | `8`          | Amount of visible items in list |
+| multiple                  | `boolean`                    | `false`      | Enable multiple selection |
+| tabIndex                  | `number`                     | `0`          | Tab index for keyboard navigation |
+| typeaheadDebounceInterval | `number`                     | `100`        | Milliseconds to wait before navigating to active element after keyboard search |
+| panelClass                | `string \| string[] \| null` | `null`       | CSS class to be added to the panel element|
+| value                     | `TValue[] \| TValue \| null` | `null`       | Value of the select field |
+| placeholder               | `string`                     | none         | Placeholder for the select field |
+| required                  | `boolean`                    | `false`      | Define if fields is required |
+| disabled                  | `boolean`                    | `false`      | Define if fields is disabled |
+
+| Output          | Type                | Description                |
+|-----------------|---------------------|----------------------------|
+| valueChange     | `EventEmitter<any>` | Value change event emitter |

@@ -129,16 +129,28 @@ export class NgxVirtualSelectFieldComponent<TValue>
   @Input('aria-describedby')
   userAriaDescribedBy = '';
 
+  /**
+   * Width for overlay panel
+   * @default 'auto'
+   */
   @Input()
   panelWidth: string | number | null =
     this._defaultOptions?.panelWidth ?? PANEL_WIDTH_AUTO;
 
+  /**
+   * Height of a single option item
+   * @default 48
+   */
   @Input({
     transform: (value: unknown) =>
       value == null ? OPTION_HEIGHT : numberAttribute(value),
   })
   optionHeight: number = this._defaultOptions?.optionHeight ?? OPTION_HEIGHT;
 
+  /**
+   * Amount of visible items in list
+   * @default 8
+   */
   @Input({
     transform: (value: unknown) =>
       value == null ? PANEL_VIEWPORT_PAGE_SIZE : numberAttribute(value),
@@ -146,20 +158,39 @@ export class NgxVirtualSelectFieldComponent<TValue>
   panelViewportPageSize: number =
     this._defaultOptions?.panelViewportPageSize ?? PANEL_VIEWPORT_PAGE_SIZE;
 
+  /**
+   * Enable multiple selection
+   * @default false
+   */
   @Input({ transform: coerceBooleanProperty })
   multiple: boolean = false;
 
+  /**
+   * Tab index for keyboard navigation
+   * @default 0
+   */
   @Input({
     transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
   })
   tabIndex: number = 0;
 
+  /**
+   * Milliseconds to wait before navigating to active element after keyboard search
+   * @default 100
+   */
   @Input({ transform: numberAttribute })
   typeaheadDebounceInterval: number = 100;
 
+  /**
+   * CSS class to be added to the panel element
+   * @default none
+   */
   @Input()
   panelClass: string | string[] | null = null;
 
+  /**
+   * Value change event
+   */
   @Output()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueChange = new EventEmitter<any>();
@@ -279,6 +310,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
       : '';
   }
 
+  /**
+   * Value of the select field
+   * @default null
+   */
   @Input()
   set value(value: TValue[] | TValue | null) {
     if (this.value === value) {
@@ -310,6 +345,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
   }
 
+  /**
+   * Placeholder for the select field
+   * @default none
+   */
   @Input()
   get placeholder(): string {
     return this._placeholder;
@@ -320,6 +359,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._stateChanges.next();
   }
 
+  /**
+   * Define if fields is required
+   * @default false
+   */
   @Input()
   get required(): boolean {
     return this._required;
@@ -330,6 +373,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._stateChanges.next();
   }
 
+  /**
+   * Define if field is disabled
+   * @default false
+   */
   @Input()
   get disabled(): boolean {
     return this._disabled;
