@@ -139,7 +139,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._defaultOptions?.panelWidth ?? PANEL_WIDTH_AUTO;
 
   /**
-   * Height of a single option item
+   * Height for an option element
    * @default 48
    */
   @Input({

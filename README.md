@@ -139,7 +139,7 @@ Component to define select field
 | Input                     | Type                         | Default      | Description       |
 |---------------------------|------------------------------|--------------|-------------------|
 | panelWidth                | `string\|number \|null`      | `auto`       |Width for overlay panel|
-| optionHeight              | `number`                     | `48`         | Height of a single option item |
+| optionHeight              | `number`                     | `48`         | Height for an option element |
 | panelViewportPageSize     | `number`                     | `8`          | Amount of visible items in list |
 | multiple                  | `boolean`                    | `false`      | Enable multiple selection |
 | tabIndex                  | `number`                     | `0`          | Tab index for keyboard navigation |
@@ -197,3 +197,17 @@ Properties:
 | label                 | `string`                                                       | Label of the option       |
 | disabled?             | `boolean`                                                      | Whether the option is disabled |
 | getLabel() optional   | `(option: NgxVirtualSelectFieldOptionModel<TValue>) => string` | Function to get label of the option |
+
+### NGX_VIRTUAL_SELECT_FIELD_CONFIG
+Injection token to define global configuration for all instances of the component
+Config see in NgxVirtualSelectFieldConfig interface
+
+### NgxVirtualSelectFieldConfig
+Interface to define global configuration contract
+Properties:
+| Name                  | Type                                       | Description                |
+|-----------------------|--------------------------------------------|----------------------------|
+| panelWidth            | `string\|number`                           | Width for overlay panel |
+| overlayPanelClass     | `string \| string[]`                       | CSS class to be added to the panel element|
+| optionHeight          | `number`                                   | Height for an option element |
+| panelViewportPageSize | `number`                                   | Amount of visible items in list |
