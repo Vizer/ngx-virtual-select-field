@@ -117,3 +117,15 @@ Custom trigger template
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
+
+## Customization
+
+Components supports custom templates for trigger and option elements. You can use `ngx-virtual-select-field-trigger` and `ngx-virtual-select-field-option` components to define custom templates.
+
+There are number of input parameters available to specify specific behavior of the component.
+
+Injection tokens might be used to customize all component instances
+
+All styles are defined with css variables, so you can easily override them in your own styles.
+
+See more in API section below.
