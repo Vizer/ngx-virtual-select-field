@@ -232,3 +232,56 @@ Properties:
 | overlayPanelClass | `string \| string[]` | CSS class to be added to the panel element|
 | optionHeight | `number` | Height for an option element |
 | panelViewportPageSize | `number` | Amount of visible items in list |
+
+### CSS variables
+
+All styles are defined with css variables, so you can easily override them in your own styles.
+CSS variables for main component:
+```scss
+:root {
+  --ngx-virtual-select-field-trigger-text-color: ...;
+  --ngx-virtual-select-field-trigger-text-color--disabled: ...;
+  --ngx-virtual-select-field-trigger-font-family: ...;
+  --ngx-virtual-select-field-trigger-line-height: ...;
+  --ngx-virtual-select-field-trigger-font-size: ...;
+  --ngx-virtual-select-field-trigger-font-weight: ...;
+  --ngx-virtual-select-field-trigger-letter-spacing: ...;
+
+  --ngx-virtual-select-field-placeholder-text-color: ...;
+  --ngx-virtual-select-field-placeholder-transition: ...;
+
+  --ngx-virtual-select-field-arrow-size: ...;
+  --ngx-virtual-select-field-arrow-color--enabled: ...;
+  --ngx-virtual-select-field-arrow-color--focused: ...;
+  --ngx-virtual-select-field-arrow-color--invalid: ...;
+  --ngx-virtual-select-field-arrow-color--disabled: ...;
+
+  --ngx-virtual-select-field-panel-viewport-page-size: ...;
+  --ngx-virtual-select-field-panel-background: ...;
+  --ngx-virtual-select-field-panel-box-shadow: ...;
+  --ngx-virtual-select-field-panel-option-height: ...;
+}
+```
+CSS variables for option component:
+
+```scss
+:root {
+  --ngx-virtual-select-field-option-color: ...;
+  --ngx-virtual-select-field-option-font-family: ...;
+  --ngx-virtual-select-field-option-line-height: ...;
+  --ngx-virtual-select-field-option-font-size: ...;
+  --ngx-virtual-select-field-option-letter-spacing: ...;
+  --ngx-virtual-select-field-option-font-weight: ...;
+
+  --ngx-virtual-select-field-option-selected-state-label-text-color: ...;
+  --ngx-virtual-select-field-option-background-color--active: ...;
+  --ngx-virtual-select-field-option-background-color--hover: ...;
+  --ngx-virtual-select-field-option-background-color--selected: ...;
+
+  --ngx-virtual-select-field-option-disabled-state-opacity: ...;
+  --ngx-virtual-select-field-option-gap: ...;
+  --ngx-virtual-select-field-option-padding: ...;
+  --ngx-virtual-select-field-option-item-height: ...;
+}
+
+```
