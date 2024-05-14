@@ -14,6 +14,7 @@ Features:
 - Theming trough css variables
 
 Not Supported Features for now:
+
 - Animations
 - Error state mather
 - Custom scroll strategy
@@ -23,51 +24,65 @@ Not Supported Features for now:
 
 ## Getting started
 
-### Install package
+1. Install package
 
-```bash
-npm install ngx-virtual-select-field
-```
+   ```bash
+   npm install ngx-virtual-select-field
+   ```
 
-### Import into your component
+1. Import bundle into your component
 
-```typescript
-import { NgxVirtualSelectFieldBundle } from 'ngx-virtual-select-field';
-...
-@Component({
-  imports: [
-    NgxVirtualSelectFieldBundle,
+   ```typescript
+   import { NgxVirtualSelectFieldBundle } from 'ngx-virtual-select-field';
+   ...
+   @Component({
+     imports: [
+       NgxVirtualSelectFieldBundle,
+       ...
+     ],
+     ...
+   })
+   ```
+
+1. Create options collection in component. Options collection should be an array of objects with `value` and `label` properties. Optionally, you can add `disabled` property to disable specific options and `getLabel()` fot type ahead search.
+
+    ```typescript
     ...
-  ],
-  ...
-})
-```
+    protected options: NgxVirtualSelectFieldOptionModel<number>[]
 
-### Setup template markup
+    constructor() {
+      this.options = new Array(100000)
+        .fill(null)
+        .map((_, index) => ({
+          value: index,
+          label: `${index} Option`,
+          disabled: index % 5 === 0,
+        }));
+    }
+   ```
 
-```html
-<mat-form-field>
-  <mat-label>Virtual Select Field Example</mat-label>
-  <ngx-virtual-select-field [value]="value">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value">
-      {{ option.label }}
-    </ngx-virtual-select-field-option>
-  </ngx-virtual-select-field>
-</mat-form-field>
-```
+1. Setup template markup. `ngxVirtualSelectFieldOptionFor` directive should be user to pass options collection to the component and provide custom option template.
 
-### Include theme styles
+   ```html
+   <mat-form-field>
+     <mat-label>Virtual Select Field Example</mat-label>
+     <ngx-virtual-select-field [value]="value">
+       <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+     </ngx-virtual-select-field>
+   </mat-form-field>
+   ```
 
-```scss
-@use 'ngx-virtual-select-field/theme' as theme;
+1. Include theme styles. You can define your own theme with help of css variables or inherit from material theme.
 
+    ```scss
+    @use 'ngx-virtual-select-field/theme' as theme;
 
-@include theme.inherit-material-theme(); // this will inherit css variables from material theme
+    @include theme.inherit-material-theme(); // this will inherit css variables from material theme
 
-// or
+    // or
 
-@include theme.create-default-theme(); // this will create default dark theme
-```
+    @include theme.create-default-theme(); // this will create basic dark theme
+    ```
 
 ## Examples
 
@@ -77,9 +92,7 @@ Basic setup with value input and output binding
 <mat-form-field>
   <mat-label>Example</mat-label>
   <ngx-virtual-select-field [value]="value" (valueChange)="onValueChange($event)">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value">
-      {{ option.label }} 
-    </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -90,9 +103,7 @@ Form control integration
 <mat-form-field>
   <mat-label>Form Control Example</mat-label>
   <ngx-virtual-select-field [formControl]="formControl">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value">
-      {{ option.label }}
-    </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -103,9 +114,7 @@ Multi select
 <mat-form-field>
   <mat-label>Multi Select Example</mat-label>
   <ngx-virtual-select-field [value]="value" multiple (valueChange)="onValueChange($event)">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value">
-      {{ option.label }}
-    </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -116,13 +125,9 @@ Custom trigger template
 <mat-form-field class="field">
   <mat-label>Custom Trigger Example</mat-label>
   <ngx-virtual-select-field multiple [(value)]="value">
-    <ngx-virtual-select-field-trigger> 
-      {{ value.length }} selected 
-    </ngx-virtual-select-field-trigger>
+    <ngx-virtual-select-field-trigger> {{ value.length }} selected </ngx-virtual-select-field-trigger>
 
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
-      {{ option.label }}
-    </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -141,82 +146,89 @@ See more in API section below.
 
 ## API
 
-### NgxVirtualSelectFieldComponent<TValue>  
+### NgxVirtualSelectFieldComponent<TValue>
+
 selector: `ngx-virtual-select-field`  
 Component to define select field
 
-| Input                     | Type                         | Default      | Description       |
-|---------------------------|------------------------------|--------------|-------------------|
-| panelWidth                | `string\|number \|null`      | `auto`       |Width for overlay panel|
-| optionHeight              | `number`                     | `48`         | Height for an option element |
-| panelViewportPageSize     | `number`                     | `8`          | Amount of visible items in list |
-| multiple                  | `boolean`                    | `false`      | Enable multiple selection |
-| tabIndex                  | `number`                     | `0`          | Tab index for keyboard navigation |
-| typeaheadDebounceInterval | `number`                     | `100`        | Milliseconds to wait before navigating to active element after keyboard search |
-| panelClass                | `string \| string[] \| null` | `null`       | CSS class to be added to the panel element|
-| value                     | `TValue[] \| TValue \| null` | `null`       | Value of the select field |
-| placeholder               | `string`                     | none         | Placeholder for the select field |
-| required                  | `boolean`                    | `false`      | Define if fields is required |
-| disabled                  | `boolean`                    | `false`      | Define if fields is disabled |
+| Input                     | Type                         | Default | Description                                                                    |
+| ------------------------- | ---------------------------- | ------- | ------------------------------------------------------------------------------ |
+| panelWidth                | `string\|number \|null`      | `auto`  | Width for overlay panel                                                        |
+| optionHeight              | `number`                     | `48`    | Height for an option element                                                   |
+| panelViewportPageSize     | `number`                     | `8`     | Amount of visible items in list                                                |
+| multiple                  | `boolean`                    | `false` | Enable multiple selection                                                      |
+| tabIndex                  | `number`                     | `0`     | Tab index for keyboard navigation                                              |
+| typeaheadDebounceInterval | `number`                     | `100`   | Milliseconds to wait before navigating to active element after keyboard search |
+| panelClass                | `string \| string[] \| null` | `null`  | CSS class to be added to the panel element                                     |
+| value                     | `TValue[] \| TValue \| null` | `null`  | Value of the select field                                                      |
+| placeholder               | `string`                     | none    | Placeholder for the select field                                               |
+| required                  | `boolean`                    | `false` | Define if fields is required                                                   |
+| disabled                  | `boolean`                    | `false` | Define if fields is disabled                                                   |
 
-| Output          | Type                 | Description                |
-|-----------------|----------------------|----------------------------|
-| valueChange     | `TValue \| TValue[]` | Value change event emitter |
+| Output      | Type                 | Description                |
+| ----------- | -------------------- | -------------------------- |
+| valueChange | `TValue \| TValue[]` | Value change event emitter |
 
-### NgxVirtualSelectFieldOptionComponent<TValue>  
+### NgxVirtualSelectFieldOptionComponent<TValue>
+
 selector: `ngx-virtual-select-field-option`  
 Component to define option element
 
-| Input                     | Type                         | Default      | Description         |
-|---------------------------|------------------------------|--------------|---------------------|
-| value (required)          | `TValue`                     |              | Value of the option |
-| disabled                  | `boolean`                    | `false`      | Whether the option is disabled |
+| Input            | Type      | Default | Description                    |
+| ---------------- | --------- | ------- | ------------------------------ |
+| value (required) | `TValue`  |         | Value of the option            |
+| disabled         | `boolean` | `false` | Whether the option is disabled |
 
-| Output             | Type                                                      | Description                |
-|--------------------|-----------------------------------------------------------|----------------------------|
-| selectedChange     | `NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>` | Option selected value change |
-
+| Output         | Type                                                      | Description                  |
+| -------------- | --------------------------------------------------------- | ---------------------------- |
+| selectedChange | `NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>` | Option selected value change |
 
 ### NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
+
 Interface to define option selection change event contract  
 Properties:
-| Name     | Type                                                      | Description                |
+| Name | Type | Description |
 |----------|-----------------------------------------------------------|----------------------------|
-| source   | `NgxVirtualSelectFieldOptionComponent<TValue>`            | Option component instance |
-| value    | `TValue`                                                   | Value of the option       |
-| selected | `boolean`                                                  | Whether the option is selected |
-  
-### NgxVirtualSelectFieldTriggerComponent 
+| source | `NgxVirtualSelectFieldOptionComponent<TValue>` | Option component instance |
+| value | `TValue` | Value of the option |
+| selected | `boolean` | Whether the option is selected |
+
+### NgxVirtualSelectFieldTriggerComponent
+
 selector: `ngx-virtual-select-field-trigger`  
 Directive to define custom trigger template
 
-### NgxVirtualSelectFieldOptionForDirective  
+### NgxVirtualSelectFieldOptionForDirective
+
 selector: `*ngxVirtualSelectFieldOptionFor`  
 Directive to define custom option template and iterate over options
-| Input                            | Type                                         | Description         |
+| Input | Type | Description |
 |----------------------------------|----------------------------------------------|---------------------|
-| of (required)                    | `NgxVirtualSelectFieldOptionModel<TValue>[]` | Options collection  |
+| of (required) | `NgxVirtualSelectFieldOptionModel<TValue>[]` | Options collection |
 
 ### NgxVirtualSelectFieldOptionModel<TValue>
+
 Interface to define option model contract  
 Properties:
-| Name                  | Type                                                           | Description                |
+| Name | Type | Description |
 |-----------------------|----------------------------------------------------------------|----------------------------|
-| value                 | `TValue`                                                       | Value of the option       |
-| label                 | `string`                                                       | Label of the option       |
-| disabled?             | `boolean`                                                      | Whether the option is disabled |
-| getLabel() optional   | `(option: NgxVirtualSelectFieldOptionModel<TValue>) => string` | Function to get label of the option |
+| value | `TValue` | Value of the option |
+| label | `string` | Label of the option |
+| disabled? | `boolean` | Whether the option is disabled |
+| getLabel() optional | `(option: NgxVirtualSelectFieldOptionModel<TValue>) => string` | Function to get label of the option |
 
 ### NGX_VIRTUAL_SELECT_FIELD_CONFIG
+
 Injection token to define global configuration for all instances of the component
 Config see in NgxVirtualSelectFieldConfig interface
 
 ### NgxVirtualSelectFieldConfig
+
 Interface to define global configuration contract
 Properties:
-| Name                  | Type                                       | Description                |
+| Name | Type | Description |
 |-----------------------|--------------------------------------------|----------------------------|
-| panelWidth            | `string\|number`                           | Width for overlay panel |
-| overlayPanelClass     | `string \| string[]`                       | CSS class to be added to the panel element|
-| optionHeight          | `number`                                   | Height for an option element |
-| panelViewportPageSize | `number`                                   | Amount of visible items in list |
+| panelWidth | `string\|number` | Width for overlay panel |
+| overlayPanelClass | `string \| string[]` | CSS class to be added to the panel element|
+| optionHeight | `number` | Height for an option element |
+| panelViewportPageSize | `number` | Amount of visible items in list |
