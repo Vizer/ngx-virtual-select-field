@@ -1,5 +1,24 @@
 # Virtual Select component for Angular Material Form Field
 
+## Table of contents
+
+- [Description](#description)
+- [Getting started](#getting-started)
+- [Examples](#examples)
+- [Customization](#customization)
+- [API](#api)
+  - [NgxVirtualSelectFieldComponent<TValue>](#ngxvirtualselectfieldcomponenttvalue)
+  - [NgxVirtualSelectFieldOptionComponent<TValue>](#ngxvirtualselectfieldoptioncomponenttvalue)
+  - [NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>](#ngxvirtualselectfieldoptionselectionchangetvalue)
+  - [NgxVirtualSelectFieldTriggerComponent](#ngxvirtualselectfieldtriggercomponent)
+  - [NgxVirtualSelectFieldOptionForDirective](#ngxvirtualselectfieldoptionfordirective)
+  - [NgxVirtualSelectFieldOptionModel<TValue>](#ngxvirtualselectfieldoptionmodeltvalue)
+  - [NGX_VIRTUAL_SELECT_FIELD_CONFIG](#ngx_virtual_select_field_config)
+  - [NgxVirtualSelectFieldConfig](#ngxvirtualselectfieldconfig)
+  - [CSS variables](#css-variables)
+
+## Description
+
 This package replicates the Angular Material Select component with virtual scroll capabilities with help of cdk-virtual-scroll. It provides most major features of the original Angular Material Select component. The goal of this package is to provide similar api and features as the original Angular Material Select component but with virtual scroll capabilities. One major difference is that this package does not support option groups at the moment. Also, this requires own structural directive to be used for options in order to provide virtual scroll capabilities and custom template.
 
 Features:
@@ -16,7 +35,7 @@ Features:
 Not Supported Features for now:
 
 - Animations
-- Error state mather
+- Custom Error state mather
 - Custom scroll strategy
 - Accessibility
 - Some additional input parameters and outputs

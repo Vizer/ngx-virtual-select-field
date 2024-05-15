@@ -15,7 +15,7 @@ Features:
 
 Not Supported Features for now:
 - Animations
-- Error state mather
+- Custom Error state mather
 - Custom scroll strategy
 - Accessibility
 - Some additional input parameters and outputs
