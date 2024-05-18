@@ -12,3 +12,7 @@ export interface NgxVirtualSelectFieldOptionModel<TValue>
    */
   value: TValue;
 }
+
+export interface NgxVirtualSelectFieldOptionTemplateContextModel<TValue> {
+  $implicit: NgxVirtualSelectFieldOptionModel<TValue>;
+}

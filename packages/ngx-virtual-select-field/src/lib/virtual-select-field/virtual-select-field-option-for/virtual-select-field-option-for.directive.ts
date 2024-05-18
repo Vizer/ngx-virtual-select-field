@@ -1,6 +1,10 @@
 import { Directive, Input, TemplateRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { NgxVirtualSelectFieldOptionModel } from './virtual-select-field-option-for.models';
+
+import {
+  NgxVirtualSelectFieldOptionModel,
+  NgxVirtualSelectFieldOptionTemplateContextModel,
+} from './virtual-select-field-option-for.models';
 
 @Directive({
   selector: '[ngxVirtualSelectFieldOptionFor]',
@@ -21,17 +25,15 @@ export class NgxVirtualSelectFieldOptionForDirective<TValue> {
   );
 
   constructor(
-    public template: TemplateRef<{
-      $implicit: { label: string; value: TValue };
-    }>
+    public template: TemplateRef<
+      NgxVirtualSelectFieldOptionTemplateContextModel<TValue>
+    >
   ) {}
 
   static ngTemplateContextGuard<TValue>(
     _dir: NgxVirtualSelectFieldOptionForDirective<TValue>,
     ctx: unknown
-  ): ctx is {
-    $implicit: NgxVirtualSelectFieldOptionModel<TValue>;
-  } {
+  ): ctx is NgxVirtualSelectFieldOptionTemplateContextModel<TValue> {
     return true;
   }
 }
