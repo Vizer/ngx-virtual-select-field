@@ -21,4 +21,4 @@ Not Supported Features for now:
 - Some additional input parameters and outputs
 - Option groups
 
-[Read NgxVirtualSelectField documentation](./src/ngx-virtual-select-field//README.md)
+[Read NgxVirtualSelectField documentation](./packages/ngx-virtual-select-field//README.md)

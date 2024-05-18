@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "ngx-virtual-select-field": ["src/ngx-virtual-select-field/src/index.ts"]
+      "ngx-virtual-select-field": ["packages/ngx-virtual-select-field/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -3,7 +3,7 @@ export default {
   displayName: 'ngx-virtual-select-field',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/src/ngx-virtual-select-field',
+  coverageDirectory: '../../coverage/packages/ngx-virtual-select-field',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
