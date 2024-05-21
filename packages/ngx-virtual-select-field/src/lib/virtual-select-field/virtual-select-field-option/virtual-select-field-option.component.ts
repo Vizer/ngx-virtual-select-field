@@ -9,7 +9,6 @@ import {
   booleanAttribute,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -33,7 +32,7 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
   host: {
     role: 'option',
     '(click)': 'onClick()',
-    '[class.ngx-virtual-select-field-option--active]': 'active',
+    '[class.ngx-virtual-select-field-option--active]': 'active()',
     '[class.ngx-virtual-select-field-option--selected]': 'selected()',
     '[class.ngx-virtual-select-field-option--multiple]': 'multiple',
     '[class.ngx-virtual-select-field-option--disabled]': 'disabled',
@@ -64,9 +63,9 @@ export class NgxVirtualSelectFieldOptionComponent<TValue>
   @ViewChild('textLabel', { static: true })
   protected readonly textLabel!: ElementRef<HTMLElement>;
 
-  protected active = false;
-
   protected readonly multiple = this._optionParent?.multiple ?? false;
+
+  protected readonly active = signal(false);
 
   protected readonly selected = signal(false);
 
@@ -75,7 +74,6 @@ export class NgxVirtualSelectFieldOptionComponent<TValue>
   constructor(
     @Inject(NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT)
     private _optionParent: NgxVirtualSelectFieldOptionParent,
-    private _changeDetectorRef: ChangeDetectorRef,
     private _elementRef: ElementRef<HTMLElement>
   ) {
     this.hostNativeElement = this._elementRef.nativeElement;
@@ -84,16 +82,14 @@ export class NgxVirtualSelectFieldOptionComponent<TValue>
   // #region Highlightable
 
   setActiveStyles(): void {
-    if (!this.active) {
-      this.active = true;
-      this._changeDetectorRef.markForCheck();
+    if (!this.active()) {
+      this.active.set(true);
     }
   }
 
   setInactiveStyles(): void {
-    if (this.active) {
-      this.active = false;
-      this._changeDetectorRef.markForCheck();
+    if (this.active()) {
+      this.active.set(false);
     }
   }
 
