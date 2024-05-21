@@ -101,7 +101,10 @@ import {
   styleUrl: './virtual-select-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    { provide: MatFormFieldControl, useExisting: NgxVirtualSelectFieldComponent },
+    {
+      provide: MatFormFieldControl,
+      useExisting: NgxVirtualSelectFieldComponent,
+    },
     {
       provide: NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
       useExisting: NgxVirtualSelectFieldComponent,
@@ -268,7 +271,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       take(1),
       switchMap(() => this._optionSelectionChanges)
     );
-  }) as Observable<NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>>;
+  });
 
   // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
@@ -762,7 +765,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
     return this.panelWidth === null ? '' : this.panelWidth;
   }
 
-  private initListKeyManager(options: NgxVirtualSelectFieldOptionModel<TValue>[]) {
+  private initListKeyManager(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+  ) {
     // TODO [refactor]: mb move to separate method
     const normalizedOptions = options.map((option) => ({
       value: option.value,

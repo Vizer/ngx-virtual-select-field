@@ -7,7 +7,6 @@ import {
   Output,
   signal,
   booleanAttribute,
-  ViewChild,
   ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,7 +19,7 @@ import {
   NGX_VIRTUAL_SELECT_FIELD_OPTION_PARENT,
   NgxVirtualSelectFieldOptionParent,
 } from './virtual-select-field-option.models';
-import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
+import { Highlightable } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'ngx-virtual-select-field-option',
@@ -40,7 +39,7 @@ import { Highlightable, ListKeyManagerOption } from '@angular/cdk/a11y';
   },
 })
 export class NgxVirtualSelectFieldOptionComponent<TValue>
-  implements Highlightable, ListKeyManagerOption
+  implements Highlightable
 {
   /**
    * The value of the option.
@@ -59,9 +58,6 @@ export class NgxVirtualSelectFieldOptionComponent<TValue>
   selectedChange = new EventEmitter<
     NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
   >();
-
-  @ViewChild('textLabel', { static: true })
-  protected readonly textLabel!: ElementRef<HTMLElement>;
 
   protected readonly multiple = this._optionParent?.multiple ?? false;
 
@@ -94,14 +90,6 @@ export class NgxVirtualSelectFieldOptionComponent<TValue>
   }
 
   // #endregion Highlightable
-
-  // #region FocusableOption
-
-  getLabel(): string {
-    return this.textLabel.nativeElement.textContent?.trim() ?? '';
-  }
-
-  // #endregion FocusableOption
 
   deselect() {
     this.selected.set(false);
