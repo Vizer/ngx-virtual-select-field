@@ -324,7 +324,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       return;
     }
 
-    value = value ? value : [];
+    value = value || [];
 
     if (!Array.isArray(value)) {
       value = [value];
@@ -727,7 +727,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     if (this.panelOpen()) {
       this.close();
     } else {
-      this.open;
+      this.open();
     }
   }
 
@@ -762,7 +762,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       return refToMeasure.nativeElement.getBoundingClientRect().width;
     }
 
-    return this.panelWidth === null ? '' : this.panelWidth;
+    return this.panelWidth ?? '';
   }
 
   private initListKeyManager(
@@ -790,7 +790,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._keyManager.tabOut.subscribe(() => {
       if (this.panelOpen()) {
         if (this._keyManager?.activeItem) {
-          this.selectOptionByValue(this._keyManager!.activeItem!.value);
+          this.selectOptionByValue(this._keyManager.activeItem.value);
         }
 
         this.focus();
@@ -861,8 +861,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
     optionComponent?.setActiveStyles();
   }
 
-  static ngAcceptInputType_required: BooleanInput;
-  static ngAcceptInputType_disabled: BooleanInput;
+  static readonly ngAcceptInputType_required: BooleanInput;
+  static readonly ngAcceptInputType_disabled: BooleanInput;
 
-  static nextId = 0;
+  private static nextId = 0;
 }
