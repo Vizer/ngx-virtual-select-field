@@ -322,7 +322,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _elRef: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _stateChanges = new Subject<void>();
-  private readonly _viewPortRulerChange: Signal<void>;
   private readonly _scrolledIndexChange = new Subject<void>();
 
   private _onChange: (value: TValue[] | TValue) => void = () => void 0;
@@ -358,58 +357,64 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
-    protected _viewportRuler: ViewportRuler,
-    protected _changeDetectorRef: ChangeDetectorRef,
-    @Optional()
-    @Inject(MAT_FORM_FIELD)
-    protected _parentFormField: MatFormField,
-    readonly _elementRef: ElementRef,
     private _ngZone: NgZone,
     @Optional()
+    @Inject(MAT_FORM_FIELD)
+    private _parentFormField: MatFormField,
+    @Optional()
     @Inject(NGX_VIRTUAL_SELECT_FIELD_CONFIG)
-    protected _defaultOptions?: NgxVirtualSelectFieldConfig
+    private _defaultOptions?: NgxVirtualSelectFieldConfig
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
       this._disabled = this.ngControl.disabled ?? false;
     }
 
-    // NOTE: View port ruler change stream runs outside the zone.
-    //       Need to run change detection manually to trigger computed signal below.
-    this._viewPortRulerChange = toSignal(
-      this._viewportRuler.change().pipe(
-        takeUntilDestroyed(this._destroyRef),
-        tap(() => this._changeDetectorRef.detectChanges())
-      )
-    );
-
-    this.overlayWidth = computed(() => {
-      this._viewPortRulerChange();
-
-      if (!this.panelOpen()) {
-        return 0;
-      }
-
-      return this.resolveOverlayWidth(this.preferredOverlayOrigin);
-    });
+    this.overlayWidth = this.createOverlayWidthSignal();
 
     this.inheritedColorTheme = this._parentFormField
       ? `mat-${this._parentFormField.color}`
       : '';
   }
 
+  private createOverlayWidthSignal() {
+    const changeDetectorRef = inject(ChangeDetectorRef);
+
+    // NOTE: View port ruler change stream runs outside the zone.
+    //       Need to run change detection manually to trigger computed signal below.
+    const viewPortRulerChange = toSignal(
+      inject(ViewportRuler)
+        .change()
+        .pipe(
+          takeUntilDestroyed(this._destroyRef),
+          tap(() => changeDetectorRef.detectChanges())
+        )
+    );
+
+    return computed(() => {
+      viewPortRulerChange();
+
+      return this.resolveOverlayWidth(this.preferredOverlayOrigin);
+    });
+  }
+
   private resolveOverlayWidth(
     preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
   ): string | number {
-    if (this.panelWidth === PANEL_WIDTH_AUTO) {
-      const refToMeasure =
-        preferredOrigin instanceof CdkOverlayOrigin
-          ? preferredOrigin.elementRef
-          : preferredOrigin || this._elementRef;
-      return refToMeasure.nativeElement.getBoundingClientRect().width;
+    if (!this.panelOpen()) {
+      return 0;
     }
 
-    return this.panelWidth ?? '';
+    if (this.panelWidth !== PANEL_WIDTH_AUTO) {
+      return this.panelWidth ?? '';
+    }
+
+    const refToMeasure =
+      preferredOrigin instanceof CdkOverlayOrigin
+        ? preferredOrigin.elementRef
+        : preferredOrigin || this._elRef;
+
+    return refToMeasure.nativeElement.getBoundingClientRect().width;
   }
 
   get shouldLabelFloat() {
@@ -451,7 +456,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         map((_selected) =>
           this._selectionModel.selected
-            .map((option) => option?.label ?? '')
+            .map((option) => option.label ?? '')
             .join(', ')
         )
       );
@@ -824,7 +829,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   // #endregion Key manager
 
   private focus() {
-    this._elementRef.nativeElement.focus();
+    this._elRef.nativeElement.focus();
   }
 
   private selectOptionByValue(value: TValue) {
