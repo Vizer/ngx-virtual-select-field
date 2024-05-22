@@ -18,6 +18,7 @@ describe('NgxVirtualSelectFieldOptionComponent', () => {
       const user = userEvent.setup();
 
       await user.click(result.debugElement.nativeElement);
+      result.fixture.detectChanges();
 
       const checkbox = arrange.findCheckbox(result);
 
@@ -67,6 +68,7 @@ describe('NgxVirtualSelectFieldOptionComponent', () => {
       const user = userEvent.setup();
 
       await user.click(result.debugElement.nativeElement);
+      result.fixture.detectChanges();
 
       const checkbox = arrange.findCheckbox(result);
 
