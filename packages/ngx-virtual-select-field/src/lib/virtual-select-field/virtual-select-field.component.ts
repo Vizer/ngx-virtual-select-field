@@ -196,6 +196,83 @@ export class NgxVirtualSelectFieldComponent<TValue>
   panelClass: string | string[] | null = null;
 
   /**
+   * Value of the select field
+   * @default null
+   */
+  @Input()
+  set value(value: TValue[] | TValue | null) {
+    if (this.value === value) {
+      return;
+    }
+
+    value = value || [];
+
+    if (!Array.isArray(value)) {
+      value = [value];
+    }
+
+    this._value = value;
+
+    this._selectionModel?.setSelection(
+      ...this._value.map(
+        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
+      )
+    );
+
+    this._stateChanges.next();
+  }
+
+  get value(): TValue[] | TValue {
+    if (this.multiple) {
+      return this._value;
+    } else {
+      return this._value[0];
+    }
+  }
+
+  /**
+   * Placeholder for the select field
+   * @default none
+   */
+  @Input()
+  get placeholder(): string {
+    return this._placeholder;
+  }
+
+  set placeholder(placeholder: string) {
+    this._placeholder = placeholder;
+    this._stateChanges.next();
+  }
+
+  /**
+   * Define if fields is required
+   * @default false
+   */
+  @Input({ transform: booleanAttribute })
+  set required(req: boolean) {
+    this._required = req;
+    this._stateChanges.next();
+  }
+
+  get required(): boolean {
+    return this._required;
+  }
+
+  /**
+   * Define if field is disabled
+   * @default false
+   */
+  @Input({ transform: booleanAttribute })
+  set disabled(value: boolean) {
+    this._disabled = value;
+    this._stateChanges.next();
+  }
+
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  /**
    * Value change event
    */
   @Output()
@@ -331,82 +408,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     return this.panelWidth ?? '';
   }
 
-  /**
-   * Value of the select field
-   * @default null
-   */
-  @Input()
-  set value(value: TValue[] | TValue | null) {
-    if (this.value === value) {
-      return;
-    }
 
-    value = value || [];
-
-    if (!Array.isArray(value)) {
-      value = [value];
-    }
-
-    this._value = value;
-
-    this._selectionModel?.setSelection(
-      ...this._value.map(
-        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
-      )
-    );
-
-    this._stateChanges.next();
-  }
-
-  get value(): TValue[] | TValue {
-    if (this.multiple) {
-      return this._value;
-    } else {
-      return this._value[0];
-    }
-  }
-
-  /**
-   * Placeholder for the select field
-   * @default none
-   */
-  @Input()
-  get placeholder(): string {
-    return this._placeholder;
-  }
-
-  set placeholder(placeholder: string) {
-    this._placeholder = placeholder;
-    this._stateChanges.next();
-  }
-
-  /**
-   * Define if fields is required
-   * @default false
-   */
-  @Input({ transform: booleanAttribute })
-  set required(req: boolean) {
-    this._required = req;
-    this._stateChanges.next();
-  }
-
-  get required(): boolean {
-    return this._required;
-  }
-
-  /**
-   * Define if field is disabled
-   * @default false
-   */
-  @Input({ transform: booleanAttribute })
-  set disabled(value: boolean) {
-    this._disabled = value;
-    this._stateChanges.next();
-  }
-
-  get disabled(): boolean {
-    return this._disabled;
-  }
 
   get shouldLabelFloat() {
     return this.focused || !this.empty;
