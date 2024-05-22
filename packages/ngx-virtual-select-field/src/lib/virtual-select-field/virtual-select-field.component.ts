@@ -236,14 +236,15 @@ export class NgxVirtualSelectFieldComponent<TValue>
    * @default none
    */
   @Input()
-  get placeholder(): string {
-    return this._placeholder;
-  }
-
   set placeholder(placeholder: string) {
     this._placeholder = placeholder;
     this._stateChanges.next();
   }
+
+  get placeholder(): string {
+    return this._placeholder;
+  }
+
   private _placeholder = '';
 
   /**
@@ -259,6 +260,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   get required(): boolean {
     return this._required;
   }
+
   private _required = false;
 
   /**
@@ -274,6 +276,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   get disabled(): boolean {
     return this._disabled;
   }
+
   private _disabled = false;
 
   /**
@@ -301,33 +304,33 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   readonly id = `ngx-virtual-select-field-${NgxVirtualSelectFieldComponent.nextId++}`;
   readonly controlType = 'ngx-virtual-select-field';
-
+  readonly ngControl: NgControl | null = inject(NgControl, {
+    optional: true,
+  });
   autofilled = false;
-  panelOpen = signal(false);
-  triggerValue$: Observable<string> | null = null;
-  overlayWidth: Signal<string | number>;
 
   protected readonly POSITIONS = POSITIONS;
   protected readonly overlayPanelClass: string | string[] =
     this._defaultOptions?.overlayPanelClass || '';
-  readonly ngControl: NgControl | null = inject(NgControl, { optional: true });
   protected readonly inheritedColorTheme: string;
+  protected readonly overlayWidth: Signal<string | number>;
+
+  protected readonly panelOpen = signal(false);
+  protected triggerValue$: Observable<string> | null = null;
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
-  private _destroyRef = inject(DestroyRef);
-  private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
-  private _stateChanges = new Subject<void>();
+  private readonly _destroyRef = inject(DestroyRef);
+  private readonly _elRef: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly _stateChanges = new Subject<void>();
+  private readonly _viewPortRulerChange: Signal<void>;
+  private readonly _scrolledIndexChange = new Subject<void>();
 
   private _onChange: (value: TValue[] | TValue) => void = () => void 0;
   private _onTouched: () => void = () => void 0;
 
-  private _focused = false;
-
   private _selectionModel!: SelectionModel<
     NgxVirtualSelectFieldOptionModel<TValue>
   >;
-  private _viewPortRulerChange: Signal<void>;
-  private _scrolledIndexChange = new Subject<void>();
   private _keyManager: ListKeyManager<
     NgxVirtualSelectFieldOptionModel<TValue>
   > | null = null;
@@ -433,6 +436,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     // NOTE: panel open is needed to keep form field in focused state during interaction with options
     return this._focused || this.panelOpen();
   }
+  private _focused = false;
 
   ngOnInit() {
     this._selectionModel = new SelectionModel<
