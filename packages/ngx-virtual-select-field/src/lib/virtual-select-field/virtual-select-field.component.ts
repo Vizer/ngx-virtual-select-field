@@ -18,6 +18,7 @@ import {
   Signal,
   TrackByFunction,
   ViewChild,
+  booleanAttribute,
   computed,
   inject,
   numberAttribute,
@@ -34,7 +35,6 @@ import {
   OverlayModule,
   ViewportRuler,
 } from '@angular/cdk/overlay';
-import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   CdkVirtualScrollViewport,
   ScrollingModule,
@@ -146,8 +146,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
    * @default 48
    */
   @Input({
-    transform: (value: unknown) =>
-      value == null ? OPTION_HEIGHT : numberAttribute(value),
+    transform: (value: unknown) => numberAttribute(value, OPTION_HEIGHT),
   })
   optionHeight: number = this._defaultOptions?.optionHeight ?? OPTION_HEIGHT;
 
@@ -157,7 +156,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
    */
   @Input({
     transform: (value: unknown) =>
-      value == null ? PANEL_VIEWPORT_PAGE_SIZE : numberAttribute(value),
+      numberAttribute(value, PANEL_VIEWPORT_PAGE_SIZE),
   })
   panelViewportPageSize: number =
     this._defaultOptions?.panelViewportPageSize ?? PANEL_VIEWPORT_PAGE_SIZE;
@@ -166,7 +165,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
    * Enable multiple selection
    * @default false
    */
-  @Input({ transform: coerceBooleanProperty })
+  @Input({ transform: booleanAttribute })
   multiple: boolean = false;
 
   /**
@@ -174,7 +173,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
    * @default 0
    */
   @Input({
-    transform: (value: unknown) => (value == null ? 0 : numberAttribute(value)),
+    transform: (value: unknown) => numberAttribute(value, 0),
   })
   tabIndex: number = 0;
 
@@ -367,28 +366,28 @@ export class NgxVirtualSelectFieldComponent<TValue>
    * Define if fields is required
    * @default false
    */
-  @Input()
-  get required(): boolean {
-    return this._required;
+  @Input({ transform: booleanAttribute })
+  set required(req: boolean) {
+    this._required = req;
+    this._stateChanges.next();
   }
 
-  set required(req: boolean) {
-    this._required = coerceBooleanProperty(req);
-    this._stateChanges.next();
+  get required(): boolean {
+    return this._required;
   }
 
   /**
    * Define if field is disabled
    * @default false
    */
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
+  @Input({ transform: booleanAttribute })
+  set disabled(value: boolean) {
+    this._disabled = value;
+    this._stateChanges.next();
   }
 
-  set disabled(value: BooleanInput) {
-    this._disabled = coerceBooleanProperty(value);
-    this._stateChanges.next();
+  get disabled(): boolean {
+    return this._disabled;
   }
 
   get shouldLabelFloat() {
@@ -707,10 +706,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
   }
 
-  protected trackByOptions: TrackByFunction<{ label: string; value: TValue }> =
-    (index: number, options: { label: string; value: TValue }) => {
-      return options.value;
-    };
+  protected optionTrackBy: TrackByFunction<
+    NgxVirtualSelectFieldOptionModel<TValue>
+  > = (_index: number, option) => {
+    return option.value;
+  };
 
   protected onScrolledIndexChange(): void {
     this._scrolledIndexChange.next();
@@ -721,14 +721,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     this.valueChange.emit(this.value);
     this._onChange?.(this.value);
-  }
-
-  protected toggle(): void {
-    if (this.panelOpen()) {
-      this.close();
-    } else {
-      this.open();
-    }
   }
 
   protected open() {
@@ -860,9 +852,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     );
     optionComponent?.setActiveStyles();
   }
-
-  static readonly ngAcceptInputType_required: BooleanInput;
-  static readonly ngAcceptInputType_disabled: BooleanInput;
 
   private static nextId = 0;
 }

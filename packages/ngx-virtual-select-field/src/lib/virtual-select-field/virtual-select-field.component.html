@@ -1,11 +1,9 @@
 <div
   class="ngx-virtual-select-field-trigger"
-  (click)="toggle()"
   cdk-overlay-origin
   #fallbackOverlayOrigin="cdkOverlayOrigin"
   #trigger
 >
-  <!-- [attr.id]="_valueId" -->
   <div class="ngx-virtual-select-field-value">
     @if (empty) {
     <span class="ngx-virtual-select-field-placeholder">{{ placeholder }}</span>
@@ -73,7 +71,7 @@
       <ng-container
         *cdkVirtualFor="
           let option of optionFor.options$ | async;
-          trackBy: trackByOptions
+          trackBy: optionTrackBy
         "
       >
         <ng-container
