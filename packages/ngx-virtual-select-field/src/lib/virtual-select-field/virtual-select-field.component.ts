@@ -229,6 +229,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       return this._value[0];
     }
   }
+  private _value: TValue[] = [];
 
   /**
    * Placeholder for the select field
@@ -243,6 +244,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._placeholder = placeholder;
     this._stateChanges.next();
   }
+  private _placeholder = '';
 
   /**
    * Define if fields is required
@@ -257,6 +259,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   get required(): boolean {
     return this._required;
   }
+  private _required = false;
 
   /**
    * Define if field is disabled
@@ -271,6 +274,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   get disabled(): boolean {
     return this._disabled;
   }
+  private _disabled = false;
 
   /**
    * Value change event
@@ -317,11 +321,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private _onChange: (value: TValue[] | TValue) => void = () => void 0;
   private _onTouched: () => void = () => void 0;
 
-  private _value: TValue[] = [];
   private _focused = false;
-  private _required = false;
-  private _disabled = false;
-  private _placeholder = '';
+
   private _selectionModel!: SelectionModel<
     NgxVirtualSelectFieldOptionModel<TValue>
   >;
@@ -407,8 +408,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     return this.panelWidth ?? '';
   }
-
-
 
   get shouldLabelFloat() {
     return this.focused || !this.empty;
