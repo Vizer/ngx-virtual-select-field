@@ -1,3 +1,5 @@
+//#region imports
+
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -5,6 +7,7 @@ import {
   Component,
   ContentChild,
   ContentChildren,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Inject,
@@ -25,7 +28,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ListKeyManager } from '@angular/cdk/a11y';
@@ -55,7 +58,6 @@ import {
   startWith,
   switchMap,
   take,
-  takeUntil,
   tap,
 } from 'rxjs';
 
@@ -91,6 +93,8 @@ import {
   KEY_A_CODE,
   SPACE_CODE,
 } from './keycodes';
+
+//#endregion imports
 
 @Component({
   selector: 'ngx-virtual-select-field',
@@ -227,9 +231,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._defaultOptions?.overlayPanelClass || '';
   readonly ngControl: NgControl | null = inject(NgControl, { optional: true });
   protected readonly inheritedColorTheme: string;
-  protected readonly _destroy = new Subject<void>();
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
+  private _destroyRef = inject(DestroyRef);
   private _elRef: ElementRef<HTMLElement> = inject(ElementRef);
   private _stateChanges = new Subject<void>();
 
@@ -293,9 +297,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
     // NOTE: View port ruler change stream runs outside the zone.
     //       Need to run change detection manually to trigger computed signal below.
     this._viewPortRulerChange = toSignal(
-      this._viewportRuler
-        .change()
-        .pipe(tap(() => this._changeDetectorRef.detectChanges()))
+      this._viewportRuler.change().pipe(
+        takeUntilDestroyed(this._destroyRef),
+        tap(() => this._changeDetectorRef.detectChanges())
+      )
     );
 
     this.overlayWidth = computed(() => {
@@ -311,6 +316,20 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this.inheritedColorTheme = this._parentFormField
       ? `mat-${this._parentFormField.color}`
       : '';
+  }
+
+  private resolveOverlayWidth(
+    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
+  ): string | number {
+    if (this.panelWidth === PANEL_WIDTH_AUTO) {
+      const refToMeasure =
+        preferredOrigin instanceof CdkOverlayOrigin
+          ? preferredOrigin.elementRef
+          : preferredOrigin || this._elementRef;
+      return refToMeasure.nativeElement.getBoundingClientRect().width;
+    }
+
+    return this.panelWidth ?? '';
   }
 
   /**
@@ -416,13 +435,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   ngOnInit() {
-    // TODO: consider using this._selectionModel.changed
     this._selectionModel = new SelectionModel<
       NgxVirtualSelectFieldOptionModel<TValue>
     >(this.multiple, [], true);
-
-    // NOTE: mat select listens to stateChanges of options components.
-    // here the source source of updates is optionFor directive
   }
 
   ngAfterContentInit() {
@@ -440,7 +455,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     this.optionFor.options$
       .pipe(
-        takeUntil(this._destroy),
+        takeUntilDestroyed(this._destroyRef),
         tap((options) =>
           this._selectionModel?.setSelection(
             ...this._value.map((v) => options.find((o) => o.value === v)!)
@@ -474,16 +489,16 @@ export class NgxVirtualSelectFieldComponent<TValue>
     const selectedIndex = options.findIndex(
       (option) => option.value === selectionEvent.value
     );
-    const selectedOption = options[selectedIndex];
+    const changedOption = options[selectedIndex];
 
     if (this.multiple) {
-      this._selectionModel.toggle(selectedOption);
-    } else if (selectedOption.value === null) {
+      this._selectionModel.toggle(changedOption);
+    } else if (changedOption.value === null) {
       this._selectionModel.clear();
       this.optionsQuery?.forEach((option) => option.deselect());
       this.close();
     } else {
-      this._selectionModel.select(selectedOption);
+      this._selectionModel.select(changedOption);
       this.optionsQuery?.forEach((option) => {
         if (option.value !== selectionEvent.value) {
           option.deselect();
@@ -493,7 +508,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.close();
     }
 
-    if (this._selectionModel.isSelected(selectedOption)) {
+    if (this._selectionModel.isSelected(changedOption)) {
       this._keyManager?.setActiveItem(selectedIndex);
     }
 
@@ -502,21 +517,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this.emitValue();
   }
 
-  private updateRenderedOptionsState(
-    options: NgxVirtualSelectFieldOptionModel<TValue>[]
-  ) {
-    this.optionsQuery!.forEach((optionComponent) => {
-      const option = options.find((o) => o.value === optionComponent.value)!;
-
-      // NOTE: deselect for all is needed because of virtual scroll and reusing options
-      optionComponent.deselect();
-      if (this._selectionModel.isSelected(option)) {
-        optionComponent.select();
-      }
-    });
-  }
-
   ngOnDestroy() {
+    this._scrolledIndexChange.complete();
+    this._keyManager?.destroy();
     this._stateChanges.complete();
   }
 
@@ -554,20 +557,25 @@ export class NgxVirtualSelectFieldComponent<TValue>
   onOverlayAttached() {
     this.cdkConnectedOverlay.positionChange
       .pipe(
+        takeUntilDestroyed(this._destroyRef),
         take(1),
         switchMap(() => this._scrolledIndexChange.pipe(take(1)))
       )
-      .subscribe(() => {
-        if (!this._selectionModel.isEmpty()) {
-          let targetIndex = this.optionFor.options$.value.findIndex(
-            (option) => option === this._selectionModel.selected[0]
-          );
+      .subscribe(() => this.navigateToFirstSelectedOption());
+  }
 
-          targetIndex = targetIndex - this.panelViewportPageSize / 2;
+  private navigateToFirstSelectedOption() {
+    if (this._selectionModel.isEmpty()) {
+      return;
+    }
 
-          this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
-        }
-      });
+    let targetIndex = this.optionFor.options$.value.findIndex(
+      (option) => option === this._selectionModel.selected[0]
+    );
+
+    targetIndex = targetIndex - this.panelViewportPageSize / 2;
+
+    this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
   }
 
   protected onFocusIn() {
@@ -586,6 +594,34 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this._stateChanges.next();
     }
   }
+
+  protected optionTrackBy: TrackByFunction<
+    NgxVirtualSelectFieldOptionModel<TValue>
+  > = (_index: number, option) => {
+    return option.value;
+  };
+
+  protected onScrolledIndexChange(): void {
+    this._scrolledIndexChange.next();
+  }
+
+  protected open() {
+    if (this._parentFormField) {
+      this.preferredOverlayOrigin =
+        this._parentFormField?.getConnectedOverlayOrigin();
+    }
+
+    this.panelOpen.set(true);
+  }
+
+  protected close() {
+    this.panelOpen.set(false);
+    this._touched = true;
+    this._onTouched();
+    this._stateChanges.next();
+  }
+
+  //#region Keyboard navigation
 
   protected onKeyDown(event: KeyboardEvent) {
     if (this.disabled) {
@@ -652,6 +688,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
           optionComponent.deselect();
         });
       }
+      this.emitValue();
     } else {
       const previouslyFocusedIndex = keyManager.activeItemIndex;
 
@@ -706,56 +743,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
   }
 
-  protected optionTrackBy: TrackByFunction<
-    NgxVirtualSelectFieldOptionModel<TValue>
-  > = (_index: number, option) => {
-    return option.value;
-  };
+  //#endregion Keyboard navigation
 
-  protected onScrolledIndexChange(): void {
-    this._scrolledIndexChange.next();
-  }
-
-  protected emitValue(): void {
-    this._value = this._selectionModel.selected.map((option) => option.value);
-
-    this.valueChange.emit(this.value);
-    this._onChange?.(this.value);
-  }
-
-  protected open() {
-    if (this._parentFormField) {
-      this.preferredOverlayOrigin =
-        this._parentFormField.getConnectedOverlayOrigin();
-    }
-
-    this.panelOpen.set(true);
-  }
-
-  protected close() {
-    this.panelOpen.set(false);
-    this._touched = true;
-    this._onTouched();
-    this._stateChanges.next();
-  }
-
-  private focus() {
-    this._elementRef.nativeElement.focus();
-  }
-
-  private resolveOverlayWidth(
-    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
-  ): string | number {
-    if (this.panelWidth === PANEL_WIDTH_AUTO) {
-      const refToMeasure =
-        preferredOrigin instanceof CdkOverlayOrigin
-          ? preferredOrigin.elementRef
-          : preferredOrigin || this._elementRef;
-      return refToMeasure.nativeElement.getBoundingClientRect().width;
-    }
-
-    return this.panelWidth ?? '';
-  }
+  //#region Key manager
 
   private initListKeyManager(
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
@@ -822,6 +812,19 @@ export class NgxVirtualSelectFieldComponent<TValue>
     return scrollTop > targetScroll || bottomScroll < targetScroll;
   }
 
+  private setActiveOptionByValues(value: TValue) {
+    const optionComponent = this.optionsQuery?.find(
+      (option) => option.value === value
+    );
+    optionComponent?.setActiveStyles();
+  }
+
+  // #endregion Key manager
+
+  private focus() {
+    this._elementRef.nativeElement.focus();
+  }
+
   private selectOptionByValue(value: TValue) {
     const option = this.findOptionByValue(value);
 
@@ -830,6 +833,27 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this.updateRenderedOptionsState(this.optionFor.options$.value);
 
     this.emitValue();
+  }
+
+  private updateRenderedOptionsState(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+  ) {
+    this.optionsQuery!.forEach((optionComponent) => {
+      const option = options.find((o) => o.value === optionComponent.value)!;
+
+      // NOTE: deselect for all is needed because of virtual scroll and reusing options
+      optionComponent.deselect();
+      if (this._selectionModel.isSelected(option)) {
+        optionComponent.select();
+      }
+    });
+  }
+
+  private emitValue(): void {
+    this._value = this._selectionModel.selected.map((option) => option.value);
+
+    this.valueChange.emit(this.value);
+    this._onChange?.(this.value);
   }
 
   private findOptionByValue(
@@ -844,13 +868,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
 
     return result;
-  }
-
-  private setActiveOptionByValues(value: TValue) {
-    const optionComponent = this.optionsQuery?.find(
-      (option) => option.value === value
-    );
-    optionComponent?.setActiveStyles();
   }
 
   private static nextId = 0;
