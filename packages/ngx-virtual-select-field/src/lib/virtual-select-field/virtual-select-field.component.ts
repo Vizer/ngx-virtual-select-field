@@ -244,7 +244,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private _focused = false;
   private _required = false;
   private _disabled = false;
-  private _touched = false;
   private _placeholder = '';
   private _selectionModel!: SelectionModel<
     NgxVirtualSelectFieldOptionModel<TValue>
@@ -422,7 +421,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   get errorState(): boolean {
-    return !!this.ngControl?.invalid && this._touched;
+    return !!this.ngControl?.invalid && !!this.ngControl?.touched;
   }
 
   get hidePlaceholder() {
@@ -589,7 +588,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._focused = false;
 
     if (!this.panelOpen()) {
-      this._touched = true;
       this._onTouched();
       this._stateChanges.next();
     }
@@ -616,7 +614,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   protected close() {
     this.panelOpen.set(false);
-    this._touched = true;
     this._onTouched();
     this._stateChanges.next();
   }
