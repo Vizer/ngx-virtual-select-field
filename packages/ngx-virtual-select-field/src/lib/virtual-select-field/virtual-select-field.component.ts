@@ -643,6 +643,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private doPanelOpenedKeydown(event: KeyboardEvent) {
+    if (!this.optionsQuery) {
+      throw new Error('optionsQuery is not defined');
+    }
+
     const keyManager = this._keyManager!;
     const activeItem = keyManager.activeItem;
     const isTyping = keyManager.isTyping();
@@ -652,6 +656,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       event.altKey
     ) {
       event.preventDefault();
+
       this.close();
     } else if (
       !isTyping &&
@@ -678,26 +683,12 @@ export class NgxVirtualSelectFieldComponent<TValue>
       event.ctrlKey
     ) {
       event.preventDefault();
-      const enabledOptionValues = this.optionFor.options$.value.filter(
-        (option) => !option.disabled
+
+      this.toggleAllOptions(
+        this.optionFor.options$.value,
+        this.optionsQuery.toArray()
       );
 
-      const hasDeselectedOptions =
-        enabledOptionValues.length > this._selectionModel.selected.length;
-
-      if (hasDeselectedOptions) {
-        this._selectionModel.select(...enabledOptionValues);
-        this.optionsQuery!.forEach((optionComponent) => {
-          if (!optionComponent.disabled) {
-            optionComponent.select();
-          }
-        });
-      } else {
-        this._selectionModel.clear();
-        this.optionsQuery!.forEach((optionComponent) => {
-          optionComponent.deselect();
-        });
-      }
       this.emitValue();
     } else {
       const previouslyFocusedIndex = keyManager.activeItemIndex;
@@ -716,6 +707,30 @@ export class NgxVirtualSelectFieldComponent<TValue>
           keyManager.activeItem.value
         );
       }
+    }
+  }
+
+  private toggleAllOptions(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
+    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[]
+  ) {
+    const enabledOptionValues = options.filter((option) => !option.disabled);
+
+    const hasDeselectedOptions =
+      enabledOptionValues.length > this._selectionModel.selected.length;
+
+    if (hasDeselectedOptions) {
+      this._selectionModel.select(...enabledOptionValues);
+      optionComponents.forEach((optionComponent) => {
+        if (!optionComponent.disabled) {
+          optionComponent.select();
+        }
+      });
+    } else {
+      this._selectionModel.clear();
+      optionComponents.forEach((optionComponent) => {
+        optionComponent.deselect();
+      });
     }
   }
 
@@ -739,6 +754,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.open();
     } else if (!this.multiple) {
       const previouslySelectedOptionIndex = keyManager.activeItemIndex;
+
       keyManager.onKeydown(event);
       const selectedOptionIndex = keyManager.activeItemIndex;
 
@@ -823,7 +839,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     const shouldScrollToActiveItem = this.shouldScrollToActiveItem(index);
     if (shouldScrollToActiveItem) {
-
       this.cdkVirtualScrollViewport.scrolledIndexChange
         .pipe(take(1))
         .subscribe(() =>
