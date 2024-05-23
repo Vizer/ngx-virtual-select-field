@@ -44,7 +44,7 @@ describe('VirtualSelectFieldComponent', () => {
 
   describe('as a control value accessor', () => {
     it('should bind to form control', async () => {
-      const expectedValue = 'foo';
+      const expectedValue = 'fooValue';
 
       const result = await render(
         `
@@ -59,6 +59,7 @@ describe('VirtualSelectFieldComponent', () => {
 
         {
           componentProperties: {
+            options: [{ label: 'foo', value: 'fooValue' }],
             control: new FormControl(expectedValue),
           },
           imports: [
@@ -69,11 +70,9 @@ describe('VirtualSelectFieldComponent', () => {
         }
       );
 
-      const childComponentInstance = result.fixture.debugElement.query(
-        By.directive(NgxVirtualSelectFieldComponent)
-      ).componentInstance;
+      const trigger = await result.findByText('foo');
 
-      expect(childComponentInstance.value).toBe(expectedValue);
+      expect(trigger).toBeTruthy();
     });
   });
 });
