@@ -503,9 +503,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
     } else if (changedOption.value === null) {
       this._selectionModel.clear();
       this.optionsQuery.forEach((option) => option.deselect());
+
       this.close();
     } else {
       this._selectionModel.select(changedOption);
+
       this.optionsQuery.forEach((option) => {
         if (option.value !== selectionEvent.value) {
           option.deselect();
@@ -764,19 +766,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private initListKeyManager(
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
-    // TODO [refactor]: mb move to separate method
-    const normalizedOptions = options.map((option) => ({
-      value: option.value,
-      label: option.label,
-      disabled: option.disabled ?? false,
-      getLabel: () => option.getLabel?.() ?? option.label,
-    }));
-
     this._keyManager?.destroy();
 
     this._keyManager = new ListKeyManager<
       NgxVirtualSelectFieldOptionModel<TValue>
-    >(normalizedOptions)
+    >(this.normalizeKeyManagerOptions(options))
       .withTypeAhead(this.typeaheadDebounceInterval)
       .withVerticalOrientation()
       .withHomeAndEnd()
@@ -784,30 +778,68 @@ export class NgxVirtualSelectFieldComponent<TValue>
       .withAllowedModifierKeys(['shiftKey']);
 
     this._keyManager.tabOut.subscribe(() => {
-      if (this.isPanelOpened()) {
-        if (this._keyManager?.activeItem) {
-          this.selectOptionByValue(options, this._keyManager.activeItem.value);
-        }
-
-        this.focus();
-        this.close();
+      if (!this.isPanelOpened()) {
+        return;
       }
+
+      if (this._keyManager?.activeItem) {
+        this.selectOptionByValue(options, this._keyManager.activeItem.value);
+      }
+
+      this.focus();
+      this.close();
     });
 
     this._keyManager.change.subscribe((index) => {
-      this.optionsQuery?.forEach((option) => option.setInactiveStyles());
-      const activeOption = options[index];
-
-      const shouldScrollToActiveItem = this.shouldScrollToActiveItem(index);
-      if (shouldScrollToActiveItem) {
-        this.cdkVirtualScrollViewport.scrolledIndexChange
-          .pipe(take(1))
-          .subscribe(() => this.setActiveOptionByValue(activeOption.value));
-        this.cdkVirtualScrollViewport.scrollToIndex(index);
-      } else {
-        this.setActiveOptionByValue(activeOption.value);
+      if (!this.optionsQuery) {
+        throw new Error('optionsQuery is not defined');
       }
+
+      this.updateActiveOptionComponent(
+        this.optionsQuery.toArray(),
+        options[index],
+        index
+      );
     });
+  }
+
+  private normalizeKeyManagerOptions(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+  ) {
+    return options.map((option) => ({
+      value: option.value,
+      label: option.label,
+      disabled: option.disabled ?? false,
+      getLabel: () => option.getLabel?.() ?? option.label,
+    }));
+  }
+
+  private updateActiveOptionComponent(
+    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
+    activeOption: NgxVirtualSelectFieldOptionModel<TValue>,
+    index: number
+  ) {
+    optionComponents.forEach((option) => option.setInactiveStyles());
+
+    const shouldScrollToActiveItem = this.shouldScrollToActiveItem(index);
+    if (shouldScrollToActiveItem) {
+
+      this.cdkVirtualScrollViewport.scrolledIndexChange
+        .pipe(take(1))
+        .subscribe(() =>
+          this.setActiveOptionComponentByValue(
+            optionComponents,
+            activeOption.value
+          )
+        );
+
+      this.cdkVirtualScrollViewport.scrollToIndex(index);
+    } else {
+      this.setActiveOptionComponentByValue(
+        optionComponents,
+        activeOption.value
+      );
+    }
   }
 
   private shouldScrollToActiveItem(targetIndex: number): boolean {
@@ -826,11 +858,19 @@ export class NgxVirtualSelectFieldComponent<TValue>
     return scrollTop > targetScroll || bottomScroll < targetScroll;
   }
 
-  private setActiveOptionByValue(value: TValue) {
-    const optionComponent = this.optionsQuery?.find(
+  private setActiveOptionComponentByValue(
+    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
+    value: TValue
+  ) {
+    const optionComponent = optionComponents.find(
       (option) => option.value === value
     );
-    optionComponent?.setActiveStyles();
+
+    if (!optionComponent) {
+      throw new Error(`Option component with value ${value} not found`);
+    }
+
+    optionComponent.setActiveStyles();
   }
 
   // #endregion Key manager
