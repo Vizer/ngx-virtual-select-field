@@ -491,20 +491,22 @@ export class NgxVirtualSelectFieldComponent<TValue>
     selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>,
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
-    const selectedIndex = options.findIndex(
-      (option) => option.value === selectionEvent.value
-    );
-    const changedOption = options[selectedIndex];
+    if (!this.optionsQuery) {
+      throw new Error('optionsQuery is not defined');
+    }
+
+    const { option: changedOption, index: selectedIndex } =
+      this.findOptionByValue(options, selectionEvent.value);
 
     if (this.multiple) {
       this._selectionModel.toggle(changedOption);
     } else if (changedOption.value === null) {
       this._selectionModel.clear();
-      this.optionsQuery?.forEach((option) => option.deselect());
+      this.optionsQuery.forEach((option) => option.deselect());
       this.close();
     } else {
       this._selectionModel.select(changedOption);
-      this.optionsQuery?.forEach((option) => {
+      this.optionsQuery.forEach((option) => {
         if (option.value !== selectionEvent.value) {
           option.deselect();
         }
@@ -612,7 +614,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   protected open() {
     if (this._parentFormField) {
       this.preferredOverlayOrigin =
-        this._parentFormField?.getConnectedOverlayOrigin();
+        this._parentFormField.getConnectedOverlayOrigin();
     }
 
     this.isPanelOpened.set(true);
@@ -657,7 +659,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
     ) {
       event.preventDefault();
 
-      const option = this.findOptionByValue(activeItem.value);
+      const { option } = this.findOptionByValue(
+        this.optionFor.options$.value,
+        activeItem.value
+      );
 
       this._selectionModel.toggle(option);
 
@@ -791,10 +796,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
       if (shouldScrollToActiveItem) {
         this.cdkVirtualScrollViewport.scrolledIndexChange
           .pipe(take(1))
-          .subscribe(() => this.setActiveOptionByValues(activeOption.value));
+          .subscribe(() => this.setActiveOptionByValue(activeOption.value));
         this.cdkVirtualScrollViewport.scrollToIndex(index);
       } else {
-        this.setActiveOptionByValues(activeOption.value);
+        this.setActiveOptionByValue(activeOption.value);
       }
     });
   }
@@ -815,7 +820,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     return scrollTop > targetScroll || bottomScroll < targetScroll;
   }
 
-  private setActiveOptionByValues(value: TValue) {
+  private setActiveOptionByValue(value: TValue) {
     const optionComponent = this.optionsQuery?.find(
       (option) => option.value === value
     );
@@ -829,7 +834,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private selectOptionByValue(value: TValue) {
-    const option = this.findOptionByValue(value);
+    const { option } = this.findOptionByValue(
+      this.optionFor.options$.value,
+      value
+    );
 
     this._selectionModel.select(option);
 
@@ -841,29 +849,35 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private updateRenderedOptionsState(
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
-    this.optionsQuery!.forEach((optionComponent) => {
-      const option = options.find((o) => o.value === optionComponent.value)!;
+    if (!this.optionsQuery) {
+      throw new Error('optionsQuery is not defined');
+    }
 
-      // NOTE: deselect for all is needed because of virtual scroll and reusing options
-      optionComponent.deselect();
+    this.optionsQuery.forEach((optionComponent) => {
+      const { option } = this.findOptionByValue(options, optionComponent.value);
+
       if (this._selectionModel.isSelected(option)) {
         optionComponent.select();
+      } else {
+        // NOTE: deselect for all is needed because of virtual scroll and reusing options
+        optionComponent.deselect();
       }
     });
   }
 
   private findOptionByValue(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
     value: TValue
-  ): NgxVirtualSelectFieldOptionModel<TValue> {
-    const result = this.optionFor.options$.value.find(
-      (option) => option.value === value
-    );
+  ): { option: NgxVirtualSelectFieldOptionModel<TValue>; index: number } {
+    const index = options.findIndex((option) => option.value === value);
 
-    if (!result) {
+    const option = options[index];
+
+    if (!option) {
       throw new Error(`Option with value ${value} not found`);
     }
 
-    return result;
+    return { option, index };
   }
 
   private emitValue(): void {
