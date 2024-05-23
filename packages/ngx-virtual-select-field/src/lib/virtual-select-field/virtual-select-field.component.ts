@@ -201,7 +201,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
    */
   @Input()
   set value(value: TValue[] | TValue | null) {
-    if (this.value === value) {
+    if (this._value === value) {
       return;
     }
 
@@ -220,14 +220,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     );
 
     this._stateChanges.next();
-  }
-
-  get value(): TValue[] | TValue {
-    if (this.multiple) {
-      return this._value;
-    } else {
-      return this._value[0];
-    }
   }
   private _value: TValue[] = [];
 
@@ -856,13 +848,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     });
   }
 
-  private emitValue(): void {
-    this._value = this._selectionModel.selected.map((option) => option.value);
-
-    this.valueChange.emit(this.value);
-    this._onChange?.(this.value);
-  }
-
   private findOptionByValue(
     value: TValue
   ): NgxVirtualSelectFieldOptionModel<TValue> {
@@ -875,6 +860,15 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
 
     return result;
+  }
+
+  private emitValue(): void {
+    this._value = this._selectionModel.selected.map((option) => option.value);
+
+    const outputValue = this.multiple ? this._value : this._value[0];
+
+    this.valueChange.emit(outputValue);
+    this._onChange?.(outputValue);
   }
 
   private static nextId = 0;
