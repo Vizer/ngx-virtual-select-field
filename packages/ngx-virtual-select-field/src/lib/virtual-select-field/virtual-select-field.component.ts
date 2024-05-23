@@ -134,6 +134,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
     ControlValueAccessor,
     NgxVirtualSelectFieldOptionParent
 {
+  //#region Inputs/Outputs
+
   @Input('aria-describedby')
   userAriaDescribedBy = '';
 
@@ -278,6 +280,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueChange = new EventEmitter<any>();
 
+  //#endregion Inputs/Outputs
+
   @ViewChild(CdkVirtualScrollViewport, { static: false })
   cdkVirtualScrollViewport!: CdkVirtualScrollViewport;
 
@@ -307,7 +311,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   protected readonly inheritedColorTheme: string;
   protected readonly overlayWidth: Signal<string | number>;
 
-  protected readonly panelOpen = signal(false);
+  protected readonly isPanelOpened = signal(false);
   protected triggerValue$: Observable<string> | null = null;
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
@@ -393,7 +397,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private resolveOverlayWidth(
     preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
   ): string | number {
-    if (!this.panelOpen()) {
+    if (!this.isPanelOpened()) {
       return 0;
     }
 
@@ -431,7 +435,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   get focused(): boolean {
     // NOTE: panel open is needed to keep form field in focused state during interaction with options
-    return this._focused || this.panelOpen();
+    return this._focused || this.isPanelOpened();
   }
   private _focused = false;
 
@@ -589,7 +593,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   protected onFocusOut() {
     this._focused = false;
 
-    if (!this.panelOpen()) {
+    if (!this.isPanelOpened()) {
       this._onTouched();
       this._stateChanges.next();
     }
@@ -611,11 +615,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
         this._parentFormField?.getConnectedOverlayOrigin();
     }
 
-    this.panelOpen.set(true);
+    this.isPanelOpened.set(true);
   }
 
   protected close() {
-    this.panelOpen.set(false);
+    this.isPanelOpened.set(false);
     this._onTouched();
     this._stateChanges.next();
   }
@@ -627,7 +631,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       return;
     }
 
-    if (this.panelOpen()) {
+    if (this.isPanelOpened()) {
       this.doPanelOpenedKeydown(event);
     } else {
       this.doPanelClosedKeydown(event);
@@ -769,7 +773,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       .withAllowedModifierKeys(['shiftKey']);
 
     this._keyManager.tabOut.subscribe(() => {
-      if (this.panelOpen()) {
+      if (this.isPanelOpened()) {
         if (this._keyManager?.activeItem) {
           this.selectOptionByValue(this._keyManager.activeItem.value);
         }
@@ -796,7 +800,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private shouldScrollToActiveItem(targetIndex: number): boolean {
-    if (!this.panelOpen()) {
+    if (!this.isPanelOpened()) {
       return false;
     }
 
