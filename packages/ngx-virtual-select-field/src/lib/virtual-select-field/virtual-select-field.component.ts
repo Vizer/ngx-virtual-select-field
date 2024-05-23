@@ -709,7 +709,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
         keyManager.activeItem &&
         keyManager.activeItemIndex !== previouslyFocusedIndex
       ) {
-        this.selectOptionByValue(keyManager.activeItem.value);
+        this.selectOptionByValue(
+          this.optionFor.options$.value,
+          keyManager.activeItem.value
+        );
       }
     }
   }
@@ -741,7 +744,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
         selectedOptionIndex &&
         previouslySelectedOptionIndex !== selectedOptionIndex
       ) {
-        this.selectOptionByValue(keyManager.activeItem!.value);
+        this.selectOptionByValue(
+          this.optionFor.options$.value,
+          keyManager.activeItem!.value
+        );
 
         // TODO: Add live announcer
         // We set a duration on the live announcement, because we want the live element to be
@@ -780,7 +786,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._keyManager.tabOut.subscribe(() => {
       if (this.isPanelOpened()) {
         if (this._keyManager?.activeItem) {
-          this.selectOptionByValue(this._keyManager.activeItem.value);
+          this.selectOptionByValue(options, this._keyManager.activeItem.value);
         }
 
         this.focus();
@@ -833,15 +839,15 @@ export class NgxVirtualSelectFieldComponent<TValue>
     this._elRef.nativeElement.focus();
   }
 
-  private selectOptionByValue(value: TValue) {
-    const { option } = this.findOptionByValue(
-      this.optionFor.options$.value,
-      value
-    );
+  private selectOptionByValue(
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
+    value: TValue
+  ) {
+    const { option } = this.findOptionByValue(options, value);
 
     this._selectionModel.select(option);
 
-    this.updateRenderedOptionsState(this.optionFor.options$.value);
+    this.updateRenderedOptionsState(options);
 
     this.emitValue();
   }
