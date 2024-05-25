@@ -650,11 +650,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
     const keyManager = this._keyManager!;
     const activeItem = keyManager.activeItem;
     const isTyping = keyManager.isTyping();
+    const options = this.optionFor.options$.value;
+    const isArrowKey =
+      event.key === ARROW_DOWN_KEY || event.key === ARROW_UP_KEY;
 
-    if (
-      (event.key === ARROW_DOWN_KEY || event.key === ARROW_UP_KEY) &&
-      event.altKey
-    ) {
+    if (isArrowKey && event.altKey) {
       event.preventDefault();
 
       this.close();
@@ -666,14 +666,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
     ) {
       event.preventDefault();
 
-      const { option } = this.findOptionByValue(
-        this.optionFor.options$.value,
-        activeItem.value
-      );
+      const { option } = this.findOptionByValue(options, activeItem.value);
 
       this._selectionModel.toggle(option);
 
-      this.updateRenderedOptionsState(this.optionFor.options$.value);
+      this.updateRenderedOptionsState(options);
 
       this.emitValue();
     } else if (
@@ -684,10 +681,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     ) {
       event.preventDefault();
 
-      this.toggleAllOptions(
-        this.optionFor.options$.value,
-        this.optionsQuery.toArray()
-      );
+      this.toggleAllOptions(options, this.optionsQuery.toArray());
 
       this.emitValue();
     } else {
@@ -697,15 +691,12 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
       if (
         this.multiple &&
-        (event.key === ARROW_DOWN_KEY || event.key === ARROW_UP_KEY) &&
+        isArrowKey &&
         event.shiftKey &&
         keyManager.activeItem &&
         keyManager.activeItemIndex !== previouslyFocusedIndex
       ) {
-        this.selectOptionByValue(
-          this.optionFor.options$.value,
-          keyManager.activeItem.value
-        );
+        this.selectOptionByValue(options, keyManager.activeItem.value);
       }
     }
   }
