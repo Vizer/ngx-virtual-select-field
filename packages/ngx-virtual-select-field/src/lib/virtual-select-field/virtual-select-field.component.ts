@@ -583,6 +583,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     );
 
     targetIndex = targetIndex - this.panelViewportPageSize / 2;
+    targetIndex = Math.max(0, targetIndex);
 
     this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
   }
@@ -832,12 +833,16 @@ export class NgxVirtualSelectFieldComponent<TValue>
     if (shouldScrollToActiveItem) {
       this.cdkVirtualScrollViewport.scrolledIndexChange
         .pipe(take(1))
-        .subscribe(() =>
+        .subscribe(() => {
+          if (!this.optionsQuery) {
+            throw new Error('optionsQuery is not defined');
+          }
+
           this.setActiveOptionComponentByValue(
-            optionComponents,
+            this.optionsQuery.toArray(),
             activeOption.value
-          )
-        );
+          );
+        });
 
       this.cdkVirtualScrollViewport.scrollToIndex(index);
     } else {
