@@ -431,36 +431,15 @@ describe('VirtualSelectFieldComponent', () => {
 
   describe('as a control value accessor', () => {
     test('should bind to form control', async () => {
-      const expectedValue = 'fooValue';
+      const options = Arrange.createOptions();
+      const option = options[2];
 
-      const result = await render(
-        `
-          <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder">
-            <ngx-virtual-select-field-option
-              *ngxVirtualSelectFieldOptionFor="let option of options"
-              [value]="option.value"
-            >
-              {{ option.label }}
-            </ngx-virtual-select-field-option>
-        `,
+      const result = await Arrange.setupAsFormCOntrol({
+        options,
+        value: option.value,
+      });
 
-        {
-          componentProperties: {
-            options: [{ label: 'foo', value: 'fooValue' }],
-            control: new FormControl(expectedValue),
-          },
-          imports: [
-            ReactiveFormsModule,
-            MatFormFieldModule,
-            NgxVirtualSelectFieldComponent,
-            NgxVirtualSelectFieldOptionForDirective,
-            NgxVirtualSelectFieldOptionComponent,
-            NgxVirtualSelectFieldTriggerDirective,
-          ],
-        }
-      );
-
-      const trigger = await result.findByText('foo');
+      const trigger = await result.findByText(option.label);
 
       expect(trigger).toBeTruthy();
     });
@@ -523,6 +502,43 @@ const Arrange = {
           ...componentProperties,
         },
         imports: [
+          MatFormFieldModule,
+          NgxVirtualSelectFieldComponent,
+          NgxVirtualSelectFieldOptionForDirective,
+          NgxVirtualSelectFieldOptionComponent,
+          NgxVirtualSelectFieldTriggerDirective,
+        ],
+      }
+    );
+  },
+
+  async setupAsFormCOntrol<TValue>(componentProperties: {
+    options: NgxVirtualSelectFieldOptionModel<TValue>[];
+    value: TValue | null;
+  }): Promise<
+    RenderResult<{
+      control: FormControl;
+      options: NgxVirtualSelectFieldOptionModel<TValue>[];
+    }>
+  > {
+    return await render(
+      `
+      <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder">
+        <ngx-virtual-select-field-option
+          *ngxVirtualSelectFieldOptionFor="let option of options"
+          [value]="option.value"
+        >
+          {{ option.label }}
+        </ngx-virtual-select-field-option>
+    `,
+
+      {
+        componentProperties: {
+          options: componentProperties.options,
+          control: new FormControl(componentProperties.value),
+        },
+        imports: [
+          ReactiveFormsModule,
           MatFormFieldModule,
           NgxVirtualSelectFieldComponent,
           NgxVirtualSelectFieldOptionForDirective,
