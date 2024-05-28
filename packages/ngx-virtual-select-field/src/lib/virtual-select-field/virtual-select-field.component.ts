@@ -750,6 +750,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
         selectedOptionIndex &&
         previouslySelectedOptionIndex !== selectedOptionIndex
       ) {
+        //TODO: arrow navigation should start from selected options. Currently it starts from the first option
         this.selectOptionByValue(
           this.optionFor.options$.value,
           keyManager.activeItem!.value

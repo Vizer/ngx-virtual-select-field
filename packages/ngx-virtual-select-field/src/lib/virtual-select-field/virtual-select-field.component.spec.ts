@@ -1,8 +1,9 @@
 import { By } from '@angular/platform-browser';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { DOWN_ARROW } from '@angular/cdk/keycodes';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { RenderResult, render } from '@testing-library/angular';
+import { RenderResult, fireEvent, render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
 import {
@@ -164,6 +165,270 @@ describe('VirtualSelectFieldComponent', () => {
     });
   });
 
+  describe('keyboard shortcuts', () => {
+    describe(' opened panel', () => {
+      test('should activate item on arrowdown', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        await user.type(viewport.nativeElement, '[ArrowDown]');
+
+        expect(ElementQuery.activeOption(result)).toBeDefined();
+      });
+
+      test('should close on alt+arrow', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        await user.type(viewport.nativeElement, '{alt>}{arrowdown}{/alt}');
+
+        expect(ElementQuery.cdkViewPort(result)).toBeFalsy();
+      });
+
+      test('should select active item on enter', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        const wrapperComponent = Arrange.getWrapperComponent(result);
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        fireEvent.keyDown(
+          viewport.nativeElement,
+          Arrange.createEventArrowDownEvent()
+        );
+
+        await user.type(viewport.nativeElement, '{enter}');
+
+        expect(wrapperComponent.value).toBe(options[1].value);
+      });
+
+      test('should select all items on ctrl+a', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+        const expectedValues = options
+          .filter((o) => !o.disabled)
+          .map((o) => o.value);
+
+        const result = await Arrange.setupMultiSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        const wrapperComponent = Arrange.getWrapperComponent(result);
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        await user.type(viewport.nativeElement, '[ControlLeft>][KeyA]');
+
+        expect(wrapperComponent.value).toEqual(expectedValues);
+      });
+
+      test('should unselect all items on ctrl+a', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+        const value = options.filter((o) => !o.disabled).map((o) => o.value);
+        const triggerText = options
+          .filter((o) => !o.disabled)
+          .map((o) => o.label)
+          .join(', ');
+
+        const result = await Arrange.setupMultiSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value,
+        });
+        const wrapperComponent = Arrange.getWrapperComponent(result);
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(triggerText);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        await user.type(viewport.nativeElement, '[ControlLeft>][KeyA]');
+
+        expect(wrapperComponent.value).toEqual([]);
+      });
+
+      test('should append selected item on shift+arrowdown', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupMultiSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: [options[1].value],
+        });
+        const wrapperComponent = Arrange.getWrapperComponent(result);
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(options[1].label);
+        await user.click(trigger);
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+
+        fireEvent.keyDown(
+          viewport.nativeElement,
+          Arrange.createEventArrowDownEvent()
+        );
+
+        fireEvent.keyDown(
+          viewport.nativeElement,
+          Arrange.createEventArrowDownEvent({
+            shiftKey: true,
+          })
+        );
+
+        console.log(wrapperComponent.value);
+        expect(ElementQuery.activeOption(result)).toBeDefined();
+        expect(wrapperComponent.value).toEqual([
+          options[1].value,
+          options[2].value,
+        ]);
+      });
+    });
+
+    describe('closed panel', () => {
+      test('should open panel on space', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+
+        await user.type(trigger, '{space}');
+
+        const viewport = ElementQuery.cdkViewPort(result);
+
+        expect(viewport).toBeTruthy();
+      });
+
+      test('should open panel on alt+arrowdown', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+
+        fireEvent.keyDown(
+          trigger,
+          Arrange.createEventArrowDownEvent({
+            altKey: true,
+          })
+        );
+
+        expect(ElementQuery.cdkViewPort(result)).toBeTruthy();
+      });
+
+      test('should multiselect open panel on arrowdown', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+        const user = Arrange.setupUserEvent();
+
+        const result = await Arrange.setupMultiSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: null,
+        });
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(placeholder);
+
+        await user.type(trigger, '{arrowdown}');
+
+        expect(ElementQuery.cdkViewPort(result)).toBeTruthy();
+      });
+
+      test('should select next item in single select on arrowdown', async () => {
+        const placeholder = 'placeholder text';
+        const options = Arrange.createOptions();
+
+        const result = await Arrange.setupSingleSelectAsMaterialFormField({
+          placeholder,
+          options,
+          value: options[3].value,
+        });
+
+        result.fixture.autoDetectChanges();
+
+        const trigger = result.getByText(options[3].label);
+
+        fireEvent.keyDown(trigger, Arrange.createEventArrowDownEvent());
+
+        expect(result.getByText(options[1].label)).toBeTruthy();
+      });
+    });
+  });
+
   describe('as a control value accessor', () => {
     test('should bind to form control', async () => {
       const expectedValue = 'fooValue';
@@ -285,6 +550,14 @@ const Arrange = {
       disabled: index % 5 === 0,
     }));
   },
+
+  createEventArrowDownEvent(fields = {}) {
+    return {
+      keyCode: DOWN_ARROW,
+      key: 'ArrowDown',
+      ...fields,
+    };
+  },
 };
 
 const ElementQuery = {
@@ -299,5 +572,10 @@ const ElementQuery = {
       By.directive(CdkVirtualScrollViewport)
     );
   },
-};
 
+  activeOption(renderResult: RenderResult<unknown, unknown>) {
+    return renderResult.debugElement.query(
+      By.css('.ngx-virtual-select-field-option--active')
+    );
+  },
+};
