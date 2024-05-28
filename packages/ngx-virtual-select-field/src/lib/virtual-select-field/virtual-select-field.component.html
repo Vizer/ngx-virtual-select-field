@@ -47,7 +47,7 @@
   (backdropClick)="close()"
   (detach)="close()"
   (attach)="onOverlayAttached()"
-  >
+>
   <!--
     [attr.aria-multiselectable]="multiple"
     [attr.aria-label]="ariaLabel || null"
@@ -58,16 +58,14 @@
 
   <cdk-virtual-scroll-viewport
     role="listbox"
+    tabindex="-1"
     class="ngx-virtual-select-field-panel {{ inheritedColorTheme }}"
     [itemSize]="optionHeight"
     [ngClass]="panelClass"
     (scrolledIndexChange)="onScrolledIndexChange()"
+    (keydown)="onKeyDown($event)"
   >
-    <div
-      tabindex="-1"
-      class="ngx-virtual-select-field-list-wrapper"
-      (keydown)="onKeyDown($event)"
-    >
+    <div class="ngx-virtual-select-field-list-wrapper">
       <ng-container
         *cdkVirtualFor="
           let option of optionFor.options$ | async;
