@@ -15,6 +15,8 @@ import {
   Validators,
 } from '@angular/forms';
 
+import { CustomizedVirtualSelectComponent } from './customized-virtual-select';
+
 @Component({
   standalone: true,
   imports: [
@@ -25,6 +27,7 @@ import {
     ReactiveFormsModule,
     JsonPipe,
     MatSelectModule,
+    CustomizedVirtualSelectComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

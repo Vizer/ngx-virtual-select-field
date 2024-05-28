@@ -1,0 +1,42 @@
+<section>
+  <div class="field-container">
+    <mat-form-field class="field">
+      <mat-label>Customized Virtual Example 5/24</mat-label>
+      <ngx-virtual-select-field
+        tabIndex="-1"
+        panelWidth="300px"
+        panelViewportPageSize="5"
+        placeholder="virtual select"
+        panelClass="dev-app-ngx-virtual-select--customized-size__5_24"
+        optionHeight="24"
+        (valueChange)="singleValue = $event"
+      >
+        <ngx-virtual-select-field-option
+          *ngxVirtualSelectFieldOptionFor="let option of options"
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          {{ option.label }}</ngx-virtual-select-field-option
+        >
+      </ngx-virtual-select-field>
+    </mat-form-field>
+  </div>
+
+  <div class="field-container">
+    <mat-form-field class="field">
+      <mat-label>Customized Virtual Example 6/36</mat-label>
+      <ngx-virtual-select-field
+        placeholder="virtual select"
+        (valueChange)="singleValue = $event"
+      >
+        <ngx-virtual-select-field-option
+          *ngxVirtualSelectFieldOptionFor="let option of options"
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          {{ option.label }}</ngx-virtual-select-field-option
+        >
+      </ngx-virtual-select-field>
+    </mat-form-field>
+  </div>
+</section>

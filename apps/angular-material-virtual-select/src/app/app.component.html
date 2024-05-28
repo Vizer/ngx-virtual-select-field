@@ -158,6 +158,11 @@
   {{ singleValue }}
 </div>
 
+<h3 class="mat-headline-5">Customized virtual Select</h3>
+<section>
+  <app-customized-virtual-select></app-customized-virtual-select>
+</section>
+
 <h3 class="mat-headline-5">Mat Select</h3>
 <div class="field-container">
   <mat-form-field class="field">
@@ -202,7 +207,7 @@
       formControlName="multiselect"
       multiple
     >
-    <mat-option disabled [value]="-1">disabled</mat-option>
+      <mat-option disabled [value]="-1">disabled</mat-option>
       @for (item of options.slice(0,100); track $index) {
       <mat-option [value]="item.value">{{ item.label }}</mat-option>
       }

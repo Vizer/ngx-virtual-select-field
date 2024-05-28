@@ -22,7 +22,6 @@ $my-theme: mat.define-dark-theme(
 
 @include mat.all-component-themes($my-theme);
 
-
 // Use the default configuration.
 $my-typography: mat.define-typography-config();
 
@@ -34,4 +33,18 @@ body {
   font-family: Roboto, sans-serif;
 }
 
-@include theme.inherit-material-theme()
+@include theme.inherit-material-theme();
+
+.dev-app-ngx-virtual-select--customized-size__5_24 {
+  --ngx-virtual-select-field-panel-viewport-page-size: 5;
+  --ngx-virtual-select-field-option-line-height: 24px;
+  --ngx-virtual-select-field-panel-option-height: 24px;
+  --ngx-virtual-select-field-option-item-height: 24px;
+}
+
+.dev-app-ngx-virtual-select--customized-size__6_36 {
+  --ngx-virtual-select-field-panel-viewport-page-size: 6;
+  --ngx-virtual-select-field-option-line-height: 36px;
+  --ngx-virtual-select-field-panel-option-height: 36px;
+  --ngx-virtual-select-field-option-item-height: 36px;
+}
