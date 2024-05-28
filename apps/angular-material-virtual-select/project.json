@@ -2,7 +2,7 @@
   "name": "angular-material-virtual-select",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "prefix": "angular-material-virtual-select",
+  "prefix": "app",
   "sourceRoot": "apps/angular-material-virtual-select/src",
   "tags": [],
   "targets": {

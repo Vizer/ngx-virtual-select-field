@@ -15,12 +15,9 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { NxWelcomeComponent } from './nx-welcome.component';
-
 @Component({
   standalone: true,
   imports: [
-    NxWelcomeComponent,
     RouterModule,
     NgxVirtualSelectFieldBundle,
     MatFormFieldModule,
@@ -29,7 +26,7 @@ import { NxWelcomeComponent } from './nx-welcome.component';
     JsonPipe,
     MatSelectModule,
   ],
-  selector: 'angular-material-virtual-select-root',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

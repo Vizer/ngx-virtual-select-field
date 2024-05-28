@@ -13,7 +13,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "angularMaterialVirtualSelect",
+            "prefix": "app",
             "style": "camelCase"
           }
         ],
@@ -21,7 +21,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "angular-material-virtual-select",
+            "prefix": "app",
             "style": "kebab-case"
           }
         ]
