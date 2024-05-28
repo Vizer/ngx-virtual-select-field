@@ -491,9 +491,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>,
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
-    if (!this.optionsQuery) {
-      throw new Error('optionsQuery is not defined');
-    }
+    this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
     const { option: changedOption, index: selectedIndex } =
       this.findOptionByValue(options, selectionEvent.value);
@@ -644,9 +642,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private doPanelOpenedKeydown(event: KeyboardEvent) {
-    if (!this.optionsQuery) {
-      throw new Error('optionsQuery is not defined');
-    }
+    this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
     const keyManager = this._keyManager!;
     const activeItem = keyManager.activeItem;
@@ -799,9 +795,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     });
 
     this._keyManager.change.subscribe((index) => {
-      if (!this.optionsQuery) {
-        throw new Error('optionsQuery is not defined');
-      }
+      this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
       this.updateActiveOptionComponent(
         this.optionsQuery.toArray(),
@@ -834,9 +828,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.cdkVirtualScrollViewport.scrolledIndexChange
         .pipe(take(1))
         .subscribe(() => {
-          if (!this.optionsQuery) {
-            throw new Error('optionsQuery is not defined');
-          }
+          this.assertIsDefined(
+            this.optionsQuery,
+            `optionsQuery is not defined`
+          );
 
           this.setActiveOptionComponentByValue(
             this.optionsQuery.toArray(),
@@ -877,9 +872,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
       (option) => option.value === value
     );
 
-    if (!optionComponent) {
-      throw new Error(`Option component with value ${value} not found`);
-    }
+    this.assertIsDefined(
+      optionComponent,
+      `Option component with value ${value} not found`
+    );
 
     optionComponent.setActiveStyles();
   }
@@ -906,9 +902,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private updateRenderedOptionsState(
     options: NgxVirtualSelectFieldOptionModel<TValue>[]
   ) {
-    if (!this.optionsQuery) {
-      throw new Error('optionsQuery is not defined');
-    }
+    this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
     this.optionsQuery.forEach((optionComponent) => {
       const { option } = this.findOptionByValue(options, optionComponent.value);
@@ -930,9 +924,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     const option = options[index];
 
-    if (!option) {
-      throw new Error(`Option with value ${value} not found`);
-    }
+    this.assertIsDefined(option, `Option with value ${value} not found`);
 
     return { option, index };
   }
@@ -943,7 +935,16 @@ export class NgxVirtualSelectFieldComponent<TValue>
     const outputValue = this.multiple ? this._value : this._value[0];
 
     this.valueChange.emit(outputValue);
-    this._onChange?.(outputValue);
+    this._onChange(outputValue);
+  }
+
+  private assertIsDefined<T>(
+    value: T,
+    message: string
+  ): asserts value is NonNullable<T> {
+    if (value === undefined || value === null) {
+      throw new Error(message);
+    }
   }
 
   private static nextId = 0;
