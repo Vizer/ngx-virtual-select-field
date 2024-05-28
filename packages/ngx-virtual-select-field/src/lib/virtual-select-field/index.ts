@@ -17,6 +17,8 @@ export { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-tr
 
 export { NgxVirtualSelectFieldOptionComponent } from './virtual-select-field-option';
 
+export { NGX_VIRTUAL_SELECT_FIELD_CONFIG } from './virtual-select-field.constants';
+
 export const NgxVirtualSelectFieldBundle = [
   NgxVirtualSelectFieldComponent,
   NgxVirtualSelectFieldOptionForDirective,
