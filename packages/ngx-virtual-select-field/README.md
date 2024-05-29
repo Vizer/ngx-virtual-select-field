@@ -38,7 +38,6 @@ Not Supported Features for now:
 - Custom Error state mather
 - Custom scroll strategy
 - Accessibility
-- Some additional input parameters and outputs
 - Option groups
 
 [Demo](https://stackblitz.com/edit/demo-ngx-virtual-select-field)
@@ -88,7 +87,11 @@ Not Supported Features for now:
    <mat-form-field>
      <mat-label>Virtual Select Field Example</mat-label>
      <ngx-virtual-select-field [value]="value">
-       <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+       <ngx-virtual-select-field-option 
+        *ngxVirtualSelectFieldOptionFor="let option of options" 
+        [value]="option.value"> 
+        {{ option.label }}
+      </ngx-virtual-select-field-option>
      </ngx-virtual-select-field>
    </mat-form-field>
    ```
@@ -113,7 +116,10 @@ Basic setup with value input and output binding
 <mat-form-field>
   <mat-label>Example</mat-label>
   <ngx-virtual-select-field [value]="value" (valueChange)="onValueChange($event)">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option 
+      *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> 
+      {{ option.label }} 
+    </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -124,7 +130,10 @@ Form control integration
 <mat-form-field>
   <mat-label>Form Control Example</mat-label>
   <ngx-virtual-select-field [formControl]="formControl">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option 
+      *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value">
+        {{ option.label }}
+    </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -135,7 +144,11 @@ Multi select
 <mat-form-field>
   <mat-label>Multi Select Example</mat-label>
   <ngx-virtual-select-field [value]="value" multiple (valueChange)="onValueChange($event)">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option 
+      *ngxVirtualSelectFieldOptionFor="let option of options" 
+      [value]="option.value"> 
+      {{ option.label }} 
+    </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
@@ -146,9 +159,14 @@ Custom trigger template
 <mat-form-field class="field">
   <mat-label>Custom Trigger Example</mat-label>
   <ngx-virtual-select-field multiple [(value)]="value">
-    <ngx-virtual-select-field-trigger> {{ value.length }} selected </ngx-virtual-select-field-trigger>
-
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-trigger> 
+      {{ value.length }} selected 
+    </ngx-virtual-select-field-trigger>
+    <ngx-virtual-select-field-option 
+      *ngxVirtualSelectFieldOptionFor="let option of options" 
+      [value]="option.value"> 
+      {{ option.label }} 
+    </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```

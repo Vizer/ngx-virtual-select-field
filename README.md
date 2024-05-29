@@ -19,7 +19,6 @@ Not Supported Features for now:
 - Custom Error state mather
 - Custom scroll strategy
 - Accessibility
-- Some additional input parameters and outputs
 - Option groups
 
 [Read NgxVirtualSelectField documentation](./packages/ngx-virtual-select-field//README.md)
@@ -41,4 +40,4 @@ Not Supported Features for now:
 </mat-form-field>
 ```
 
-[See more here](./packages/ngx-virtual-select-field//README.md)
+[See more here](./packages/ngx-virtual-select-field//README.md#examples)
