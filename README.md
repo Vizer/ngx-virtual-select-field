@@ -32,7 +32,11 @@ Not Supported Features for now:
 <mat-form-field>
   <mat-label>Example</mat-label>
   <ngx-virtual-select-field [(value)]="value">
-    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+    <ngx-virtual-select-field-option 
+      *ngxVirtualSelectFieldOptionFor="let option of options"
+      [value]="option.value"> 
+      {{ option.label }}
+    </ngx-virtual-select-field-option>
   </ngx-virtual-select-field>
 </mat-form-field>
 ```
