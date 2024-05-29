@@ -120,7 +120,6 @@ import {
     '(blur)': 'onFocusOut()',
     '(keydown)': 'onKeyDown($event)',
     class: 'ngx-virtual-select-field',
-    '[class.ngx-virtual-select-field-hide-placeholder]': 'hidePlaceholder',
     '[class.ngx-virtual-select-field-disabled]': 'disabled',
     '[class.ngx-virtual-select-field-invalid]': 'errorState',
   },
@@ -427,10 +426,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   get errorState(): boolean {
     return !!this.ngControl?.invalid && !!this.ngControl?.touched;
-  }
-
-  get hidePlaceholder() {
-    return !this.focused || !this.empty;
   }
 
   get focused(): boolean {

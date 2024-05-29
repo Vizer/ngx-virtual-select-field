@@ -46,8 +46,6 @@ $name-prefix: 'ngx-virtual-select-field';
 }
 
 .#{$name-prefix}-placeholder {
-  // Delay the transition until the label has animated about a third of the way through, in
-  // order to prevent the placeholder from overlapping for a split second.
   transition: var(--#{$name-prefix}-placeholder-transition);
   color: var(--#{$name-prefix}-placeholder-text-color);
 
@@ -55,18 +53,18 @@ $name-prefix: 'ngx-virtual-select-field';
     transition: none;
   }
 
-  :host-context(.#{$name-prefix}-hide-placeholder) & {
+  :host-context(.mat-form-field-hide-placeholder) & {
     color: transparent;
-
-    // Overwrite browser specific CSS properties that can overwrite the `color` property.
-    // Some developers seem to use this approach to easily overwrite the placeholder / label color.
     -webkit-text-fill-color: transparent;
-
-    // Remove the transition to prevent the placeholder
-    // from overlapping when the label comes back down.
     transition: none;
-    // Prevents the '...' from showing on the parent element.
     display: block;
+  }
+
+  &:empty::before {
+    content: ' ';
+    white-space: pre;
+    width: 1px;
+    display: inline-block;
   }
 }
 
@@ -116,6 +114,10 @@ $name-prefix: 'ngx-virtual-select-field';
 
   :host-context(.mat-form-field-appearance-fill) & {
     transform: translateY(-8px);
+  }
+
+  :host-context(.mat-form-field-appearance-fill .mdc-text-field--no-label) & {
+    transform: none;
   }
 }
 
