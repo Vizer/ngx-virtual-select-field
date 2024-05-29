@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { JsonPipe } from '@angular/common';
 import {
@@ -20,10 +18,8 @@ import { CustomizedVirtualSelectComponent } from './customized-virtual-select';
 @Component({
   standalone: true,
   imports: [
-    RouterModule,
     NgxVirtualSelectFieldBundle,
     MatFormFieldModule,
-    MatInputModule,
     ReactiveFormsModule,
     JsonPipe,
     MatSelectModule,
@@ -34,8 +30,6 @@ import { CustomizedVirtualSelectComponent } from './customized-virtual-select';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'angular-material-virtual-select';
-
   singleValue: number | null = null;
 
   multiselectValue: number[] | null = null;
