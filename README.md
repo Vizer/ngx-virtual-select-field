@@ -14,6 +14,7 @@ Features:
 - Theming trough css variables
 
 Not Supported Features for now:
+
 - Animations
 - Custom Error state mather
 - Custom scroll strategy
@@ -22,3 +23,18 @@ Not Supported Features for now:
 - Option groups
 
 [Read NgxVirtualSelectField documentation](./packages/ngx-virtual-select-field//README.md)
+
+[Demo](https://stackblitz.com/edit/demo-ngx-virtual-select-field)
+
+## Example single select
+
+```html
+<mat-form-field>
+  <mat-label>Example</mat-label>
+  <ngx-virtual-select-field [(value)]="value">
+    <ngx-virtual-select-field-option *ngxVirtualSelectFieldOptionFor="let option of options" [value]="option.value"> {{ option.label }} </ngx-virtual-select-field-option>
+  </ngx-virtual-select-field>
+</mat-form-field>
+```
+
+[See more here](./packages/ngx-virtual-select-field//README.md)

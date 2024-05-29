@@ -41,6 +41,8 @@ Not Supported Features for now:
 - Some additional input parameters and outputs
 - Option groups
 
+[Demo](https://stackblitz.com/edit/demo-ngx-virtual-select-field)
+
 ## Getting started
 
 1. Install package
