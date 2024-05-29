@@ -185,10 +185,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   /**
    * Milliseconds to wait before navigating to active element after keyboard search
-   * @default 100
+   * @default 300
    */
   @Input({ transform: numberAttribute })
-  typeaheadDebounceInterval: number = 100;
+  typeaheadDebounceInterval: number = 300;
 
   /**
    * CSS class to be added to the panel element

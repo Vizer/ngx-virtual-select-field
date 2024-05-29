@@ -177,7 +177,7 @@ Component to define select field
 | panelViewportPageSize     | `number`                     | `8`     | Amount of visible items in list                                                |
 | multiple                  | `boolean`                    | `false` | Enable multiple selection                                                      |
 | tabIndex                  | `number`                     | `0`     | Tab index for keyboard navigation                                              |
-| typeaheadDebounceInterval | `number`                     | `100`   | Milliseconds to wait before navigating to active element after keyboard search |
+| typeaheadDebounceInterval | `number`                     | `300`   | Milliseconds to wait before navigating to active element after keyboard search |
 | panelClass                | `string \| string[] \| null` | `null`  | CSS class to be added to the panel element                                     |
 | value                     | `TValue[] \| TValue \| null` | `null`  | Value of the select field                                                      |
 | placeholder               | `string`                     | none    | Placeholder for the select field                                               |
