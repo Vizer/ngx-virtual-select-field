@@ -6,26 +6,23 @@
 
 @include mat.core();
 
-$my-primary: mat.define-palette(mat.$indigo-palette, 500);
-$my-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-
-$my-theme: mat.define-dark-theme(
+$dev-theme: mat.define-theme(
   (
     color: (
-      primary: $my-primary,
-      accent: $my-accent,
+      theme-type: dark,
+      primary: mat.$violet-palette,
     ),
-    typography: mat.define-typography-config(),
-    density: 0,
+    density: (
+      scale: 0,
+    ),
   )
 );
 
-@include mat.all-component-themes($my-theme);
+html {
+  @include mat.core-theme($dev-theme);
 
-// Use the default configuration.
-$my-typography: mat.define-typography-config();
-
-@include mat.typography-hierarchy($my-typography);
+  @include mat.all-component-themes($dev-theme);
+}
 
 body {
   background: rgb(32, 32, 32);
