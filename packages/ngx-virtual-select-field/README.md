@@ -96,16 +96,11 @@ Not Supported Features for now:
    </mat-form-field>
    ```
 
-1. Include theme styles. You can define your own theme with help of css variables or inherit from material theme.
-
+1. Include theme styles. You can define your own theme with help of [CSS variables](#css-variables) or inherit from material theme.
     ```scss
     @use 'ngx-virtual-select-field/theme' as theme;
 
     @include theme.inherit-material-theme(); // this will inherit css variables from material theme
-
-    // or
-
-    @include theme.create-default-theme(); // this will create basic dark theme
     ```
 
 ## Examples
@@ -324,3 +319,4 @@ CSS variables for option component:
 }
 
 ```
+<a name="abcd"></a>
