@@ -1,31 +1,31 @@
 {
-  "name": "angular-material-virtual-select",
+  "name": "dev-app",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/angular-material-virtual-select/src",
+  "sourceRoot": "apps/dev-app/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/angular-material-virtual-select",
-        "index": "apps/angular-material-virtual-select/src/index.html",
-        "browser": "apps/angular-material-virtual-select/src/main.ts",
+        "outputPath": "dist/apps/dev-app",
+        "index": "apps/dev-app/src/index.html",
+        "browser": "apps/dev-app/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/angular-material-virtual-select/tsconfig.app.json",
+        "tsConfig": "apps/dev-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/angular-material-virtual-select/src/favicon.ico",
-          "apps/angular-material-virtual-select/src/assets"
+          "apps/dev-app/src/favicon.ico",
+          "apps/dev-app/src/assets"
         ],
-        "styles": ["apps/angular-material-virtual-select/src/styles.scss"],
+        "styles": ["apps/dev-app/src/styles.scss"],
         "scripts": [],
-        "server": "apps/angular-material-virtual-select/src/main.server.ts",
+        "server": "apps/dev-app/src/main.server.ts",
         "prerender": true,
         "ssr": {
-          "entry": "apps/angular-material-virtual-select/server.ts"
+          "entry": "apps/dev-app/server.ts"
         }
       },
       "configurations": {
@@ -56,10 +56,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "angular-material-virtual-select:build:production"
+          "buildTarget": "dev-app:build:production"
         },
         "development": {
-          "buildTarget": "angular-material-virtual-select:build:development"
+          "buildTarget": "dev-app:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -67,7 +67,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "angular-material-virtual-select:build"
+        "buildTarget": "dev-app:build"
       }
     },
     "lint": {
@@ -75,8 +75,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "apps/angular-material-virtual-select/**/*.ts",
-          "apps/angular-material-virtual-select/**/*.html"
+          "apps/dev-app/**/*.ts",
+          "apps/dev-app/**/*.html"
         ]
       }
     },
@@ -84,7 +84,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/angular-material-virtual-select/jest.config.ts"
+        "jestConfig": "apps/dev-app/jest.config.ts"
       }
     }
   }

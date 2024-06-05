@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "defaultProject": "angular-material-virtual-select",
+  "defaultProject": "dev-app",
   "workspaceLayout": {
     "libsDir": "packages",
     "appsDir": "apps"

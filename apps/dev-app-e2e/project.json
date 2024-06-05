@@ -1,16 +1,16 @@
 {
-  "name": "angular-material-virtual-select-e2e",
+  "name": "dev-app-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/angular-material-virtual-select-e2e/src",
+  "sourceRoot": "apps/dev-app-e2e/src",
   "targets": {
     "e2e": {
       "executor": "@nx/playwright:playwright",
       "outputs": [
-        "{workspaceRoot}/dist/.playwright/apps/angular-material-virtual-select-e2e"
+        "{workspaceRoot}/dist/.playwright/apps/dev-app-e2e"
       ],
       "options": {
-        "config": "apps/angular-material-virtual-select-e2e/playwright.config.ts"
+        "config": "apps/dev-app-e2e/playwright.config.ts"
       }
     },
     "lint": {
@@ -18,10 +18,10 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "apps/angular-material-virtual-select-e2e/**/*.{js,ts}"
+          "apps/dev-app-e2e/**/*.{js,ts}"
         ]
       }
     }
   },
-  "implicitDependencies": ["angular-material-virtual-select"]
+  "implicitDependencies": ["dev-app"]
 }

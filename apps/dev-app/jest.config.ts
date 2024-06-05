@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'angular-material-virtual-select',
+  displayName: 'dev-app',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/apps/angular-material-virtual-select',
+  coverageDirectory: '../../coverage/apps/dev-app',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
