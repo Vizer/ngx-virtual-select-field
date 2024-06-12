@@ -12,7 +12,6 @@ import {
   EventEmitter,
   Inject,
   Input,
-  NgZone,
   OnDestroy,
   OnInit,
   Optional,
@@ -52,7 +51,6 @@ import {
   Observable,
   Subject,
   debounceTime,
-  defer,
   map,
   merge,
   startWith,
@@ -216,8 +214,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     this._selectionModel?.setSelection(
       ...this._value.map(
-        (v) => this.optionFor.options$.value.find((o) => o.value === v)!
-      )
+        (v) => this.optionFor.options$.value.find((o) => o.value === v)!,
+      ),
     );
 
     this._stateChanges.next();
@@ -329,36 +327,14 @@ export class NgxVirtualSelectFieldComponent<TValue>
     NgxVirtualSelectFieldOptionModel<TValue>
   > | null = null;
 
-  // NOTE: recursive defer observable to await for options to be rendered
-  private readonly _optionSelectionChanges: Observable<
-    NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
-  > = defer(() => {
-    const options = this.optionsQuery;
-
-    if (options) {
-      return options.changes.pipe(
-        startWith(options),
-        switchMap(() =>
-          merge(...options.map((option) => option.selectedChange))
-        )
-      );
-    }
-
-    return this._ngZone.onStable.pipe(
-      take(1),
-      switchMap(() => this._optionSelectionChanges)
-    );
-  });
-
   // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
-    private _ngZone: NgZone,
     @Optional()
     @Inject(MAT_FORM_FIELD)
     private _parentFormField: MatFormField,
     @Optional()
     @Inject(NGX_VIRTUAL_SELECT_FIELD_CONFIG)
-    private _defaultOptions?: NgxVirtualSelectFieldConfig
+    private _defaultOptions?: NgxVirtualSelectFieldConfig,
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
@@ -382,8 +358,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
         .change()
         .pipe(
           takeUntilDestroyed(this._destroyRef),
-          tap(() => changeDetectorRef.detectChanges())
-        )
+          tap(() => changeDetectorRef.detectChanges()),
+        ),
     );
 
     return computed(() => {
@@ -394,7 +370,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private resolveOverlayWidth(
-    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined
+    preferredOrigin: ElementRef<ElementRef> | CdkOverlayOrigin | undefined,
   ): string | number {
     if (!this.isPanelOpened()) {
       return 0;
@@ -448,43 +424,49 @@ export class NgxVirtualSelectFieldComponent<TValue>
         map((_selected) =>
           this._selectionModel.selected
             .map((option) => option.label ?? '')
-            .join(', ')
-        )
+            .join(', '),
+        ),
       );
     }
 
     this.optionFor.options$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((options) => {
+        this._selectionModel?.setSelection(
+          ...this._value.map((v) => options.find((o) => o.value === v)!),
+        );
+        this.initListKeyManager(options);
+      });
+
+    this._scrolledIndexChange
       .pipe(
         takeUntilDestroyed(this._destroyRef),
-        tap((options) =>
-          this._selectionModel?.setSelection(
-            ...this._value.map((v) => options.find((o) => o.value === v)!)
-          )
+        debounceTime(100),
+        tap(() =>
+          this.updateRenderedOptionsState(this.optionFor.options$.value),
         ),
-        tap((options) => this.initListKeyManager(options)),
-        switchMap((options) =>
-          merge(
-            this._optionSelectionChanges.pipe(
-              tap(
-                (
-                  selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>
-                ) => this.updateOptionSelection(selectionEvent, options)
-              )
-            ),
+        switchMap(() => {
+          this.assertIsDefined(
+            this.optionsQuery,
+            `optionsQuery is not defined`,
+          );
 
-            this._scrolledIndexChange.pipe(
-              debounceTime(100),
-              tap(() => this.updateRenderedOptionsState(options))
-            )
-          )
-        )
+          return merge(
+            ...this.optionsQuery.map((option) => option.selectedChange),
+          );
+        }),
       )
-      .subscribe();
+      .subscribe((selectionEvent) =>
+        this.updateOptionSelection(
+          selectionEvent,
+          this.optionFor.options$.value,
+        ),
+      );
   }
 
   private updateOptionSelection(
     selectionEvent: NgxVirtualSelectFieldOptionSelectionChangeEvent<TValue>,
-    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
   ) {
     this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
@@ -561,7 +543,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       .pipe(
         takeUntilDestroyed(this._destroyRef),
         take(1),
-        switchMap(() => this._scrolledIndexChange.pipe(take(1)))
+        switchMap(() => this._scrolledIndexChange.pipe(take(1))),
       )
       .subscribe(() => this.navigateToFirstSelectedOption());
   }
@@ -572,7 +554,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     }
 
     let targetIndex = this.optionFor.options$.value.findIndex(
-      (option) => option === this._selectionModel.selected[0]
+      (option) => option === this._selectionModel.selected[0],
     );
 
     targetIndex = targetIndex - this.panelViewportPageSize / 2;
@@ -695,7 +677,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private toggleAllOptions(
     options: NgxVirtualSelectFieldOptionModel<TValue>[],
-    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[]
+    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
   ) {
     const enabledOptionValues = options.filter((option) => !option.disabled);
 
@@ -748,7 +730,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
         //TODO: arrow navigation should start from selected options. Currently it starts from the first option
         this.selectOptionByValue(
           this.optionFor.options$.value,
-          keyManager.activeItem!.value
+          keyManager.activeItem!.value,
         );
 
         // TODO: Add live announcer
@@ -764,7 +746,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   //#region Key manager
 
   private initListKeyManager(
-    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
   ) {
     this._keyManager?.destroy();
 
@@ -796,13 +778,13 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.updateActiveOptionComponent(
         this.optionsQuery.toArray(),
         options[index],
-        index
+        index,
       );
     });
   }
 
   private normalizeKeyManagerOptions(
-    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
   ) {
     return options.map((option) => ({
       value: option.value,
@@ -815,7 +797,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private updateActiveOptionComponent(
     optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
     activeOption: NgxVirtualSelectFieldOptionModel<TValue>,
-    index: number
+    index: number,
   ) {
     optionComponents.forEach((option) => option.setInactiveStyles());
 
@@ -826,12 +808,12 @@ export class NgxVirtualSelectFieldComponent<TValue>
         .subscribe(() => {
           this.assertIsDefined(
             this.optionsQuery,
-            `optionsQuery is not defined`
+            `optionsQuery is not defined`,
           );
 
           this.setActiveOptionComponentByValue(
             this.optionsQuery.toArray(),
-            activeOption.value
+            activeOption.value,
           );
         });
 
@@ -839,7 +821,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     } else {
       this.setActiveOptionComponentByValue(
         optionComponents,
-        activeOption.value
+        activeOption.value,
       );
     }
   }
@@ -862,15 +844,15 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private setActiveOptionComponentByValue(
     optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
-    value: TValue
+    value: TValue,
   ) {
     const optionComponent = optionComponents.find(
-      (option) => option.value === value
+      (option) => option.value === value,
     );
 
     this.assertIsDefined(
       optionComponent,
-      `Option component with value ${value} not found`
+      `Option component with value ${value} not found`,
     );
 
     optionComponent.setActiveStyles();
@@ -884,7 +866,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private selectOptionByValue(
     options: NgxVirtualSelectFieldOptionModel<TValue>[],
-    value: TValue
+    value: TValue,
   ) {
     const { option } = this.findOptionByValue(options, value);
 
@@ -896,7 +878,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private updateRenderedOptionsState(
-    options: NgxVirtualSelectFieldOptionModel<TValue>[]
+    options: NgxVirtualSelectFieldOptionModel<TValue>[],
   ) {
     this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
 
@@ -914,7 +896,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private findOptionByValue(
     options: NgxVirtualSelectFieldOptionModel<TValue>[],
-    value: TValue
+    value: TValue,
   ): { option: NgxVirtualSelectFieldOptionModel<TValue>; index: number } {
     const index = options.findIndex((option) => option.value === value);
 
@@ -936,7 +918,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private assertIsDefined<T>(
     value: T,
-    message: string
+    message: string,
   ): asserts value is NonNullable<T> {
     if (value === undefined || value === null) {
       throw new Error(message);
