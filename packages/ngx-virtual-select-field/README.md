@@ -1,3 +1,8 @@
+<span><a href="https://www.npmjs.com/package/ngx-virtual-select-field" title="View this project on NPM">![NPM Version](https://img.shields.io/npm/v/ngx-virtual-select-field?style=flat&logo=npm)
+</a></span>
+<span><a href="https://github.com/Vizer/ngx-virtual-select-field/actions/workflows/node.js.yml" title="View this project workflow">![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/vizer/ngx-virtual-select-field/node.js.yml?style=flat&logo=github&label=workflow)
+</a></span>
+
 # Virtual Select component for Angular Material Form Field
 
 ## Table of contents
@@ -89,7 +94,8 @@ Not Supported Features for now:
      <ngx-virtual-select-field [value]="value">
        <ngx-virtual-select-field-option 
         *ngxVirtualSelectFieldOptionFor="let option of options" 
-        [value]="option.value"> 
+        [value]="option.value"
+        [disabled]="option.disabled"> 
         {{ option.label }}
       </ngx-virtual-select-field-option>
      </ngx-virtual-select-field>
