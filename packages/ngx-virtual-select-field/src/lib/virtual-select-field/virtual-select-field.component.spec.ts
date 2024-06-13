@@ -1,10 +1,14 @@
 import { By } from '@angular/platform-browser';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import {
+  CdkVirtualScrollViewport,
+  VIRTUAL_SCROLL_STRATEGY,
+} from '@angular/cdk/scrolling';
 import { DOWN_ARROW } from '@angular/cdk/keycodes';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { RenderResult, fireEvent, render } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { DebugElement } from '@angular/core';
 
 import {
   NgxVirtualSelectFieldOptionForDirective,
@@ -86,6 +90,10 @@ describe('VirtualSelectFieldComponent', () => {
 
       const optionsDebugElements = ElementQuery.allOptionComponents(result);
 
+      Arrange.triggerScroll(ElementQuery.cdkViewPort(result));
+
+      await result.fixture.whenStable();
+
       expect(optionsDebugElements.length).toBeGreaterThan(4);
 
       await user.click(optionsDebugElements[0].nativeElement);
@@ -154,6 +162,10 @@ describe('VirtualSelectFieldComponent', () => {
 
       const trigger = result.getByText(expectedPlaceholder);
       await user.click(trigger);
+
+      Arrange.triggerScroll(ElementQuery.cdkViewPort(result));
+
+      await result.fixture.whenStable();
 
       const optionElements = ElementQuery.allOptionComponents(result);
       await user.click(optionElements[1].nativeElement);
@@ -237,7 +249,7 @@ describe('VirtualSelectFieldComponent', () => {
 
         fireEvent.keyDown(
           viewport.nativeElement,
-          Arrange.createEventArrowDownEvent()
+          Arrange.createEventArrowDownEvent(),
         );
 
         await user.type(viewport.nativeElement, '{enter}');
@@ -325,17 +337,16 @@ describe('VirtualSelectFieldComponent', () => {
 
         fireEvent.keyDown(
           viewport.nativeElement,
-          Arrange.createEventArrowDownEvent()
+          Arrange.createEventArrowDownEvent(),
         );
 
         fireEvent.keyDown(
           viewport.nativeElement,
           Arrange.createEventArrowDownEvent({
             shiftKey: true,
-          })
+          }),
         );
 
-        console.log(wrapperComponent.value);
         expect(ElementQuery.activeOption(result)).toBeDefined();
         expect(wrapperComponent.value).toEqual([
           options[1].value,
@@ -383,7 +394,7 @@ describe('VirtualSelectFieldComponent', () => {
           trigger,
           Arrange.createEventArrowDownEvent({
             altKey: true,
-          })
+          }),
         );
 
         expect(ElementQuery.cdkViewPort(result)).toBeTruthy();
@@ -475,7 +486,7 @@ const Arrange = {
           NgxVirtualSelectFieldOptionComponent,
           NgxVirtualSelectFieldTriggerDirective,
         ],
-      }
+      },
     );
   },
 
@@ -508,7 +519,7 @@ const Arrange = {
           NgxVirtualSelectFieldOptionComponent,
           NgxVirtualSelectFieldTriggerDirective,
         ],
-      }
+      },
     );
   },
 
@@ -545,12 +556,12 @@ const Arrange = {
           NgxVirtualSelectFieldOptionComponent,
           NgxVirtualSelectFieldTriggerDirective,
         ],
-      }
+      },
     );
   },
 
   getWrapperComponent<TValue>(
-    render: RenderResult<unknown, { value: TValue }>
+    render: RenderResult<unknown, { value: TValue }>,
   ) {
     return render.fixture.componentInstance;
   },
@@ -574,24 +585,28 @@ const Arrange = {
       ...fields,
     };
   },
+
+  triggerScroll(viewport: DebugElement) {
+    viewport.injector.get(VIRTUAL_SCROLL_STRATEGY).onContentScrolled();
+  },
 };
 
 const ElementQuery = {
   allOptionComponents(renderResult: RenderResult<unknown, unknown>) {
     return renderResult.debugElement.queryAll(
-      By.directive(NgxVirtualSelectFieldOptionComponent)
+      By.directive(NgxVirtualSelectFieldOptionComponent),
     );
   },
 
   cdkViewPort(renderResult: RenderResult<unknown, unknown>) {
     return renderResult.debugElement.query(
-      By.directive(CdkVirtualScrollViewport)
+      By.directive(CdkVirtualScrollViewport),
     );
   },
 
   activeOption(renderResult: RenderResult<unknown, unknown>) {
     return renderResult.debugElement.query(
-      By.css('.ngx-virtual-select-field-option--active')
+      By.css('.ngx-virtual-select-field-option--active'),
     );
   },
 };
