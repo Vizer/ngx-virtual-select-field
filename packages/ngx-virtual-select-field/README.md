@@ -300,6 +300,7 @@ CSS variables for main component:
   --ngx-virtual-select-field-panel-background: ...;
   --ngx-virtual-select-field-panel-box-shadow: ...;
   --ngx-virtual-select-field-panel-option-height: ...;
+  --ngx-virtual-select-field-panel-list-wrapper-padding: ...;
 }
 ```
 CSS variables for option component:
@@ -325,4 +326,3 @@ CSS variables for option component:
 }
 
 ```
-<a name="abcd"></a>

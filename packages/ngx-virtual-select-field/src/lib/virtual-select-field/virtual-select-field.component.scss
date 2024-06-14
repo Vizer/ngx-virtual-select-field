@@ -143,6 +143,7 @@ $name-prefix: 'ngx-virtual-select-field';
   &-list-wrapper {
     display: flex;
     flex-direction: column;
+    padding: var(--#{$name-prefix}-panel-list-wrapper-padding);
   }
 }
 

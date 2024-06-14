@@ -55,6 +55,7 @@ $option-prefix: 'ngx-virtual-select-field-option';
     );
     --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
+    --#{$name-prefix}-panel-list-wrapper-padding: 8px 0;
   }
 
   :root {
@@ -112,6 +113,7 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$name-prefix}-panel-box-shadow: none;
     --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
+    --#{$name-prefix}-panel-list-wrapper-padding: 8px 0;
   }
 
   :root {
