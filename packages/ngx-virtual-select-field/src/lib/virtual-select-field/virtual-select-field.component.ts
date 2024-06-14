@@ -417,6 +417,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   ngAfterContentInit() {
+    this.assertIsDefined(this.optionsQuery, `optionsQuery is not defined`);
+
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
         startWith(null),
@@ -438,29 +440,24 @@ export class NgxVirtualSelectFieldComponent<TValue>
         this.initListKeyManager(options);
       });
 
-    this._scrolledIndexChange
+    this.optionsQuery.changes
       .pipe(
         takeUntilDestroyed(this._destroyRef),
-        debounceTime(100),
-        tap(() =>
-          this.updateRenderedOptionsState(this.optionFor.options$.value),
+        switchMap(() =>
+          merge(...this.optionsQuery!.map((option) => option.selectedChange)),
         ),
-        switchMap(() => {
-          this.assertIsDefined(
-            this.optionsQuery,
-            `optionsQuery is not defined`,
-          );
-
-          return merge(
-            ...this.optionsQuery.map((option) => option.selectedChange),
-          );
-        }),
       )
       .subscribe((selectionEvent) =>
         this.updateOptionSelection(
           selectionEvent,
           this.optionFor.options$.value,
         ),
+      );
+
+    merge(this._scrolledIndexChange, this._selectionModel.changed)
+      .pipe(takeUntilDestroyed(this._destroyRef), debounceTime(20))
+      .subscribe(() =>
+        this.updateRenderedOptionsState(this.optionFor.options$.value),
       );
   }
 
@@ -477,17 +474,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this._selectionModel.toggle(changedOption);
     } else if (changedOption.value === null) {
       this._selectionModel.clear();
-      this.optionsQuery.forEach((option) => option.deselect());
 
       this.close();
     } else {
       this._selectionModel.select(changedOption);
-
-      this.optionsQuery.forEach((option) => {
-        if (option.value !== selectionEvent.value) {
-          option.deselect();
-        }
-      });
 
       this.close();
     }
@@ -638,7 +628,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.close();
     } else if (
       !isTyping &&
-      (event.code == ENTER_CODE || event.code === SPACE_CODE) &&
+      (event.code === ENTER_CODE || event.code === SPACE_CODE) &&
       activeItem &&
       !hasModifierKey(event)
     ) {
@@ -647,8 +637,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
       const { option } = this.findOptionByValue(options, activeItem.value);
 
       this._selectionModel.toggle(option);
-
-      this.updateRenderedOptionsState(options);
 
       this.emitValue();
     } else if (
@@ -659,7 +647,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
     ) {
       event.preventDefault();
 
-      this.toggleAllOptions(options, this.optionsQuery.toArray());
+      this.toggleAllOptions(options);
 
       this.emitValue();
     } else {
@@ -681,7 +669,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   private toggleAllOptions(
     options: NgxVirtualSelectFieldOptionModel<TValue>[],
-    optionComponents: NgxVirtualSelectFieldOptionComponent<TValue>[],
   ) {
     const enabledOptionValues = options.filter((option) => !option.disabled);
 
@@ -690,16 +677,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     if (hasDeselectedOptions) {
       this._selectionModel.select(...enabledOptionValues);
-      optionComponents.forEach((optionComponent) => {
-        if (!optionComponent.disabled) {
-          optionComponent.select();
-        }
-      });
     } else {
       this._selectionModel.clear();
-      optionComponents.forEach((optionComponent) => {
-        optionComponent.deselect();
-      });
     }
   }
 
@@ -875,8 +854,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     const { option } = this.findOptionByValue(options, value);
 
     this._selectionModel.select(option);
-
-    this.updateRenderedOptionsState(options);
 
     this.emitValue();
   }
