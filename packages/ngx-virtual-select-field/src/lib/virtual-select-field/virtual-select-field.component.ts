@@ -113,7 +113,7 @@ import {
     },
   ],
   host: {
-    '[attr.tabindex]': 'tabIndex',
+    '[attr.tabindex]': 'this.disabled ? -1 : tabIndex',
     '(focus)': 'onFocusIn()',
     '(blur)': 'onFocusOut()',
     '(keydown)': 'onKeyDown($event)',
@@ -534,6 +534,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   onContainerClick(): void {
+    if (this.disabled) {
+      return;
+    }
+
     this.focus();
     this.open();
   }
