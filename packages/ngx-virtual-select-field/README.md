@@ -296,7 +296,6 @@ CSS variables for main component:
   --ngx-virtual-select-field-arrow-color--invalid: ...;
   --ngx-virtual-select-field-arrow-color--disabled: ...;
 
-  --ngx-virtual-select-field-panel-viewport-page-size: ...;
   --ngx-virtual-select-field-panel-background: ...;
   --ngx-virtual-select-field-panel-box-shadow: ...;
   --ngx-virtual-select-field-panel-option-height: ...;

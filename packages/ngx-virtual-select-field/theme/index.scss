@@ -46,7 +46,6 @@ $option-prefix: 'ngx-virtual-select-field-option';
       --mat-select-disabled-arrow-color
     );
 
-    --#{$name-prefix}-panel-viewport-page-size: 8;
     --#{$name-prefix}-panel-background: var(
       --mat-select-panel-background-color
     );
@@ -55,7 +54,7 @@ $option-prefix: 'ngx-virtual-select-field-option';
     );
     --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
-    --#{$name-prefix}-panel-list-wrapper-padding: 8px 0;
+    --#{$name-prefix}-panel-list-wrapper-padding: 8px;
   }
 
   :root {
@@ -108,12 +107,11 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$name-prefix}-arrow-color--invalid: red;
     --#{$name-prefix}-arrow-color--disabled: grey;
 
-    --#{$name-prefix}-panel-viewport-page-size: 8;
     --#{$name-prefix}-panel-background: black;
     --#{$name-prefix}-panel-box-shadow: none;
     --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
-    --#{$name-prefix}-panel-list-wrapper-padding: 8px 0;
+    --#{$name-prefix}-panel-list-wrapper-padding: 8px;
   }
 
   :root {

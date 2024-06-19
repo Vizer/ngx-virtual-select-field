@@ -6,15 +6,17 @@
 >
   <div class="ngx-virtual-select-field-value">
     @if (empty) {
-    <span class="ngx-virtual-select-field-placeholder">{{ placeholder }}</span>
+      <span class="ngx-virtual-select-field-placeholder">{{
+        placeholder
+      }}</span>
     } @else {
-    <span>
-      @if (customTrigger) {
-      <ng-content select="ngx-virtual-select-field-trigger"></ng-content>
-      } @else {
-      <span>{{ triggerValue$ | async }}</span>
-      }
-    </span>
+      <span>
+        @if (customTrigger) {
+          <ng-content select="ngx-virtual-select-field-trigger"></ng-content>
+        } @else {
+          <span>{{ triggerValue$ | async }}</span>
+        }
+      </span>
     }
   </div>
 
@@ -55,11 +57,11 @@
     [@transformPanel]="'showing'"
     (@transformPanel.done)="_panelDoneAnimatingStream.next($event.toState)"
     -->
-
   <cdk-virtual-scroll-viewport
     role="listbox"
     tabindex="-1"
     class="ngx-virtual-select-field-panel {{ inheritedColorTheme }}"
+    [style.--viewport-page-size]="maxPageSize"
     [itemSize]="optionHeight"
     [ngClass]="panelClass"
     (scrolledIndexChange)="onScrolledIndexChange()"

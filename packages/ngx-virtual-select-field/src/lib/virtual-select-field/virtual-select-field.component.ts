@@ -410,6 +410,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
   private _focused = false;
 
+  protected get maxPageSize(): number{
+    return Math.min(this.panelViewportPageSize, this.optionFor.options$.value.length);
+  }
+
   ngOnInit() {
     this._selectionModel = new SelectionModel<
       NgxVirtualSelectFieldOptionModel<TValue>
@@ -551,7 +555,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       (option) => option === this._selectionModel.selected[0],
     );
 
-    targetIndex = targetIndex - this.panelViewportPageSize / 2;
+    targetIndex = targetIndex - this.maxPageSize / 2;
     targetIndex = Math.max(0, targetIndex);
 
     this.cdkVirtualScrollViewport.scrollToIndex(targetIndex);
@@ -819,7 +823,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
     const bottomScroll =
-      scrollTop + this.optionHeight * this.panelViewportPageSize - 1;
+      scrollTop + this.optionHeight * this.maxPageSize - 1;
     const targetScroll = this.optionHeight * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;
