@@ -129,8 +129,8 @@ $name-prefix: 'ngx-virtual-select-field';
   &-panel {
     width: 100%;
     height: calc(
-      var(--#{$name-prefix}-panel-option-height) *
-        var(--#{$name-prefix}-panel-viewport-page-size)
+      var(--#{$name-prefix}-panel-option-height) * var(--viewport-page-size) +
+        var(--#{$name-prefix}-panel-list-wrapper-padding) * 2
     );
     background: var(--#{$name-prefix}-panel-background);
     box-shadow: var(--#{$name-prefix}-panel-box-shadow);
@@ -143,7 +143,8 @@ $name-prefix: 'ngx-virtual-select-field';
   &-list-wrapper {
     display: flex;
     flex-direction: column;
-    padding: var(--#{$name-prefix}-panel-list-wrapper-padding);
+    padding-top: var(--#{$name-prefix}-panel-list-wrapper-padding);
+    padding-bottom: var(--#{$name-prefix}-panel-list-wrapper-padding);
   }
 }
 
