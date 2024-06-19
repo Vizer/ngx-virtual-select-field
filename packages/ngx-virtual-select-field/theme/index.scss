@@ -52,7 +52,6 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$name-prefix}-panel-box-shadow: var(
       --mat-select-container-elevation-shadow
     );
-    --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
     --#{$name-prefix}-panel-list-wrapper-padding: 8px;
   }
@@ -81,7 +80,6 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$option-prefix}-disabled-state-opacity: 0.38;
     --#{$option-prefix}-gap: 8px;
     --#{$option-prefix}-padding: 0 16px;
-    --#{$option-prefix}-item-height: 48px;
   }
 
   @include overlay-position-styles();
@@ -109,7 +107,6 @@ $option-prefix: 'ngx-virtual-select-field-option';
 
     --#{$name-prefix}-panel-background: black;
     --#{$name-prefix}-panel-box-shadow: none;
-    --#{$name-prefix}-panel-option-height: 48px;
     --#{$name-prefix}-panel-border-radius: 4px;
     --#{$name-prefix}-panel-list-wrapper-padding: 8px;
   }
@@ -130,7 +127,6 @@ $option-prefix: 'ngx-virtual-select-field-option';
     --#{$option-prefix}-disabled-state-opacity: 0.5;
     --#{$option-prefix}-gap: 8px;
     --#{$option-prefix}-padding: 0 16px;
-    --#{$option-prefix}-item-height: 48px;
   }
 
   @include overlay-position-styles();

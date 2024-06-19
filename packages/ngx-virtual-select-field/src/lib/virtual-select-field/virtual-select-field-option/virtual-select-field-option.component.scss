@@ -1,4 +1,5 @@
 $option-prefix: 'ngx-virtual-select-field-option';
+$field-viewport-option-height: '--ngx-virtual-select-field__viewport-option-height';
 
 :host {
   cursor: pointer;
@@ -7,8 +8,8 @@ $option-prefix: 'ngx-virtual-select-field-option';
   flex-direction: row;
   gap: var(--#{$option-prefix}-gap);
   padding: var(--#{$option-prefix}-padding);
-  height: var(--#{$option-prefix}-item-height);
   line-height: var(--#{$option-prefix}-line-height);
+  height: var(#{$field-viewport-option-height});
 
   color: var(--#{$option-prefix}-color);
   font-family: var(--#{$option-prefix}-font-family);
