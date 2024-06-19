@@ -15,7 +15,6 @@ import {
     {
       provide: NGX_VIRTUAL_SELECT_FIELD_CONFIG,
       useValue: {
-        overlayPanelClass: 'dev-app-ngx-virtual-select--customized-size__6_36',
         panelWidth: 450,
         optionHeight: 36,
         panelViewportPageSize: 6,
