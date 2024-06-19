@@ -90,6 +90,21 @@
   </mat-form-field>
 </div>
 
+<div class="field-container">
+  <mat-form-field class="field">
+    <mat-label>5 items Virtual Example</mat-label>
+    <ngx-virtual-select-field multiple>
+      <ngx-virtual-select-field-option
+        *ngxVirtualSelectFieldOptionFor="let option of options.slice(0,5)"
+        [value]="option.value"
+        [disabled]="option.disabled"
+      >
+        {{ option.label }}</ngx-virtual-select-field-option
+      >
+    </ngx-virtual-select-field>
+  </mat-form-field>
+</div>
+
 <h3 class="mat-headline-5">Form</h3>
 
 <form [formGroup]="form" class="form-container">
@@ -135,6 +150,7 @@
   </mat-form-field>
   {{ singleValue }}
 </div>
+
 
 <h3 class="mat-headline-5">Customized virtual Select</h3>
 <section>
