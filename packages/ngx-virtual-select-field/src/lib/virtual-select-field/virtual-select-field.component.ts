@@ -410,8 +410,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
   private _focused = false;
 
-  protected get maxPageSize(): number{
-    return Math.min(this.panelViewportPageSize, this.optionFor.options$.value.length);
+  protected get maxPageSize(): number {
+    return Math.min(this.panelViewportPageSize, this.optionFor.options$.value.length,);
   }
 
   ngOnInit() {
@@ -446,10 +446,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     this.optionsQuery.changes
       .pipe(
-        takeUntilDestroyed(this._destroyRef),
         switchMap(() =>
           merge(...this.optionsQuery!.map((option) => option.selectedChange)),
         ),
+        takeUntilDestroyed(this._destroyRef),
       )
       .subscribe((selectionEvent) =>
         this.updateOptionSelection(
@@ -539,9 +539,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
   onOverlayAttached() {
     this.cdkConnectedOverlay.positionChange
       .pipe(
-        takeUntilDestroyed(this._destroyRef),
         take(1),
         switchMap(() => this._scrolledIndexChange.pipe(take(1))),
+        takeUntilDestroyed(this._destroyRef),
       )
       .subscribe(() => this.navigateToFirstSelectedOption());
   }
@@ -822,8 +822,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
       this.cdkVirtualScrollViewport.elementRef.nativeElement.scrollTop;
 
     // NOTE: -1 is needed to prevent scrolling to next item out of the viewport
-    const bottomScroll =
-      scrollTop + this.optionHeight * this.maxPageSize - 1;
+    const bottomScroll = scrollTop + this.optionHeight * this.maxPageSize - 1;
     const targetScroll = this.optionHeight * targetIndex;
 
     return scrollTop > targetScroll || bottomScroll < targetScroll;
