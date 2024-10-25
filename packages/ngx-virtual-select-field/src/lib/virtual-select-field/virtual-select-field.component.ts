@@ -896,8 +896,8 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     const outputValue = this.multiple ? this._value : this._value[0];
 
-    this.valueChange.emit(outputValue);
     this._onChange(outputValue);
+    this.valueChange.emit(outputValue);
   }
 
   private assertIsDefined<T>(
