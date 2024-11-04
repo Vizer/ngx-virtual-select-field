@@ -454,6 +454,21 @@ describe('VirtualSelectFieldComponent', () => {
 
       expect(trigger).toBeTruthy();
     });
+
+    test('should trigger value after form update', async () => {
+      const options = Arrange.createOptions();
+      const option = options[3];
+
+      const result = await Arrange.setupAsFormCOntrol({
+        options,
+        value: null,
+      });
+
+      result.fixture.componentInstance.control.setValue(option.value);
+
+      const trigger = await result.findByText(option.label);
+      expect(trigger).toBeTruthy();
+    });
   });
 });
 

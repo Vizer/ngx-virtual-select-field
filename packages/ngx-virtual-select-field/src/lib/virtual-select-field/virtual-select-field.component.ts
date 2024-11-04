@@ -312,6 +312,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   protected triggerValue$: Observable<string> | null = null;
   protected preferredOverlayOrigin: CdkOverlayOrigin | ElementRef | undefined;
 
+  private readonly _changeDetectorRef = inject(ChangeDetectorRef);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _elRef: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _stateChanges = new Subject<void>();
@@ -327,7 +328,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     NgxVirtualSelectFieldOptionModel<TValue>
   > | null = null;
 
-  // NOTE: optionSelectionChanges in mat select with defer and onStable to await for options to be rendered
   constructor(
     @Optional()
     @Inject(MAT_FORM_FIELD)
@@ -393,7 +393,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   get empty() {
-    return this._selectionModel.isEmpty();
+    return !this._selectionModel || this._selectionModel.isEmpty();
   }
 
   get stateChanges(): Observable<void> {
@@ -411,7 +411,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   private _focused = false;
 
   protected get maxPageSize(): number {
-    return Math.min(this.panelViewportPageSize, this.optionFor.options$.value.length,);
+    return Math.min(
+      this.panelViewportPageSize,
+      this.optionFor.options$.value.length,
+    );
   }
 
   ngOnInit() {
@@ -426,7 +429,6 @@ export class NgxVirtualSelectFieldComponent<TValue>
     if (!this.customTrigger) {
       this.triggerValue$ = this._selectionModel.changed.pipe(
         startWith(null),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         map((_selected) =>
           this._selectionModel.selected
             .map((option) => option.label ?? '')
@@ -505,6 +507,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
   writeValue(value: TValue[]): void {
     this.value = value;
+
+    // after settting a value on empty fornControl local `empty` does not update
+    // as result the field continue to show placeholder.
+    // needed to trigger change detection for the empty state and trigger value updates
+    this._changeDetectorRef.markForCheck();
   }
 
   registerOnChange(fn: (value: TValue[] | TValue) => void) {
