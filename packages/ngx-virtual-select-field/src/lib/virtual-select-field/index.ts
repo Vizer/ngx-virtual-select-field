@@ -11,7 +11,10 @@ export {
   NgxVirtualSelectFieldOptionModel,
 } from './virtual-select-field-option-for';
 
-export { NgxVirtualSelectFieldComponent } from './virtual-select-field.component';
+export {
+  NgxVirtualSelectFieldComponent,
+  NgxVirtualSelectFieldChange,
+} from './virtual-select-field.component';
 
 export { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
 
