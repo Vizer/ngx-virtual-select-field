@@ -1,3 +1,18 @@
+## 1.2.0 (2024-11-04)
+
+
+### 🚀 Features
+
+- **virtual-select:** implement selectionChange event ([b012b91](https://github.com/Vizer/angular-material-virtual-select/commit/b012b91))
+
+### 🩹 Fixes
+
+- **virtual-select:** update trigger value after setting value on empty form control ([4e09269](https://github.com/Vizer/angular-material-virtual-select/commit/4e09269))
+
+### ❤️  Thank You
+
+- Volodymyr Zherebnyi @Vizer
+
 ## 1.1.0 (2024-06-19)
 
 
