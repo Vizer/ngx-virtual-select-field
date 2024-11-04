@@ -205,9 +205,11 @@ Component to define select field
 | required                  | `boolean`                    | `false` | Define if fields is required                                                   |
 | disabled                  | `boolean`                    | `false` | Define if fields is disabled                                                   |
 
-| Output      | Type                 | Description                |
-| ----------- | -------------------- | -------------------------- |
-| valueChange | `TValue \| TValue[]` | Value change event emitter |
+| Output          | Type                          | Description                |
+| --------------- | ----------------------------- | -------------------------- |
+| valueChange     | `TValue \| TValue[]`          | Value change output        |
+| selectionChange | `NgxVirtualSelectFieldChange` | Selecten change output     |
+
 
 ### NgxVirtualSelectFieldOptionComponent<TValue>
 
@@ -272,6 +274,16 @@ Properties:
 | overlayPanelClass | `string \| string[]` | CSS class to be added to the panel element|
 | optionHeight | `number` | Height for an option element |
 | panelViewportPageSize | `number` | Amount of visible items in list |
+
+### NgxVirtualSelectFieldChange
+
+Class to define event for `selectionChange` output
+Properties:
+| Name | Type | Description |
+|-----------------------|--------------------------------------------|----------------------------|
+| source | `NgxVirtualSelectFieldComponent` | isntance of the selector component |
+| value | `TValue` or `TValue[]` | new selection value|
+
 
 ### CSS variables
 

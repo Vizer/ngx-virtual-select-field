@@ -9,13 +9,11 @@ import {
   ContentChildren,
   DestroyRef,
   ElementRef,
-  EventEmitter,
   Inject,
   Input,
   OnDestroy,
   OnInit,
   Optional,
-  Output,
   QueryList,
   Signal,
   TrackByFunction,
@@ -24,6 +22,7 @@ import {
   computed,
   inject,
   numberAttribute,
+  output,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -273,9 +272,14 @@ export class NgxVirtualSelectFieldComponent<TValue>
   /**
    * Value change event
    */
-  @Output()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueChange = new EventEmitter<any>();
+  valueChange = output<any>();
+
+  /**
+   * Selection change event
+   * Emits after value change and form control update
+   */
+  selectionChange = output<NgxVirtualSelectFieldChange<TValue>>();
 
   //#endregion Inputs/Outputs
 
@@ -595,6 +599,10 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   protected open() {
+    if (this.isPanelOpened()) {
+      return;
+    }
+
     if (this._parentFormField) {
       this.preferredOverlayOrigin =
         this._parentFormField.getConnectedOverlayOrigin();
@@ -905,6 +913,9 @@ export class NgxVirtualSelectFieldComponent<TValue>
 
     this.valueChange.emit(outputValue);
     this._onChange(outputValue);
+    this.selectionChange.emit(
+      new NgxVirtualSelectFieldChange(this, outputValue),
+    );
   }
 
   private assertIsDefined<T>(
@@ -917,4 +928,11 @@ export class NgxVirtualSelectFieldComponent<TValue>
   }
 
   private static nextId = 0;
+}
+
+export class NgxVirtualSelectFieldChange<TValue> {
+  constructor(
+    public source: NgxVirtualSelectFieldComponent<TValue>,
+    public value: any,
+  ) {}
 }

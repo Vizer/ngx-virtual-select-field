@@ -16,7 +16,10 @@ import {
 } from './virtual-select-field-option-for';
 import { NgxVirtualSelectFieldOptionComponent } from './virtual-select-field-option';
 import { NgxVirtualSelectFieldTriggerDirective } from './virtual-select-field-trigger';
-import { NgxVirtualSelectFieldComponent } from './virtual-select-field.component';
+import {
+  NgxVirtualSelectFieldChange,
+  NgxVirtualSelectFieldComponent,
+} from './virtual-select-field.component';
 
 describe('VirtualSelectFieldComponent', () => {
   beforeAll(() => {
@@ -445,7 +448,8 @@ describe('VirtualSelectFieldComponent', () => {
       const options = Arrange.createOptions();
       const option = options[2];
 
-      const result = await Arrange.setupAsFormCOntrol({
+      const result = await Arrange.setupAsFormControl({
+        placeholder: null,
         options,
         value: option.value,
       });
@@ -459,7 +463,8 @@ describe('VirtualSelectFieldComponent', () => {
       const options = Arrange.createOptions();
       const option = options[3];
 
-      const result = await Arrange.setupAsFormCOntrol({
+      const result = await Arrange.setupAsFormControl({
+        placeholder: null,
         options,
         value: null,
       });
@@ -468,6 +473,35 @@ describe('VirtualSelectFieldComponent', () => {
 
       const trigger = await result.findByText(option.label);
       expect(trigger).toBeTruthy();
+    });
+
+    it('should propagate all events', async () => {
+      const placeholder = 'placeholder text';
+      const options = Arrange.createOptions();
+      const option = options[3];
+
+      const user = Arrange.setupUserEvent();
+
+      const result = await Arrange.setupAsFormControl({
+        placeholder,
+        options,
+        value: null,
+      });
+      result.fixture.autoDetectChanges();
+
+      const trigger = await result.findByText(placeholder);
+      await user.click(trigger);
+
+      const optionsDebugElements = ElementQuery.allOptionComponents(result);
+      await user.click(optionsDebugElements[3].nativeElement);
+
+      expect(result.fixture.componentInstance.value).toBe(option.value);
+      expect(result.fixture.componentInstance.control.value).toBe(option.value);
+      expect(result.fixture.componentInstance.selectionChange).toEqual({
+        value: option.value,
+        source:
+          ElementQuery.ngxVirtualSelectFieldComponent(result).componentInstance,
+      });
     });
   });
 });
@@ -538,34 +572,42 @@ const Arrange = {
     );
   },
 
-  async setupAsFormCOntrol<TValue>(componentProperties: {
+  async setupAsFormControl<TValue>(componentProperties: {
+    placeholder: string | null;
     options: NgxVirtualSelectFieldOptionModel<TValue>[];
     value: TValue | null;
   }): Promise<
     RenderResult<{
+      placeholder: string | null;
       control: FormControl;
       options: NgxVirtualSelectFieldOptionModel<TValue>[];
+      value: TValue | null;
+      selectionChange: NgxVirtualSelectFieldChange<TValue> | null;
     }>
   > {
     return await render(
       `
-      <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder">
-        <ngx-virtual-select-field-option
-          *ngxVirtualSelectFieldOptionFor="let option of options"
-          [value]="option.value"
-        >
-          {{ option.label }}
-        </ngx-virtual-select-field-option>
+        <ngx-virtual-select-field [formControl]="control" [placeholder]="placeholder" (valueChange)="value = $event" (selectionChange)="selectionChange = $event">
+          <ngx-virtual-select-field-option
+            *ngxVirtualSelectFieldOptionFor="let option of options"
+            [value]="option.value"
+          >
+            {{ option.label }}
+          </ngx-virtual-select-field-option>
+        </ngx-virtual-select-field>
     `,
 
       {
         componentProperties: {
+          placeholder: componentProperties.placeholder,
           options: componentProperties.options,
           control: new FormControl(componentProperties.value),
+          value: componentProperties.value,
+          selectionChange: null,
         },
         imports: [
-          ReactiveFormsModule,
           MatFormFieldModule,
+          ReactiveFormsModule,
           NgxVirtualSelectFieldComponent,
           NgxVirtualSelectFieldOptionForDirective,
           NgxVirtualSelectFieldOptionComponent,
@@ -622,6 +664,12 @@ const ElementQuery = {
   activeOption(renderResult: RenderResult<unknown, unknown>) {
     return renderResult.debugElement.query(
       By.css('.ngx-virtual-select-field-option--active'),
+    );
+  },
+
+  ngxVirtualSelectFieldComponent(renderResult: RenderResult<unknown, unknown>) {
+    return renderResult.debugElement.query(
+      By.directive(NgxVirtualSelectFieldComponent),
     );
   },
 };
