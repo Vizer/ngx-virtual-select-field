@@ -435,7 +435,7 @@ export class NgxVirtualSelectFieldComponent<TValue>
         startWith(null),
         map((_selected) =>
           this._selectionModel.selected
-            .map((option) => option.label ?? '')
+            .map((option) => option?.label ?? '')
             .join(', '),
         ),
       );
